@@ -109,7 +109,7 @@ export default function YourFunds() {
             src="/static/landing/yourfunds-hero.png"
             sx={{ position: 'absolute', left: 70, top: -40, zIndex: 10, [theme.breakpoints.up('md')]: { top: -20 } }}
           />
-          <Stack spacing={4} sx={{ marginLeft: 0, [theme.breakpoints.up('md')]: { marginLeft: 40 } }}>
+          <Stack spacing={4} sx={{ marginLeft: 0, [theme.breakpoints.up('md')]: { marginLeft: 55 } }}>
             <Stack direction={{ xs: 'column', md: 'row' }} spacing={3} alignItems="center">
               <Box
                 sx={{
