@@ -6,4 +6,5 @@ export { default as GetPaid } from './GetPaid';
 export { default as YourFunds } from './YourFunds';
 export { default as RoadMap } from './RoadMap';
 export { default as SyntheticArchitecture } from './SyntheticArchitecture';
+export { default as FAQList } from './FAQList';
 export { default as Tokenomics } from './Tokenomics';

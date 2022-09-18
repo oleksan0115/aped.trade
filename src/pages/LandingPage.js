@@ -11,6 +11,7 @@ import {
   YourFunds,
   RoadMap,
   SyntheticArchitecture,
+  FAQList,
   Tokenomics
 } from '../components/_external-pages/landing';
 
@@ -41,6 +42,7 @@ export default function LandingPage() {
         <RoadMap />
         <SyntheticArchitecture />
         <Tokenomics />
+        <FAQList />
       </ContentStyle>
     </RootStyle>
   );
