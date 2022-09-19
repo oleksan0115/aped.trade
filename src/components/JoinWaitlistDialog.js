@@ -1,12 +1,16 @@
+import { Helmet } from 'react-helmet';
 import PropTypes from 'prop-types';
 import React from 'react';
 
 // materials
 import { useTheme } from '@material-ui/core/styles';
+import { Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
+
+import Image from './Image';
 
 JoinWaitlistDialog.propTypes = {
   isOpen: PropTypes.bool,
@@ -36,30 +40,23 @@ export default function JoinWaitlistDialog({ isOpen, onClose }) {
         sx={{
           '& .MuiPaper-root': {
             width: 400,
-            height: 'calc(100% - 200px)',
-            [theme.breakpoints.up('md')]: { width: 600, height: 650 }
+            height: 520,
+            [theme.breakpoints.up('md')]: { width: 500 }
           }
         }}
       >
-        <DialogContent>
-          <div>
-            <iframe
-              title="waitlist"
-              scrolling="no"
-              style={{
-                position: 'absolute',
-                top: '0',
-                left: '0',
-                border: '0',
-                width: '100%',
-                height: '100%'
-              }}
-              src="https://getwaitlist.com/waitlist/4158"
-            />
-          </div>
+        <DialogContent sx={{ overflowY: 'hidden' }}>
+          <Image src="/static/landing/astronaut.png" sx={{ width: 120, height: 120, margin: 'auto' }} />
+          <Typography variant="h4" sx={{ textAlign: 'center', my: 2 }}>
+            Join limited Presale Waitlist
+          </Typography>
+          <div className="launchlist-widget" data-key-id="31PxJ8" data-height="250px" />
+          <Helmet>
+            <script src="https://getlaunchlist.com/js/widget.js" type="text/javascript" defer />
+          </Helmet>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} variant="contained" size="large" color="secondary" autoFocus>
+          <Button onClick={handleClose} variant="contained" color="secondary" autoFocus>
             Cancel
           </Button>
         </DialogActions>
