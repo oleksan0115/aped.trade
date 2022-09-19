@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 // material
 import { experimentalStyled as styled, useTheme } from '@material-ui/core/styles';
@@ -8,6 +9,7 @@ import { varWrapEnter, varFadeInRight } from '../../animate';
 // components
 import Image from '../../Image';
 import { MHidden } from '../../@material-extend';
+import JoinWaitlistDialog from '../../JoinWaitlistDialog';
 // ----------------------------------------------------------------------
 
 const RootStyle = styled(motion.div)(({ theme }) => ({
@@ -58,9 +60,12 @@ const HeroImgStyle = styled(motion.img)(() => ({
 
 export default function LandingHero() {
   const theme = useTheme();
+  const [dialogOpen, setDialogOpen] = useState(false);
+
   return (
     <>
       <RootStyle initial="initial" animate="animate" variants={varWrapEnter}>
+        <JoinWaitlistDialog isOpen={dialogOpen} onClose={() => setDialogOpen(false)} />
         <Container maxWidth="xl">
           <Stack direction="row" spacing={1} justifyContent="space-between">
             <ContentStyle>
@@ -140,7 +145,7 @@ export default function LandingHero() {
               </Stack>
 
               <motion.div variants={varFadeInRight}>
-                <Button className="aped-button" variant="contained" target="_self" href="#">
+                <Button className="aped-button" variant="contained" onClick={() => setDialogOpen(true)}>
                   JOIN WAITLIST
                 </Button>
               </motion.div>

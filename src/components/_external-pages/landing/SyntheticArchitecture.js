@@ -10,6 +10,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 //
 import { varWrapEnter, varFadeInRight } from '../../animate';
 import Image from '../../Image';
+import JoinWaitlistDialog from '../../JoinWaitlistDialog';
 
 // ----------------------------------------------------------------------
 
@@ -62,6 +63,7 @@ const AccordionStyle = withStyles(() => ({
 export default function SyntheticArchitecture() {
   const theme = useTheme();
   const [expanded, setExpanded] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
@@ -69,6 +71,7 @@ export default function SyntheticArchitecture() {
   return (
     <RootStyle initial="initial" animate="animate" variants={varWrapEnter}>
       <Container sx={{ position: 'relative' }}>
+        <JoinWaitlistDialog isOpen={dialogOpen} onClose={() => setDialogOpen(false)} />
         <Image
           src="/static/landing/text-shine.png"
           sx={{ position: 'absolute', left: '50%', top: 100, transform: 'translate(-50%, -50%)', zIndex: 1 }}
@@ -182,7 +185,12 @@ export default function SyntheticArchitecture() {
             </Box>
 
             <motion.div variants={varFadeInRight}>
-              <Button className="aped-button" variant="contained" target="_self" href="#" sx={{ zIndex: 3 }}>
+              <Button
+                className="aped-button"
+                variant="contained"
+                onClick={() => setDialogOpen(true)}
+                sx={{ zIndex: 3 }}
+              >
                 JOIN WAITLIST
               </Button>
             </motion.div>

@@ -33,3 +33,20 @@
   background-clip: text;
   text-fill-color: transparent;
 }
+
+h1 {
+  color: #000000;
+}
+.container--waitlistapi {
+  margin: 0 auto;
+  background-color: #cecaf3;
+}
+.button--waitlistapi {
+  background-color: #000000;
+}
+.statusTextContainer--waitlistapi {
+  color: #000000;
+}
+.referralLinkField--text {
+  color: #000000;
+}
