@@ -166,10 +166,10 @@ export default function LandingHero() {
                   left: '-165px'
                 }}
               />
-              <Image
+              {/* <Image
                 src="/static/landing/astronaut.png"
                 sx={{ position: 'absolute', left: '-380px', bottom: '-70px', zIndex: 10 }}
-              />
+              /> */}
             </HeroImgContainer>
           </Stack>
 
