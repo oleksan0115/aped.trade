@@ -85,8 +85,11 @@ export default function JoinWaitlistDialog({ isOpen, onClose }) {
             [theme.breakpoints.up('md')]: { overflowY: 'hidden', padding: 2 }
           }}
         >
-          <Typography variant="h3" sx={{ textAlign: 'center', my: 1 }}>
-            Join Presale Waitlist
+          <Typography
+            variant="h3"
+            sx={{ textAlign: 'center', my: 1, textTransform: 'uppercase', fontFamily: 'BarlowExtraBoldItalic' }}
+          >
+            Join Presale <span className="gradient-text">Waitlist</span>
           </Typography>
           <Stack spacing={0.5}>
             <Typography variant="body2" sx={{ textAlign: 'center' }}>
