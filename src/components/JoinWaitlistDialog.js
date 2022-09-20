@@ -33,7 +33,7 @@ const DialogTitle = withStyles(styles)((props) => {
       <Typography variant="h6">{children}</Typography>
       {onClose ? (
         <IconButton aria-label="close" className={classes.closeButton} onClick={onClose}>
-          <CloseIcon />
+          <CloseIcon sx={{ zIndex: 10 }} />
         </IconButton>
       ) : null}
     </MuiDialogTitle>
@@ -68,16 +68,23 @@ export default function JoinWaitlistDialog({ isOpen, onClose }) {
         sx={{
           '& .MuiPaper-root': {
             width: 400,
-            height: 530,
-            [theme.breakpoints.up('md')]: { width: 500, height: 550 }
+            height: 550,
+            [theme.breakpoints.up('md')]: { width: 500, height: 570 }
           }
         }}
       >
         <DialogTitle id="customized-dialog-title" onClose={handleClose} />
+        <Image
+          src="/static/landing/giphy.webp"
+          sx={{ height: 160, margin: 'auto', width: '100%', marginTop: '-35px', marginBottom: '30px' }}
+        />
         <DialogContent
-          sx={{ padding: 0, marginTop: -4, [theme.breakpoints.up('md')]: { overflowY: 'hidden', padding: 2 } }}
+          sx={{
+            padding: 0,
+            marginTop: -4,
+            [theme.breakpoints.up('md')]: { overflowY: 'hidden', padding: 2 }
+          }}
         >
-          <Image src="/static/landing/astronaut.png" sx={{ width: 120, height: 120, margin: 'auto' }} />
           <Typography variant="h3" sx={{ textAlign: 'center', my: 1 }}>
             Join Presale Waitlist
           </Typography>
