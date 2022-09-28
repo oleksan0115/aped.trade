@@ -14,7 +14,7 @@ const menuConfig = [
     icon: <Iconify icon="material-symbols:generating-tokens-outline-rounded" sx={{ width: 20, height: 20 }} />
   },
   {
-    title: 'Hello',
+    title: 'ABOUT',
     path: '/contact',
     icon: <Iconify icon="fluent:text-font-info-16-filled" sx={{ width: 20, height: 20 }} />
   },
