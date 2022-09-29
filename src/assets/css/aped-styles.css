@@ -50,3 +50,20 @@ h1 {
 .referralLinkField--text {
   color: #000000;
 }
+
+.trading-view {
+  display: flex;
+  align-items: center;
+}
+
+.tradingview-widget-copyright {
+  display: none;
+}
+
+#TICKER_2 .tradingview-widget-container {
+  height: 70px !important;
+}
+
+#ADVANCED_CHART_2 .tradingview-widget-container {
+  height: 100%;
+}

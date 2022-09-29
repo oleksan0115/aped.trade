@@ -57,14 +57,14 @@ export default function LowDAIDialog({ showDialog, onShowDialog }) {
           <Typography variant="h4">Oops! Low wallet DAI Balance, buy DAI instantly!</Typography>
           <Box m={2} />
           <Paper variant="outlined" sx={{ p: 1 }}>
-            <Button variant="outlined" color="secondary" fullWidth sx={{ justifyContent: 'flex-start' }}>
+            <Button variant="outlined" color="primary" fullWidth sx={{ justifyContent: 'flex-start' }}>
               <Stack direction="row" spacing={2} alignItems="center">
                 <Box component="img" src="/static/trading/bank.png" sx={{ width: 50 }} />
-                <Typography variant="body1">Credit Card</Typography>
+                <Typography variant="body1">Bank Card</Typography>
               </Stack>
             </Button>
             <Box m={3} />
-            <Button variant="outlined" color="secondary" fullWidth sx={{ justifyContent: 'flex-start' }}>
+            <Button variant="outlined" color="primary" fullWidth sx={{ justifyContent: 'flex-start' }}>
               <Stack direction="row" spacing={2} alignItems="center">
                 <Box component="img" src="/static/trading/debit-card.png" sx={{ width: 50 }} />
                 <Typography variant="body1">Credit Card</Typography>
@@ -73,7 +73,7 @@ export default function LowDAIDialog({ showDialog, onShowDialog }) {
           </Paper>
         </DialogContent>
         <DialogActions>
-          <Button variant="outlined" onClick={handleClose} color="primary">
+          <Button variant="contained" onClick={handleClose} color="primary">
             Close
           </Button>
         </DialogActions>
