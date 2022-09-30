@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 // material
 import { useTheme, experimentalStyled as styled } from '@material-ui/core/styles';
 
-import { AppBar, Tabs, Tab, Typography, Box } from '@material-ui/core';
+import { AppBar, Tabs, Tab, Typography, Box, Stack } from '@material-ui/core';
 
 import { Chart, LongShort, Activity, MobileLeaderboard, MobileLiquidity } from '../components/_external-pages/trading';
 // ----------------------------------------------------------------------
@@ -89,10 +89,10 @@ export default function MobileVersion() {
     <RootStyle>
       <TabPanel value={value} index={0} dir={theme.direction}>
         <ContentStyle>
-          <Box sx={{ height: 400, mb: 3 }}>
+          <Stack spacing={2} sx={{ mb: 5 }}>
             <Chart isLight={isLight} />
-          </Box>
-          <LongShort />
+            <LongShort />
+          </Stack>
         </ContentStyle>
       </TabPanel>
       <TabPanel value={value} index={1} dir={theme.direction}>

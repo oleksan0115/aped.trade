@@ -5,7 +5,8 @@ import PropTypes from 'prop-types';
 import { TradingViewEmbed, widgetType } from 'react-tradingview-embed';
 
 // materials
-// import { useTheme } from '@material-ui/core/styles';
+import { useTheme } from '@material-ui/core/styles';
+import { useMediaQuery } from '@material-ui/core';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
@@ -23,10 +24,12 @@ Chart.propTypes = {
 };
 
 function Chart({ isLight }) {
-  // const theme = useTheme();
+  const theme = useTheme();
   // const [chartData, setChartData] = useState([]);
   // const [query, setQuery] = useState('BTC');
   // const [symbol, setSymbol] = useState('');
+
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
 
   const [currency, setCurrency] = useState('BTC');
 
@@ -37,6 +40,7 @@ function Chart({ isLight }) {
       const response = await fetch(
         `https://min-api.cryptocompare.com/data/blockchain/histo/day?fsym=${symbol}&api_key=${CRYPTO_COMPARE}&limit=30`
       );
+
       const data = await response.json();
       const bulkData = data.Data.Data || [];
       const dataArray = [];
@@ -64,21 +68,6 @@ function Chart({ isLight }) {
 
     setCryptoData(newCrypto);
   }, []);
-
-  // const loadChartData = async (symbol) => {
-  //   const response = await fetch(
-  //     `https://min-api.cryptocompare.com/data/blockchain/histo/day?fsym=${symbol}&api_key=${CRYPTO_COMPARE}&limit=30`
-  //   );
-  //   const data = await response.json();
-  //   const bulkData = data.Data.Data || [];
-  //   const dataArray = [];
-  //   bulkData.map((y) =>
-  //     dataArray.push({
-  //       x: y.time * 1000,
-  //       y: y.transaction_count * y.average_transaction_value
-  //     })
-  //   );
-  // };
 
   const handleChange = (event) => {
     setCurrency(event.target.value);
@@ -155,7 +144,7 @@ function Chart({ isLight }) {
           interval: '1D',
           colorTheme: isLight ? 'light' : 'dark',
           width: '100%',
-          // height: '500px',
+          height: isDesktop ? '400px' : '670px',
           symbol: `${currency}USD`
         }}
       />
