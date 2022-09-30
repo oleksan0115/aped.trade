@@ -43,7 +43,8 @@ const StopLessBadge = styled('div')(({ theme }) => ({
   marginTop: theme.spacing(1),
   backgroundColor: theme.palette.error.main,
   borderRadius: theme.spacing(0.5),
-  color: 'white'
+  color: 'white',
+  padding: theme.spacing(0, 1)
 }));
 
 const LeverageBadge = styled('div')(({ theme }) => ({
@@ -184,7 +185,7 @@ export default function LongShort() {
   const [sliderValue, setSliderValue] = useState(20);
   const [selectedTab, setSelectedTab] = useState(1);
   const [longShort, setLongShort] = useState('long');
-  const [trailingValue, setTrailingValue] = useState(365);
+  const [trailingValue, setTrailingValue] = useState(57);
 
   const [sliderRange, setSliderRange] = useState(SLIDER_RANGE[1]);
   const [minMax, setMinMax] = useState(MIN_MAX[1]);
@@ -199,9 +200,9 @@ export default function LongShort() {
     const value = leverage;
     const newStopLess = leverage * trailingValue - (leverage * trailingValue * (100 - value)) / 100;
     const newTakeProfit = leverage * trailingValue + (leverage * trailingValue * value) / 100;
-    setStopLess(Number(newStopLess.toFixed(2)));
+    setStopLess(Number(newStopLess.toFixed(1)));
     setLeverage(value);
-    setTakeProfit(Number(newTakeProfit.toFixed(2)));
+    setTakeProfit(Number(newTakeProfit.toFixed(1)));
   }, [leverage, trailingValue]);
 
   const handleChange = (event, value) => {
@@ -304,6 +305,7 @@ export default function LongShort() {
               textColor="primary"
               onChange={handleChangeTab}
               aria-label="disabled tabs example"
+              sx={{ '& .MuiButtonBase-root:not(:last-child)': { marginRight: 0 } }}
             >
               <Tab icon={<StopLess stopLess={stopLess} />} />
               <Tab icon={<Leverage leverage={leverage} />} />

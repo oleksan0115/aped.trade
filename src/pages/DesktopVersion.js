@@ -25,10 +25,10 @@ export default function DesktopVersion() {
       <Container maxWidth="xl" m={1}>
         <Box m={4} />
         <Grid container spacing={2}>
-          <Grid item xs={12} lg={8} xl={9} sx={{ [theme.breakpoints.down('lg')]: { minHeight: 400 } }}>
+          <Grid item xs={12} md={8} lg={9} sx={{ [theme.breakpoints.down('md')]: { minHeight: 400 } }}>
             <Chart isLight={isLight} />
           </Grid>
-          <Grid item xs={12} lg={4} xl={3}>
+          <Grid item xs={12} md={4} lg={3}>
             <LongShort />
           </Grid>
         </Grid>
