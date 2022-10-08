@@ -42,6 +42,8 @@ function Chart({ isLight }) {
       );
 
       const data = await response.json();
+
+      console.log(symbol, data);
       const bulkData = data.Data.Data || [];
       const dataArray = [];
       bulkData.map((y) =>
