@@ -9,6 +9,7 @@ import Image from '../components/Image';
 // ----------------------------------------------------------------------
 
 const RootStyle = styled(Page)({
+  backgroundImage: 'radial-gradient(circle, #161616, #161616, #000000)',
   height: '100%'
 });
 
@@ -16,7 +17,7 @@ const ContainerStyle = styled(Container)(({ theme }) => ({
   height: '100%',
   overflow: 'hidden',
   position: 'relative',
-  backgroundColor: theme.palette.background.default
+  paddingTop: theme.spacing(3)
 }));
 
 const HeaderStyle = styled(Box)(({ theme }) => ({
