@@ -9,7 +9,7 @@ import Image from '../components/Image';
 // ----------------------------------------------------------------------
 
 const RootStyle = styled(Page)({
-  backgroundImage: 'radial-gradient(circle, #161616, #161616, #000000)',
+  // backgroundImage: 'radial-gradient(circle, #161616, #161616, #000000)',
   height: '100%'
 });
 
@@ -32,32 +32,30 @@ const ContentBox = styled((props) => <Stack spacing={3} {...props} />)(({ theme 
   transform: 'translate(-50%, -50%)',
   textAlign: 'center',
   padding: theme.spacing(2, 1),
-  [theme.breakpoints.down('md')]: {
-    width: '100%'
-  }
+  width: '100%'
 }));
 
 // ----------------------------------------------------------------------
 
 export default function MarketingFunnel() {
   return (
-    <RootStyle title="Marketing Funnel | LVRJ" id="move_top">
+    <RootStyle title="Marketing Funnel | LVRJ" id="move_top" className="gradient-background">
       <ContainerStyle>
         <HeaderStyle>
           <Link underline="none" component={RouterLink} to="/">
             <Stack spacing={1} direction="row" alignItems="center">
               <Image src="/static/marketing-funnel/logo.png" />
-              <Typography variant="h4" sx={{ fontWeight: 200, color: 'white' }}>
+              <Typography variant="h4" sx={{ fontWeight: 200, color: 'white', fontFamily: 'monospace' }}>
                 APED
               </Typography>
             </Stack>
           </Link>
         </HeaderStyle>
         <ContentBox>
-          <Typography variant="h2" color="white" sx={{ fontFamily: 'system-ui', fontWeight: 900 }}>
+          <Typography variant="h2" color="white" sx={{ fontFamily: 'arial black', fontWeight: 900 }}>
             Trade Perpetual Futures
           </Typography>
-          <Typography variant="h6" color="white" sx={{ fontFamily: 'system-ui', fontWeight: 400 }}>
+          <Typography variant="h6" color="white" sx={{ fontFamily: 'arial', fontWeight: 400 }}>
             Low Fees. No KYC. High Leverage.
           </Typography>
           <Button variant="contained" className="gradient-button">

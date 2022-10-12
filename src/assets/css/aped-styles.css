@@ -70,6 +70,12 @@ h1 {
 
 /* marketing funnel */
 
+.gradient-background {
+  background: #161616;
+  box-shadow: inset 0 0 80px 30px #000000;
+  -webkit-box-shadow: inset 0 0 80px 30px #000000;
+}
+
 .gradient-button {
   background-image: linear-gradient(to bottom, #69ddff 0%, #4a5e8c 44%, #4a5e8c 49%, #4a5e8c 57%, #da22ff 100%);
   border-radius: 15px;
