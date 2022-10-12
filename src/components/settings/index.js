@@ -1,3 +1,4 @@
+import { useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { Icon } from '@iconify/react';
 import closeFill from '@iconify/icons-eva/close-fill';
@@ -16,7 +17,9 @@ import SettingFullscreen from './SettingFullscreen';
 const DRAWER_WIDTH = 260;
 
 export default function Settings() {
+  const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
+  const isHide = pathname === '/marketing-funnel';
 
   useEffect(() => {
     if (open) {
@@ -48,36 +51,38 @@ export default function Settings() {
           ...(open && { right: 12 })
         }}
       >
-        <Box
-          sx={{
-            p: 0.5,
-            px: '4px',
-            mt: -3,
-            left: -44,
-            top: '50%',
-            color: 'grey.800',
-            position: 'absolute',
-            bgcolor: 'common.white',
-            borderRadius: '24px 0 16px 24px',
-            boxShadow: (theme) => theme.customShadows.z12
-          }}
-        >
-          <Tooltip title="Settings">
-            <MIconButton
-              color="inherit"
-              onClick={handleToggle}
-              sx={{
-                p: 0,
-                width: 40,
-                height: 40,
-                transition: (theme) => theme.transitions.create('all'),
-                '&:hover': { color: 'primary.main', bgcolor: 'transparent' }
-              }}
-            >
-              <Icon icon={open ? closeFill : options2Fill} width={20} height={20} />
-            </MIconButton>
-          </Tooltip>
-        </Box>
+        {!isHide && (
+          <Box
+            sx={{
+              p: 0.5,
+              px: '4px',
+              mt: -3,
+              left: -44,
+              top: '50%',
+              color: 'grey.800',
+              position: 'absolute',
+              bgcolor: 'common.white',
+              borderRadius: '24px 0 16px 24px',
+              boxShadow: (theme) => theme.customShadows.z12
+            }}
+          >
+            <Tooltip title="Settings">
+              <MIconButton
+                color="inherit"
+                onClick={handleToggle}
+                sx={{
+                  p: 0,
+                  width: 40,
+                  height: 40,
+                  transition: (theme) => theme.transitions.create('all'),
+                  '&:hover': { color: 'primary.main', bgcolor: 'transparent' }
+                }}
+              >
+                <Icon icon={open ? closeFill : options2Fill} width={20} height={20} />
+              </MIconButton>
+            </Tooltip>
+          </Box>
+        )}
 
         <Paper
           sx={{

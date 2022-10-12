@@ -108,12 +108,20 @@ h1 {
   justify-content: center;
   height: 100%;
   transition: background 0.5s ease;
-  font-family: cursive;
+  font-family: system-ui;
   width: 100%;
 }
 
 .gradient-button:hover .MuiButton-label {
   background: transparent;
+}
+
+@media screen and (max-width: 580px) {
+  .gradient-background {
+    background: #161616;
+    box-shadow: inset 0 0 80px 30px #000000;
+    -webkit-box-shadow: inset 0 0 30px 7px #000000;
+  }
 }
 
 /* .gradient-button {
