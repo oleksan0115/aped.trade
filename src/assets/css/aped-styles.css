@@ -67,3 +67,87 @@ h1 {
 #ADVANCED_CHART_2 .tradingview-widget-container {
   height: 100%;
 }
+
+/* marketing funnel */
+
+.gradient-button {
+  background-image: linear-gradient(to bottom, #69ddff 0%, #4a5e8c 44%, #4a5e8c 49%, #4a5e8c 57%, #da22ff 100%);
+  border-radius: 15px;
+  box-sizing: border-box;
+  color: white;
+  display: block;
+  font: 1.125rem 'Oswald', Arial, sans-serif; /*18*/
+  height: 60px;
+  letter-spacing: 1px;
+  margin: 0 auto;
+  padding: 4px;
+  position: relative;
+  text-decoration: none;
+  width: 264px;
+  margin: auto !important;
+  margin-top: 24px !important;
+  margin-bottom: 30px !important;
+  z-index: 2;
+}
+
+.gradient-button:hover {
+  color: #fff;
+}
+
+.gradient-button .MuiButton-label {
+  align-items: center;
+  background: #0d0f14;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  transition: background 0.5s ease;
+  font-family: cursive;
+  width: 100%;
+}
+
+.gradient-button:hover .MuiButton-label {
+  background: transparent;
+}
+
+/* .gradient-button {
+  font-family: system-ui;
+  padding: 5px 30px;
+  font-weight: 100;
+  position: relative;
+  z-index: 2;
+  display: inline-block;
+  text-decoration: none;
+  color: rgba(#fff, 0.7);
+  box-sizing: border-box;
+  text-align: center;
+  background-color: transparent;
+  font-size: 1.1em;
+  transition: 0.3s;
+  border: 4px solid rgb(28, 43, 28);
+  border-image-source: linear-gradient(to bottom, #69ddff 0%, #4a5e8c 44%, #4a5e8c 49%, #4a5e8c 57%, #da22ff 100%);
+  border-image-slice: 4;
+  overflow: hidden;
+}
+
+.gradient-button:hover {
+  color: #fff;
+}
+
+.gradient-button:hover:after {
+  width: 120%;
+}
+.gradient-button:after {
+  content: '';
+  position: absolute;
+  transition: 0.3s;
+  content: '';
+  width: 0;
+  bottom: -1px;
+  height: 3px;
+  background: linear-gradient(to bottom, #69ddff 0%, #4a5e8c 44%, #4a5e8c 49%, #4a5e8c 57%, #da22ff 100%);
+  height: 120%;
+  left: -10%;
+  transform: skewX(15deg);
+  z-index: -1;
+} */
