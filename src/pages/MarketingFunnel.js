@@ -9,7 +9,7 @@ import Image from '../components/Image';
 // ----------------------------------------------------------------------
 
 const RootStyle = styled(Page)({
-  backgroundImage: 'radial-gradient(circle, #161616, #161616, #000000)',
+  // backgroundImage: 'radial-gradient(circle, #161616, #161616, #000000)',
   height: '100%'
 });
 
