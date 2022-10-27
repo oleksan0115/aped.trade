@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 // material
 import { experimentalStyled as styled, useTheme } from '@material-ui/core/styles';
-import { Button, Container, Typography, Stack, Box } from '@material-ui/core';
+import { Button, Container, Typography, Stack } from '@material-ui/core';
 // routes
 //
 import { varWrapEnter, varFadeInRight } from '../../animate';
@@ -71,28 +71,6 @@ export default function LandingHero() {
           <Stack direction="row" spacing={1} justifyContent="space-between">
             <ContentStyle>
               <motion.div variants={varFadeInRight}>
-                {/* <Stack
-                  direction="row"
-                  spacing={2}
-                  alignItems="center"
-                  justifyContent={{ xs: 'center', md: 'flex-start' }}
-                >
-                  <MHidden width="mdDown">
-                    <Box sx={{ width: 73, height: 0, border: '2px solid #FE00C0', borderRadius: 5 }} />
-                  </MHidden>
-                  <Typography
-                    sx={{
-                      fontSize: '16px',
-                      color: '#FE00C0',
-                      [theme.breakpoints.up('md')]: {
-                        fontSize: '22px'
-                      }
-                    }}
-                  >
-                    TRADE
-                  </Typography>
-                </Stack> */}
-
                 <Typography
                   sx={{
                     textAlign: 'center',
@@ -112,37 +90,6 @@ export default function LandingHero() {
                   <span className="gradient-text">LEVERAGED</span> TRADING
                 </Typography>
               </motion.div>
-
-              {/* <Stack
-                direction="column"
-                spacing={1.5}
-                justifyContent={{ xs: 'left', md: 'flex-start', marginTop: '10px !important' }}
-              >
-                {[...Array(3)].map((_, index) => (
-                  <Stack
-                    key={index}
-                    component={motion.div}
-                    variants={varFadeInRight}
-                    direction="row"
-                    spacing={1}
-                    justifyContent={{ xs: 'center', md: 'flex-start' }}
-                  >
-                    <img alt="sketch icon" src="/static/landing/star.png" width={20} height={20} />
-                    <Typography
-                      variant="body2"
-                      color="common.white"
-                      sx={{
-                        fontWeight: '100 !important',
-                        fontFamily: 'sans-serif',
-                        [theme.breakpoints.down('md')]: { fontSize: '12px' }
-                      }}
-                    >
-                      <b>Milestone {index + 1}:</b> First 100,000 users get 20 LVRJ
-                    </Typography>
-                  </Stack>
-                ))}
-              </Stack> */}
-
               <motion.div variants={varFadeInRight}>
                 <Button className="aped-button" variant="contained" onClick={() => setDialogOpen(true)}>
                   JOIN WAITLIST
@@ -156,19 +103,6 @@ export default function LandingHero() {
 
             <HeroImgContainer>
               <HeroImgStyle alt="hero" src="/static/landing/desktop-trading-hero.png" />
-              {/* <HeroImgStyle
-                alt="hero"
-                src="/static/landing/phone-list-hero.png"
-                sx={{
-                  position: 'absolute',
-                  top: 15,
-                  left: '-165px'
-                }}
-              /> */}
-              {/* <Image
-                src="/static/landing/astronaut.png"
-                sx={{ position: 'absolute', left: '-380px', bottom: '-70px', zIndex: 10 }}
-              /> */}
             </HeroImgContainer>
           </Stack>
 
