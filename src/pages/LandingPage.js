@@ -10,9 +10,9 @@ import {
   // GetPaid,
   // YourFunds,
   // RoadMap,
-  SyntheticArchitecture,
-  FAQList,
-  Tokenomics
+  SyntheticArchitecture
+  // FAQList,
+  // Tokenomics
 } from '../components/_external-pages/landing';
 
 // ----------------------------------------------------------------------
@@ -41,8 +41,8 @@ export default function LandingPage() {
         {/* <YourFunds /> */}
         {/* <RoadMap /> */}
         <SyntheticArchitecture />
-        <Tokenomics />
-        <FAQList />
+        {/* <Tokenomics /> */}
+        {/* <FAQList /> */}
       </ContentStyle>
     </RootStyle>
   );

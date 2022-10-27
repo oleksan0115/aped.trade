@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 // material
 import { experimentalStyled as styled, withStyles, useTheme } from '@material-ui/core/styles';
-import { Container, Stack, Typography, Box, Grid, Button } from '@material-ui/core';
+import { Container, Stack, Typography, Box, Grid, Button, Link } from '@material-ui/core';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
@@ -18,7 +18,7 @@ const RootStyle = styled(motion.div)(({ theme }) => ({
   position: 'relative',
   width: '100%',
   textAlign: 'left',
-  padding: theme.spacing(15, 0, 15, 0),
+  padding: theme.spacing(5, 0, 15, 0),
   backgroundColor: theme.palette.grey[900]
 }));
 
@@ -38,6 +38,7 @@ const BoxStyle = styled(Box)(({ theme }) => ({
   border: '3px solid rgba(255, 255, 255, 0.16)',
   borderRadius: 10,
   zIndex: 2,
+  textAlign: 'center',
   [theme.breakpoints.up('md')]: {
     padding: theme.spacing(10)
   }
@@ -204,6 +205,55 @@ export default function SyntheticArchitecture() {
             sx={{ position: 'absolute', right: 0, top: 60, transform: 'translate(50%, -15%)', zIndex: 1 }}
           />
         </BoxStyle>
+
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={6}>
+            <BoxStyle>
+              <Image src="/static/landing/bonding_curve.png" sx={{ width: 231, height: 'auto', margin: 'auto' }} />
+              <Typography
+                variant="h2"
+                className="gradient-text-1"
+                sx={{
+                  fontFamily: 'BarlowExtraBold',
+                  marginBottom: 18,
+                  [theme.breakpoints.down('md')]: { fontSize: '28px', textAlign: 'center' }
+                }}
+              >
+                BONDING CURVE
+              </Typography>
+              <Link
+                className="aped-link-button"
+                href="https://aped-xyz.gitbook.io/copy-of-aped.-xyz-perp-dex-litepaper/economics-structure/bonding-curve"
+                target="_blank"
+              >
+                LEARN MORE
+              </Link>
+            </BoxStyle>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <BoxStyle>
+              <Image src="/static/landing/deflationary.png" sx={{ width: 231, height: 'auto', margin: 'auto' }} />
+              <Typography
+                variant="h2"
+                className="gradient-text-1"
+                sx={{
+                  fontFamily: 'BarlowExtraBold',
+                  marginBottom: 18,
+                  [theme.breakpoints.down('md')]: { fontSize: '28px', textAlign: 'center' }
+                }}
+              >
+                Deflationary
+              </Typography>
+              <Link
+                className="aped-link-button"
+                href="https://aped-xyz.gitbook.io/copy-of-aped.-xyz-perp-dex-litepaper/tokenomics"
+                target="_blank"
+              >
+                LEARN MORE
+              </Link>
+            </BoxStyle>
+          </Grid>
+        </Grid>
       </Container>
     </RootStyle>
   );

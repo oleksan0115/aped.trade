@@ -9,6 +9,19 @@
   box-shadow: none;
 }
 
+.aped-link-button {
+  text-decoration: none;
+  background: linear-gradient(90deg, #fd02bd -9.8%, #5600c4 100%);
+  padding: 16px 30px;
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+}
+
+.aped-link-button:hover {
+  text-decoration: none;
+}
+
 .active-link {
   font-family: 'BarlowExtraBold';
   background: linear-gradient(90deg, #fd02bd -9.8%, #5600c4 100%);
@@ -24,6 +37,18 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
   text-fill-color: transparent;
+}
+
+.gradient-text-1 {
+  background: linear-gradient(90deg, #fd02bd -9.8%, #5600c4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 42px;
+  margin-top: 30px;
 }
 
 .solid-text {

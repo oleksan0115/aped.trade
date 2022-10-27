@@ -1,24 +1,23 @@
 import { Link as RouterLink } from 'react-router-dom';
 // material
-import { experimentalStyled as styled, useTheme } from '@material-ui/core/styles';
-import { Link, Box, Container, Typography, Stack } from '@material-ui/core';
+import { experimentalStyled as styled } from '@material-ui/core/styles';
+import { Link, Container, Stack } from '@material-ui/core';
 //
-import Logo from '../../components/Logo';
 import Image from '../../components/Image';
 
 // ----------------------------------------------------------------------
 
 const LINKS = [
-  { name: 'HOME', href: '#' },
-  { name: 'TEGRONOMICS', href: '#' },
-  { name: 'ABOUT', href: '#' },
-  { name: 'CONTACT', href: '#' }
+  { name: 'TERMS OF USE', href: '#' },
+  { name: 'REFERAL TERMS', href: '#' },
+  { name: 'DOCS', href: '#' },
+  { name: 'PRIVACY POLICY', href: '#' }
 ];
 
 const SOCIALS = [
-  { name: 'medium', icon: '/static/landing/logo-medium.png', href: '#' },
-  { name: 'discord', icon: '/static/landing/logo-discord.png', href: '#' },
-  { name: 'twitter', icon: '/static/landing/logo-twitter.png', href: '#' }
+  { name: 'medium', icon: '/static/socials/social-medium.png', href: '#' },
+  { name: 'discord', icon: '/static/socials/social-discord.png', href: '#' },
+  { name: 'twitter', icon: '/static/socials/social-twitter.png', href: '#' }
 ];
 
 const RootStyle = styled('div')(({ theme }) => ({
@@ -32,12 +31,16 @@ const RootStyle = styled('div')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 export default function MainFooter() {
-  const theme = useTheme();
   return (
     <RootStyle>
       <Container maxWidth="sm">
-        <Stack spacing={5} alignItems="center">
-          <Logo sx={{ [theme.breakpoints.up('md')]: { margin: '0 !important' }, mx: { xs: 'auto', md: 'inherit' } }} />
+        <Stack spacing={5} alignItems="center" sx={{ marginBottom: 3 }}>
+          <Image src="/static/landing/footer-logo.png" sx={{ margin: 'auto' }} />
+          <Stack direction="row" spacing={2}>
+            {SOCIALS.map((link) => (
+              <Image key={link.name} src={link.icon} sx={{ margin: 'auto' }} />
+            ))}
+          </Stack>
           <Stack direction={{ xs: 'column', md: 'row' }} spacing={{ xs: 2, md: 5 }}>
             {LINKS.map((link) => (
               <Link
@@ -52,15 +55,9 @@ export default function MainFooter() {
               </Link>
             ))}
           </Stack>
-
-          <Stack direction="row" spacing={2}>
-            {SOCIALS.map((link) => (
-              <Image key={link.name} src={link.icon} sx={{ width: 40, height: 40, margin: 'auto' }} />
-            ))}
-          </Stack>
         </Stack>
       </Container>
-      <Box sx={{ marginTop: 5, borderTop: '2px solid #202020', padding: theme.spacing(1, 3), color: 'white' }}>
+      {/* <Box sx={{ marginTop: 5, borderTop: '2px solid #202020', padding: theme.spacing(1, 3), color: 'white' }}>
         <Stack direction="row" justifyContent="space-between">
           <Typography variant="body2" sx={{ fontFamily: 'BarlowRegular' }}>
             &copy; 2022 aped.xyz
@@ -74,7 +71,7 @@ export default function MainFooter() {
             </Typography>
           </Stack>
         </Stack>
-      </Box>
+      </Box> */}
     </RootStyle>
   );
 }
