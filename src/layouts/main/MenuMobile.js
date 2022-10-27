@@ -7,12 +7,13 @@ import arrowIosForwardFill from '@iconify/icons-eva/arrow-ios-forward-fill';
 import arrowIosDownwardFill from '@iconify/icons-eva/arrow-ios-downward-fill';
 // material
 import { alpha, experimentalStyled as styled, useTheme } from '@material-ui/core/styles';
-import { Box, List, Drawer, Link, Collapse, ListItem, ListItemText, ListItemIcon } from '@material-ui/core';
+import { Box, List, Drawer, Link, Collapse, ListItem, ListItemText, ListItemIcon, Button } from '@material-ui/core';
 // components
 import Logo from '../../components/Logo';
 import NavSection from '../../components/NavSection';
 import Scrollbar from '../../components/Scrollbar';
 import { MIconButton } from '../../components/@material-extend';
+import JoinWaitlistDialog from '../../components/JoinWaitlistDialog';
 //
 import menuConfig from './MenuConfig';
 
@@ -138,6 +139,7 @@ export default function MenuMobile({ isOffset, isHome }) {
   const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
     if (mobileOpen) {
@@ -171,6 +173,7 @@ export default function MenuMobile({ isOffset, isHome }) {
       >
         <Icon icon={menu2Fill} />
       </MIconButton>
+      <JoinWaitlistDialog isOpen={dialogOpen} onClose={() => setDialogOpen(false)} />
 
       <Drawer
         open={mobileOpen}
@@ -184,7 +187,7 @@ export default function MenuMobile({ isOffset, isHome }) {
             <Logo sx={{ mx: PADDING, my: 3 }} />
           </Link>
 
-          <List disablePadding>
+          <List disablePadding sx={{ textAlign: 'center' }}>
             {menuConfig.map((link) => (
               <MenuMobileItem
                 key={link.title}
@@ -194,6 +197,9 @@ export default function MenuMobile({ isOffset, isHome }) {
                 isActive={pathname === link.path}
               />
             ))}
+            <Button className="aped-button" variant="contained" onClick={() => setDialogOpen(true)} sx={{ mt: 2 }}>
+              JOIN WAITLIST
+            </Button>
           </List>
         </Scrollbar>
       </Drawer>

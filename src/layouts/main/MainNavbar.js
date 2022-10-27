@@ -2,27 +2,20 @@ import { useState } from 'react';
 import { NavLink as RouterLink, useLocation } from 'react-router-dom';
 // material
 import { useTheme } from '@material-ui/core/styles';
-import { Box, Button, AppBar, Toolbar, Container, Stack } from '@material-ui/core';
+import { Box, Button, AppBar, Toolbar, Container } from '@material-ui/core';
 // hooks
 import useOffSetTop from '../../hooks/useOffSetTop';
 // components
 import Logo from '../../components/Logo';
 import JoinWaitlistDialog from '../../components/JoinWaitlistDialog';
 // import Label from '../../components/Label';
-import Image from '../../components/Image';
 import { MHidden } from '../../components/@material-extend';
+import Iconify from '../../components/Iconify';
 //
-import MenuDesktop from './MenuDesktop';
 import MenuMobile from './MenuMobile';
 import navConfig from './MenuConfig';
 
 // ----------------------------------------------------------------------
-
-const socialIcons = [
-  { title: 'medium', src: '/static/socials/social-medium.png' },
-  { title: 'discord', src: '/static/socials/social-discord.png' },
-  { title: 'twitter', src: '/static/socials/social-twitter.png' }
-];
 
 export default function MainNavbar() {
   const theme = useTheme();
@@ -53,12 +46,6 @@ export default function MainNavbar() {
           <Box sx={{ flexGrow: 1 }} />
 
           <MHidden width="mdDown">
-            <MenuDesktop isOffset={isOffset} isHome={isHome} navConfig={navConfig} />
-            <Stack direction="row" spacing={3}>
-              {socialIcons.map((icon) => (
-                <Image key={icon.title} src={icon.src} />
-              ))}
-            </Stack>
             <Button
               className="aped-button"
               variant="contained"
@@ -67,14 +54,20 @@ export default function MainNavbar() {
             >
               JOIN WAITLIST
             </Button>
+            <Button
+              className="aped-button"
+              variant="contained"
+              onClick={() => setDialogOpen(true)}
+              sx={{ marginLeft: 9, paddingLeft: '5px !important', paddingRight: '5px !important' }}
+            >
+              <Iconify icon="fluent-mdl2:world" sx={{ width: 30, height: 30 }} />
+            </Button>
           </MHidden>
           <MHidden width="mdUp">
             <MenuMobile isOffset={isOffset} isHome={isHome} navConfig={navConfig} />
           </MHidden>
         </Container>
       </Toolbar>
-
-      {/* {isOffset && <ToolbarShadowStyle />} */}
     </AppBar>
   );
 }
