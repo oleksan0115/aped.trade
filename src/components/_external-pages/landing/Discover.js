@@ -233,9 +233,22 @@ export default function Discover() {
                   border: '1px solid #FE00C0',
                   borderRadius: 5,
                   margin: 'auto',
-                  marginTop: 20
+                  marginTop: 6,
+                  marginBottom: 6
                 }}
               />
+              <Typography
+                variant="subtitle1"
+                color="whtie"
+                sx={{
+                  fontFamily: 'BarlowExtraBoldItalic',
+                  [theme.breakpoints.down('md')]: {
+                    fontSize: '26px'
+                  }
+                }}
+              >
+                50+ PAIRS
+              </Typography>
             </Box>
           </ContentStyle>
         </Container>
