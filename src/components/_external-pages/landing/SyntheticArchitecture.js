@@ -212,14 +212,14 @@ export default function SyntheticArchitecture() {
               <Image src="/static/landing/bonding_curve.png" sx={{ width: 231, height: 'auto', margin: 'auto' }} />
               <Typography
                 variant="h2"
-                className="gradient-text-1"
                 sx={{
                   fontFamily: 'BarlowExtraBold',
+                  marginTop: 5,
                   marginBottom: 18,
                   [theme.breakpoints.down('md')]: { fontSize: '28px', textAlign: 'center' }
                 }}
               >
-                BONDING CURVE
+                <span className="gradient-text-1">BONDING CURVE</span>
               </Typography>
               <Link
                 className="aped-link-button"
@@ -235,14 +235,14 @@ export default function SyntheticArchitecture() {
               <Image src="/static/landing/deflationary.png" sx={{ width: 231, height: 'auto', margin: 'auto' }} />
               <Typography
                 variant="h2"
-                className="gradient-text-1"
                 sx={{
                   fontFamily: 'BarlowExtraBold',
+                  marginTop: 5,
                   marginBottom: 18,
                   [theme.breakpoints.down('md')]: { fontSize: '28px', textAlign: 'center' }
                 }}
               >
-                Deflationary
+                <span className="gradient-text-1">Deflationary</span>
               </Typography>
               <Link
                 className="aped-link-button"
