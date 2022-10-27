@@ -34,6 +34,7 @@ const ContentStyle = styled((props) => <Stack spacing={5} {...props} />)(({ them
   position: 'relative',
   paddingTop: theme.spacing(10),
   paddingBottom: theme.spacing(10),
+  justifyContent: 'center',
   [theme.breakpoints.up('md')]: {
     margin: 'unset',
     marginLeft: theme.spacing(5),
@@ -70,7 +71,7 @@ export default function LandingHero() {
           <Stack direction="row" spacing={1} justifyContent="space-between">
             <ContentStyle>
               <motion.div variants={varFadeInRight}>
-                <Stack
+                {/* <Stack
                   direction="row"
                   spacing={2}
                   alignItems="center"
@@ -90,7 +91,7 @@ export default function LandingHero() {
                   >
                     TRADE
                   </Typography>
-                </Stack>
+                </Stack> */}
 
                 <Typography
                   sx={{
@@ -107,14 +108,12 @@ export default function LandingHero() {
                     }
                   }}
                 >
-                  CRYPTOS, STOCKS, <br />
-                  COMMODITIES AND
-                  <br />
-                  FOREX WITH <span className="gradient-text">LEVERAGE!</span>
+                  DECENTRALIZED <br />
+                  <span className="gradient-text">LEVERAGED</span> TRADING
                 </Typography>
               </motion.div>
 
-              <Stack
+              {/* <Stack
                 direction="column"
                 spacing={1.5}
                 justifyContent={{ xs: 'left', md: 'flex-start', marginTop: '10px !important' }}
@@ -142,7 +141,7 @@ export default function LandingHero() {
                     </Typography>
                   </Stack>
                 ))}
-              </Stack>
+              </Stack> */}
 
               <motion.div variants={varFadeInRight}>
                 <Button className="aped-button" variant="contained" onClick={() => setDialogOpen(true)}>
@@ -157,7 +156,7 @@ export default function LandingHero() {
 
             <HeroImgContainer>
               <HeroImgStyle alt="hero" src="/static/landing/desktop-trading-hero.png" />
-              <HeroImgStyle
+              {/* <HeroImgStyle
                 alt="hero"
                 src="/static/landing/phone-list-hero.png"
                 sx={{
@@ -165,7 +164,7 @@ export default function LandingHero() {
                   top: 15,
                   left: '-165px'
                 }}
-              />
+              /> */}
               {/* <Image
                 src="/static/landing/astronaut.png"
                 sx={{ position: 'absolute', left: '-380px', bottom: '-70px', zIndex: 10 }}
