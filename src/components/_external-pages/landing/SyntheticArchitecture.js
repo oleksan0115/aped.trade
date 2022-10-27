@@ -180,7 +180,7 @@ export default function SyntheticArchitecture() {
                   [theme.breakpoints.down('md')]: { fontSize: '14px', textAlign: 'center' }
                 }}
               >
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt .
+                Connect wallet to become an early ape.
               </Typography>
             </Box>
 
@@ -211,53 +211,50 @@ export default function SyntheticArchitecture() {
 
 const architectures = [
   {
-    title: 'Zero Funding Fees',
+    title: 'No sign up required',
     content:
-      'Lrvj uses a real-time custom Chainlink DON that aggregates pricing data from 8 exchanges, while other platforms generate their own prices using an order book. We do not match buying and selling this way–we instead conduct leveraged trades virtually, and simulate PnL with smart contracts.'
+      'Keep what’s important to you. We don’t believe in having access to your funds or identity past what is required for us to operate. As of now, we only need trader collateral on a trade-by-trade basis.'
   },
   {
-    title: 'Highest Leverage Available Anywhere',
+    title: 'Most Accurate Asset Pricing Available',
     content:
-      'Lrvj uses a real-time custom Chainlink DON that aggregates pricing data from 8 exchanges, while other platforms generate their own prices using an order book. We do not match buying and selling this way–we instead conduct leveraged trades virtually, and simulate PnL with smart contracts.'
+      'The most accurate asset pricing. We average prices from multiple exchanges to eliminate the need for an order book. Learn more about Chainlink Dons. (link out to documentation about chainlink dons using Chainlink Dons text as hyperlink)'
   },
   {
-    title: 'Trade Using Spot Prices',
+    title: 'Completely Decentralized architecture',
     content:
-      'Lrvj uses a real-time custom Chainlink DON that aggregates pricing data from 8 exchanges, while other platforms generate their own prices using an order book. We do not match buying and selling this way–we instead conduct leveraged trades virtually, and simulate PnL with smart contracts.'
+      'Trust returned to you. Limit orders, liquidations and rebalancing in a decentralized fashion. All handled by the power of Chainlink Keepers.'
   },
   {
-    title: 'Trade Any Leverage Without Borrowing Funds',
+    title: 'Eliminate scam wicks',
     content:
-      'Lrvj uses a real-time custom Chainlink DON that aggregates pricing data from 8 exchanges, while other platforms generate their own prices using an order book. We do not match buying and selling this way–we instead conduct leveraged trades virtually, and simulate PnL with smart contracts.'
+      'No more scam wicks. Many exchanges accept scam wicks as a norm in times of low volume. Using custom Chainlink Dons, we average prices from multiple exchanges to protect traders.'
   },
   {
-    title: 'Completely Decentralized Leverage Trading',
-    content:
-      'Lrvj uses a real-time custom Chainlink DON that aggregates pricing data from 8 exchanges, while other platforms generate their own prices using an order book. We do not match buying and selling this way–we instead conduct leveraged trades virtually, and simulate PnL with smart contracts.'
+    title: 'Chain-agnostic',
+    content: 'Available for on preferred network. launch planned on arbitrum, optimism & polygon.'
   },
   {
-    title: 'Lower Trading Fees',
-    content:
-      'Lrvj uses a real-time custom Chainlink DON that aggregates pricing data from 8 exchanges, while other platforms generate their own prices using an order book. We do not match buying and selling this way–we instead conduct leveraged trades virtually, and simulate PnL with smart contracts.'
+    title: 'Up to 1000x Leverage',
+    content: 'Crypto 5x to 150x, Forex 10x to 1000x, Stocks 5x to 100x'
   },
   {
-    title: 'Eliminating Scam-Wicks',
+    title: 'Fully Synthetic',
     content:
-      'Lrvj uses a real-time custom Chainlink DON that aggregates pricing data from 8 exchanges, while other platforms generate their own prices using an order book. We do not match buying and selling this way–we instead conduct leveraged trades virtually, and simulate PnL with smart contracts.'
+      'Synthetic architectures means no underlying assets being traded are actually bought or sold by us. We simulate these actions through smart contracts. Critical trade statistics are tracked algorithmically.'
   },
   {
-    title: 'Superior Capital Efficiency',
+    title: 'Lower trading fees',
     content:
-      'Lrvj uses a real-time custom Chainlink DON that aggregates pricing data from 8 exchanges, while other platforms generate their own prices using an order book. We do not match buying and selling this way–we instead conduct leveraged trades virtually, and simulate PnL with smart contracts.'
+      'Lower overhead means lower fees. Decentralized architecture passes savings back to users.(link to docs about dao governance)'
   },
   {
-    title: 'Trade Crypto / Forex / Commodities',
+    title: 'Superior capital efficiency',
     content:
-      'Lrvj uses a real-time custom Chainlink DON that aggregates pricing data from 8 exchanges, while other platforms generate their own prices using an order book. We do not match buying and selling this way–we instead conduct leveraged trades virtually, and simulate PnL with smart contracts.'
+      'With no order book and trades handled synthetically, we only need one liquidity pool. Adding new pairs is instant. Specific pair liquidity is no longer a problem.'
   },
   {
-    title: 'Superior Capital Efficiency',
-    content:
-      'Lrvj uses a real-time custom Chainlink DON that aggregates pricing data from 8 exchanges, while other platforms generate their own prices using an order book. We do not match buying and selling this way–we instead conduct leveraged trades virtually, and simulate PnL with smart contracts.'
+    title: 'USDC, USDT & DAI accpeted',
+    content: 'Trade and paid in the stablecoin of your choice. currently accepting usdc, usdt & dai.'
   }
 ];

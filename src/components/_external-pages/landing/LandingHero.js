@@ -102,7 +102,7 @@ export default function LandingHero() {
             </ContentStyle>
 
             <HeroImgContainer>
-              <HeroImgStyle alt="hero" src="/static/landing/desktop-trading-hero.png" />
+              <HeroImgStyle alt="hero" src="/static/landing/desktop-trading-hero.png" sx={{ marginBottom: 5 }} />
             </HeroImgContainer>
           </Stack>
 

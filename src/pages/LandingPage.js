@@ -6,10 +6,10 @@ import {
   LandingHero,
   PoweredBy,
   Discover,
-  Borrowing,
-  GetPaid,
-  YourFunds,
-  RoadMap,
+  // Borrowing,
+  // GetPaid,
+  // YourFunds,
+  // RoadMap,
   SyntheticArchitecture,
   FAQList,
   Tokenomics
@@ -36,10 +36,10 @@ export default function LandingPage() {
       <ContentStyle>
         <PoweredBy />
         <Discover />
-        <Borrowing />
-        <GetPaid />
-        <YourFunds />
-        <RoadMap />
+        {/* <Borrowing /> */}
+        {/* <GetPaid /> */}
+        {/* <YourFunds /> */}
+        {/* <RoadMap /> */}
         <SyntheticArchitecture />
         <Tokenomics />
         <FAQList />
