@@ -3,14 +3,11 @@ import { Icon } from '@iconify/react';
 import { useState, useEffect } from 'react';
 import menu2Fill from '@iconify/icons-eva/menu-2-fill';
 import { NavLink as RouterLink, useLocation } from 'react-router-dom';
-import arrowIosForwardFill from '@iconify/icons-eva/arrow-ios-forward-fill';
-import arrowIosDownwardFill from '@iconify/icons-eva/arrow-ios-downward-fill';
 // material
 import { alpha, experimentalStyled as styled, useTheme } from '@material-ui/core/styles';
-import { Box, List, Drawer, Link, Collapse, ListItem, ListItemText, ListItemIcon, Button } from '@material-ui/core';
+import { Box, Drawer, Link, ListItem, ListItemText, Stack, Button } from '@material-ui/core';
 // components
-import Logo from '../../components/Logo';
-import NavSection from '../../components/NavSection';
+import Iconify from '../../components/Iconify';
 import Scrollbar from '../../components/Scrollbar';
 import { MIconButton } from '../../components/@material-extend';
 import JoinWaitlistDialog from '../../components/JoinWaitlistDialog';
@@ -19,8 +16,7 @@ import menuConfig from './MenuConfig';
 
 // ----------------------------------------------------------------------
 
-const ICON_SIZE = 22;
-const ITEM_SIZE = 48;
+const ITEM_SIZE = 55;
 const PADDING = 2.5;
 
 const ListItemStyle = styled(ListItem)(({ theme }) => ({
@@ -32,83 +28,25 @@ const ListItemStyle = styled(ListItem)(({ theme }) => ({
   color: theme.palette.text.secondary
 }));
 
+const LinkStyle = styled(Link)(({ theme }) => ({
+  fontFamily: 'BarlowExtraBold',
+  height: ITEM_SIZE,
+  fontSize: '20px',
+  textTransform: 'uppercase',
+  padding: theme.spacing(1.8, 0),
+  margin: `${theme.spacing(2, 0)} !important`,
+  color: theme.palette.text.primary
+}));
+
 // ----------------------------------------------------------------------
 
 MenuMobileItem.propTypes = {
   item: PropTypes.object,
-  isOpen: PropTypes.bool,
-  isActive: PropTypes.bool,
-  onOpen: PropTypes.func
+  isActive: PropTypes.bool
 };
 
-function MenuMobileItem({ item, isOpen, isActive, onOpen }) {
-  const { title, path, icon, children } = item;
-
-  if (children) {
-    return (
-      <div key={title}>
-        <ListItemStyle button onClick={onOpen}>
-          <ListItemIcon>{icon}</ListItemIcon>
-          <ListItemText disableTypography primary={title} />
-          <Box
-            component={Icon}
-            icon={isOpen ? arrowIosDownwardFill : arrowIosForwardFill}
-            sx={{ width: 16, height: 16, ml: 1 }}
-          />
-        </ListItemStyle>
-
-        <Collapse in={isOpen} timeout="auto" unmountOnExit>
-          <Box sx={{ display: 'flex', flexDirection: 'column-reverse' }}>
-            <NavSection
-              navConfig={menuConfig[2].children}
-              sx={{
-                '&.MuiList-root:last-child .MuiListItem-root': {
-                  height: 200,
-                  backgroundSize: '92%',
-                  backgroundPosition: 'center',
-                  bgcolor: 'background.neutral',
-                  backgroundRepeat: 'no-repeat',
-                  backgroundImage: 'url(/static/illustrations/illustration_dashboard.png)',
-                  '& > *:not(.MuiTouchRipple-root)': { display: 'none' }
-                },
-                '& .MuiListSubheader-root': {
-                  pl: PADDING,
-                  display: 'flex',
-                  alignItems: 'center',
-                  '&:before': {
-                    ml: '6px',
-                    mr: '22px',
-                    width: 8,
-                    height: 2,
-                    content: "''",
-                    borderRadius: 2,
-                    bgcolor: 'currentColor'
-                  }
-                },
-                '& .MuiListItem-root': {
-                  pl: PADDING,
-                  '&:before': { display: 'none' },
-                  '&.active': { color: 'primary.main', bgcolor: 'transparent' }
-                },
-                '& .MuiListItemIcon-root': {
-                  width: ICON_SIZE,
-                  height: ICON_SIZE,
-                  '&:before': {
-                    width: 4,
-                    height: 4,
-                    content: "''",
-                    borderRadius: '50%',
-                    bgcolor: 'currentColor'
-                  }
-                }
-              }}
-            />
-          </Box>
-        </Collapse>
-      </div>
-    );
-  }
-
+function MenuMobileItem({ item, isActive }) {
+  const { title, path } = item;
   return (
     <ListItemStyle
       button
@@ -123,7 +61,6 @@ function MenuMobileItem({ item, isOpen, isActive, onOpen }) {
         })
       }}
     >
-      <ListItemIcon>{icon}</ListItemIcon>
       <ListItemText disableTypography primary={title} />
     </ListItemStyle>
   );
@@ -137,7 +74,6 @@ MenuMobile.propTypes = {
 export default function MenuMobile({ isOffset, isHome }) {
   const theme = useTheme();
   const { pathname } = useLocation();
-  const [open, setOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -154,10 +90,6 @@ export default function MenuMobile({ isOffset, isHome }) {
 
   const handleDrawerClose = () => {
     setMobileOpen(false);
-  };
-
-  const handleOpen = () => {
-    setOpen(!open);
   };
 
   return (
@@ -179,28 +111,25 @@ export default function MenuMobile({ isOffset, isHome }) {
         open={mobileOpen}
         onClose={handleDrawerClose}
         ModalProps={{ keepMounted: true }}
-        PaperProps={{ sx: { pb: 5, width: 260 } }}
+        PaperProps={{ sx: { pb: 5, width: '100%' } }}
         sx={{ '& .MuiPaper-root': { backgroundColor: theme.palette.grey[900] } }}
       >
+        <MIconButton onClick={handleDrawerClose} sx={{ position: 'absolute', right: 5, top: 5 }}>
+          <Iconify icon="line-md:menu-to-close-alt-transition" sx={{ width: 30, height: 30 }} />
+        </MIconButton>
         <Scrollbar>
-          <Link component={RouterLink} to="/" sx={{ display: 'inline-flex' }}>
-            <Logo sx={{ mx: PADDING, my: 3 }} />
-          </Link>
-
-          <List disablePadding sx={{ textAlign: 'center' }}>
-            {menuConfig.map((link) => (
-              <MenuMobileItem
-                key={link.title}
-                item={link}
-                isOpen={open}
-                onOpen={handleOpen}
-                isActive={pathname === link.path}
-              />
-            ))}
-            <Button className="aped-button" variant="contained" onClick={() => setDialogOpen(true)} sx={{ mt: 2 }}>
+          <Box sx={{ textAlign: 'center' }}>
+            <Stack direction="column" spacing={1} sx={{ marginTop: 20 }}>
+              {menuConfig.map((link) => (
+                <LinkStyle key={link.title} href={link.path}>
+                  {link.title}
+                </LinkStyle>
+              ))}
+            </Stack>
+            <Button className="aped-button" variant="contained" onClick={() => setDialogOpen(true)} sx={{ mt: 5 }}>
               JOIN WAITLIST
             </Button>
-          </List>
+          </Box>
         </Scrollbar>
       </Drawer>
     </>

@@ -140,7 +140,7 @@ export default function Discover() {
               />
               <Typography
                 variant="subtitle1"
-                color="whtie"
+                color="white"
                 sx={{
                   fontFamily: 'BarlowExtraBoldItalic',
                   [theme.breakpoints.down('md')]: {

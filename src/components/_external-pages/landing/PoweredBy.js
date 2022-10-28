@@ -21,8 +21,11 @@ const ContentStyle = styled((props) => <Stack spacing={5} {...props} />)(({ them
 }));
 
 const ImageStyle = styled(Box)(({ theme }) => ({
-  height: 20,
+  height: 15,
+  // margin: 'auto',
+  marginLeft: '10px !important',
   [theme.breakpoints.up('md')]: {
+    // marginLeft: '40px !important',
     height: 40
   }
 }));
@@ -35,13 +38,18 @@ export default function PoweredBy() {
       <RootStyle initial="initial" animate="animate" variants={varWrapEnter}>
         <ContentStyle>
           <motion.div variants={varFadeInRight}>
-            <Stack direction="row" spacing={5} justifyContent="space-around" alignItems="center">
-              <ImageStyle component="img" src="/static/home/chainlink.svg" />
+            <Stack
+              direction="row"
+              spacing={5}
+              justifyContent="space-around"
+              alignItems="center"
+              sx={{ maxWidth: 1200, margin: 'auto' }}
+            >
+              <ImageStyle component="img" src="/static/home/arbitrum.png" />
               <ImageStyle component="img" src="/static/home/polygon.png" />
+              <ImageStyle component="img" src="/static/home/optimism.png" />
               <ImageStyle component="img" src="/static/home/chainlink.svg" />
-              <ImageStyle component="img" src="/static/home/polygon.png" />
-              <ImageStyle component="img" src="/static/home/chainlink.svg" />
-              <ImageStyle component="img" src="/static/home/polygon.png" />
+              <ImageStyle component="img" src="/static/home/marker.png" />
             </Stack>
           </motion.div>
         </ContentStyle>

@@ -67,7 +67,7 @@ export default function LandingHero() {
     <>
       <RootStyle initial="initial" animate="animate" variants={varWrapEnter}>
         <JoinWaitlistDialog isOpen={dialogOpen} onClose={() => setDialogOpen(false)} />
-        <Container maxWidth="xl">
+        <Container sx={{ maxWidth: 'none !important' }}>
           <Stack direction="row" spacing={1} justifyContent="space-between">
             <ContentStyle>
               <motion.div variants={varFadeInRight}>

@@ -15,7 +15,7 @@ const menuConfig = [
   },
   {
     title: 'WHITE PAPER',
-    path: '/white-paper',
+    path: 'https://aped-xyz.gitbook.io/copy-of-aped.-xyz-perp-dex-litepaper/intro',
     icon: <Iconify icon="fluent:text-font-info-16-filled" sx={{ width: 20, height: 20 }} />
   }
 ];

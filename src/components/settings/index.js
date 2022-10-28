@@ -19,7 +19,7 @@ const DRAWER_WIDTH = 260;
 export default function Settings() {
   const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
-  const isHide = pathname === '/marketing-funnel';
+  const isHide = pathname !== '/trading-view';
 
   useEffect(() => {
     if (open) {
