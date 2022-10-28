@@ -4,7 +4,7 @@ import Slider from 'react-slick';
 
 // material
 import { experimentalStyled as styled, useTheme } from '@material-ui/core/styles';
-import { Typography, Stack, Container, Box, useMediaQuery } from '@material-ui/core';
+import { Typography, Stack, Container, Box } from '@material-ui/core';
 //
 import { varWrapEnter } from '../../animate';
 
@@ -42,16 +42,40 @@ const discovers = [
     value: 3
   },
   {
-    name: 'COMMODITIES',
+    name: 'STOCKS',
     value: 4
   },
   {
-    name: 'STOCKS',
-    value: 5
+    name: 'COMMODITIES',
+    value: 1
   },
   {
-    name: 'NFTS RESORT',
-    value: 6
+    name: 'FOREX',
+    value: 2
+  },
+  {
+    name: 'CRYPTO ',
+    value: 3
+  },
+  {
+    name: 'STOCKS',
+    value: 4
+  },
+  {
+    name: 'COMMODITIES',
+    value: 1
+  },
+  {
+    name: 'FOREX',
+    value: 2
+  },
+  {
+    name: 'CRYPTO ',
+    value: 3
+  },
+  {
+    name: 'STOCKS',
+    value: 4
   }
 ];
 
@@ -60,13 +84,46 @@ const discovers = [
 export default function Discover() {
   const theme = useTheme();
 
-  const upMd = useMediaQuery(theme.breakpoints.up('md'));
+  const settings = {
+    dots: true,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 4,
+    slidesToScroll: 4,
+    initialSlide: 0,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 3,
+          infinite: true,
+          dots: true
+        }
+      },
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 2,
+          initialSlide: 2
+        }
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1
+        }
+      }
+    ]
+  };
 
   const renderSlides = () =>
     discovers.map((slide, index) => (
       <div key={index}>
-        <Box sx={{ position: 'relative', margin: 1, [theme.breakpoints.up('md')]: { margin: 1.5 } }}>
-          <Image src={`/static/landing/discover-${index + 1}.jpg`} sx={{ borderRadius: '9px' }} />
+        <Box sx={{ position: 'relative' }}>
+          <Image src={`/static/landing/discover-${slide.value}.png`} />
           <Typography
             className="solid-text"
             sx={{
@@ -153,34 +210,7 @@ export default function Discover() {
             </Box>
           </ContentStyle>
         </Container>
-        <Box
-          sx={{
-            width: '160%',
-            transform: 'translateX(-18.5%)',
-            [theme.breakpoints.up('md')]: {
-              width: '130%',
-              transform: 'translateX(-11.5%)'
-            }
-          }}
-        >
-          <Slider
-            dots={false}
-            slidesToShow={upMd ? 5 : 3}
-            slidesToScroll={1}
-            autoplay
-            autoplaySpeed={3000}
-            // style={{
-            //   width: '160%',
-            //   transform: 'translateX(-11.5%)',
-            //   [theme.breakpoints.up('md')]: {
-            //     width: '130%',
-            //     transform: 'translateX(-11.5%)'
-            //   }
-            // }}
-          >
-            {renderSlides()}
-          </Slider>
-        </Box>
+        <Slider {...settings}>{renderSlides()}</Slider>
       </RootStyle>
     </>
   );

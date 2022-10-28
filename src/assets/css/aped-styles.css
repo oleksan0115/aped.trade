@@ -93,6 +93,12 @@ h1 {
   height: 100%;
 }
 
+.slick-dots li button:before {
+  color: white;
+  font-size: 10px;
+  opacity: 1;
+}
+
 /* marketing funnel */
 
 .gradient-background {
