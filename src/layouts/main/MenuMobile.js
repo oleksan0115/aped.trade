@@ -121,7 +121,7 @@ export default function MenuMobile({ isOffset, isHome }) {
           <Box sx={{ textAlign: 'center' }}>
             <Stack direction="column" spacing={1} sx={{ marginTop: 20 }}>
               {menuConfig.map((link) => (
-                <LinkStyle key={link.title} href={link.path}>
+                <LinkStyle key={link.title} href={link.path} onClick={handleDrawerClose}>
                   {link.title}
                 </LinkStyle>
               ))}

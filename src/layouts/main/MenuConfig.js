@@ -5,12 +5,12 @@ import Iconify from '../../components/Iconify';
 const menuConfig = [
   {
     title: 'TRADABLE ASSETS',
-    path: '/',
+    path: '/#discover',
     icon: <Iconify icon="carbon:home" sx={{ width: 20, height: 20 }} />
   },
   {
     title: 'FAQ',
-    path: '/',
+    path: '/#faq',
     icon: <Iconify icon="material-symbols:generating-tokens-outline-rounded" sx={{ width: 20, height: 20 }} />
   },
   {

@@ -70,7 +70,7 @@ export default function SyntheticArchitecture() {
     setExpanded(isExpanded ? panel : false);
   };
   return (
-    <RootStyle initial="initial" animate="animate" variants={varWrapEnter}>
+    <RootStyle initial="initial" animate="animate" variants={varWrapEnter} id="faq">
       <Container sx={{ position: 'relative' }}>
         <JoinWaitlistDialog isOpen={dialogOpen} onClose={() => setDialogOpen(false)} />
         <Image

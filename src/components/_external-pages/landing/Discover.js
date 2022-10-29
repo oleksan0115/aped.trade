@@ -153,51 +153,26 @@ export default function Discover() {
   //   });
   // }, []);
   return (
-    <>
-      <RootStyle initial="initial" animate="animate" variants={varWrapEnter} id="discover">
-        <Container>
-          <ContentStyle>
-            <Box>
+    <RootStyle initial="initial" animate="animate" variants={varWrapEnter} id="discover">
+      <Container>
+        <ContentStyle>
+          <Box>
+            <Typography
+              variant="h2"
+              sx={{
+                fontFamily: 'BarlowExtraBoldItalic',
+                color: 'common.white',
+                textAlign: 'center',
+                [theme.breakpoints.down('md')]: {
+                  fontSize: '28px'
+                }
+              }}
+            >
+              DISCOVER{' '}
               <Typography
+                component="span"
                 variant="h2"
-                sx={{
-                  fontFamily: 'BarlowExtraBoldItalic',
-                  color: 'common.white',
-                  textAlign: 'center',
-                  [theme.breakpoints.down('md')]: {
-                    fontSize: '28px'
-                  }
-                }}
-              >
-                DISCOVER{' '}
-                <Typography
-                  component="span"
-                  variant="h2"
-                  className="gradient-text"
-                  sx={{
-                    fontFamily: 'BarlowExtraBoldItalic',
-                    [theme.breakpoints.down('md')]: {
-                      fontSize: '26px'
-                    }
-                  }}
-                >
-                  TRADABLE ASSETS
-                </Typography>
-              </Typography>
-              <div
-                style={{
-                  width: 160,
-                  height: 0,
-                  border: '1px solid #FE00C0',
-                  borderRadius: 5,
-                  margin: 'auto',
-                  marginTop: 6,
-                  marginBottom: 6
-                }}
-              />
-              <Typography
-                variant="subtitle1"
-                color="white"
+                className="gradient-text"
                 sx={{
                   fontFamily: 'BarlowExtraBoldItalic',
                   [theme.breakpoints.down('md')]: {
@@ -205,13 +180,36 @@ export default function Discover() {
                   }
                 }}
               >
-                50+ PAIRS
+                TRADABLE ASSETS
               </Typography>
-            </Box>
-          </ContentStyle>
-        </Container>
-        <Slider {...settings}>{renderSlides()}</Slider>
-      </RootStyle>
-    </>
+            </Typography>
+            <div
+              style={{
+                width: 160,
+                height: 0,
+                border: '1px solid #FE00C0',
+                borderRadius: 5,
+                margin: 'auto',
+                marginTop: 6,
+                marginBottom: 6
+              }}
+            />
+            <Typography
+              variant="subtitle1"
+              color="white"
+              sx={{
+                fontFamily: 'BarlowExtraBoldItalic',
+                [theme.breakpoints.down('md')]: {
+                  fontSize: '26px'
+                }
+              }}
+            >
+              50+ PAIRS
+            </Typography>
+          </Box>
+        </ContentStyle>
+      </Container>
+      <Slider {...settings}>{renderSlides()}</Slider>
+    </RootStyle>
   );
 }

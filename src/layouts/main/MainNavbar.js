@@ -57,7 +57,8 @@ export default function MainNavbar() {
             <Button
               className="aped-button"
               variant="contained"
-              onClick={() => setDialogOpen(true)}
+              // onClick={() => setDialogOpen(true)}
+              href="/#discover"
               sx={{ marginLeft: 9, paddingLeft: '5px !important', paddingRight: '5px !important' }}
             >
               <Iconify icon="fluent-mdl2:world" sx={{ width: 30, height: 30 }} />
