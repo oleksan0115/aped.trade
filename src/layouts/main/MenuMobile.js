@@ -35,7 +35,7 @@ const LinkStyle = styled(Link)(({ theme }) => ({
   textTransform: 'uppercase',
   padding: theme.spacing(1.8, 0),
   margin: `${theme.spacing(2, 0)} !important`,
-  color: theme.palette.text.primary
+  color: 'white'
 }));
 
 // ----------------------------------------------------------------------
