@@ -10,7 +10,7 @@ const menuConfig = [
   },
   {
     title: 'FAQ',
-    path: '/faq',
+    path: '/',
     icon: <Iconify icon="material-symbols:generating-tokens-outline-rounded" sx={{ width: 20, height: 20 }} />
   },
   {

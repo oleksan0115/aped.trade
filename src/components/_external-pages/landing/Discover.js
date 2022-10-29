@@ -154,7 +154,7 @@ export default function Discover() {
   // }, []);
   return (
     <>
-      <RootStyle initial="initial" animate="animate" variants={varWrapEnter}>
+      <RootStyle initial="initial" animate="animate" variants={varWrapEnter} id="discover">
         <Container>
           <ContentStyle>
             <Box>
