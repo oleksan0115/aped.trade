@@ -209,7 +209,11 @@ export default function SyntheticArchitecture() {
         <Grid container spacing={3}>
           <Grid item xs={12} md={6}>
             <BoxStyle>
-              <Image src="/static/landing/bonding_curve.png" sx={{ width: 231, height: 'auto', margin: 'auto' }} />
+              <img
+                src="/static/landing/bonding_curve.png"
+                alt="bonding-curve"
+                style={{ width: 231, height: 'auto', margin: 'auto' }}
+              />
               <Typography
                 variant="h2"
                 sx={{
@@ -232,7 +236,11 @@ export default function SyntheticArchitecture() {
           </Grid>
           <Grid item xs={12} md={6}>
             <BoxStyle>
-              <Image src="/static/landing/deflationary.png" sx={{ width: 231, height: 'auto', margin: 'auto' }} />
+              <img
+                src="/static/landing/deflationary.png"
+                alt="deflationary"
+                style={{ width: 231, height: 'auto', margin: 'auto' }}
+              />
               <Typography
                 variant="h2"
                 sx={{

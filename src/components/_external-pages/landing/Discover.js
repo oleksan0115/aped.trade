@@ -8,7 +8,7 @@ import { Typography, Stack, Container, Box } from '@material-ui/core';
 //
 import { varWrapEnter } from '../../animate';
 
-import Image from '../../Image';
+// import Image from '../../Image';
 // const finnhub = require('finnhub');
 
 // const api_key = finnhub.ApiClient.instance.authentications['api_key'];
@@ -123,7 +123,8 @@ export default function Discover() {
     discovers.map((slide, index) => (
       <div key={index}>
         <Box sx={{ position: 'relative' }}>
-          <Image src={`/static/landing/discover-${slide.value}.png`} />
+          <img src={`/static/landing/discover-${slide.value}.png`} alt={`slide-${index}`} style={{ width: '100%' }} />
+          {/* <Image src={`/static/landing/discover-${slide.value}.png`} alt={`slide-${index}`} /> */}
           <Typography
             className="solid-text"
             sx={{
