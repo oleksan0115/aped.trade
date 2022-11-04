@@ -22,7 +22,7 @@ const SOCIALS = [
 
 const RootStyle = styled('div')(({ theme }) => ({
   position: 'relative',
-  paddingTop: theme.spacing(10),
+  paddingTop: theme.spacing(5),
   borderTop: '2px solid #202020',
   borderBottom: '2px solid #202020',
   backgroundColor: '#13121D'
@@ -49,7 +49,7 @@ export default function MainFooter() {
                 color="common.white"
                 variant="body2"
                 component={RouterLink}
-                sx={{ display: 'block', textAlign: 'center', fontSize: '18px' }}
+                sx={{ display: 'block', textAlign: 'center' }}
               >
                 {link.name}
               </Link>
@@ -57,21 +57,6 @@ export default function MainFooter() {
           </Stack>
         </Stack>
       </Container>
-      {/* <Box sx={{ marginTop: 5, borderTop: '2px solid #202020', padding: theme.spacing(1, 3), color: 'white' }}>
-        <Stack direction="row" justifyContent="space-between">
-          <Typography variant="body2" sx={{ fontFamily: 'BarlowRegular' }}>
-            &copy; 2022 aped.xyz
-          </Typography>
-          <Stack direction="row" spacing={3} alignItems="center">
-            <Typography variant="body2" sx={{ fontFamily: 'BarlowRegular' }}>
-              Terms of Use
-            </Typography>
-            <Typography variant="body2" sx={{ fontFamily: 'BarlowRegular' }}>
-              Privacy Policy
-            </Typography>
-          </Stack>
-        </Stack>
-      </Box> */}
     </RootStyle>
   );
 }

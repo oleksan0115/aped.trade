@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom';
 //
 import TradingNavbar from './TradingNavbar';
+import TradingFooter from './TradingFooter';
 
 // ----------------------------------------------------------------------
 
@@ -11,6 +12,7 @@ export default function MainLayout() {
       <div>
         <Outlet />
       </div>
+      <TradingFooter />
     </>
   );
 }

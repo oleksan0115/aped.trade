@@ -1,84 +1,61 @@
 import { Link as RouterLink } from 'react-router-dom';
 // material
-import { experimentalStyled as styled, useTheme } from '@material-ui/core/styles';
-import { Grid, Link, Box, Container, Typography, Stack } from '@material-ui/core';
+import { experimentalStyled as styled } from '@material-ui/core/styles';
+import { Link, Container, Stack } from '@material-ui/core';
 //
-import Logo from '../../components/Logo';
+import Image from '../../components/Image';
 
 // ----------------------------------------------------------------------
 
 const LINKS = [
-  {
-    headline: 'Socials',
-    children: [
-      { name: 'Discord', href: '#' },
-      { name: 'Medium', href: '#' },
-      { name: 'Twitter', href: '#' }
-    ]
-  }
+  { name: 'TERMS OF USE', href: '#' },
+  { name: 'REFERAL TERMS', href: '#' },
+  { name: 'DOCS', href: '#' },
+  { name: 'PRIVACY POLICY', href: '#' }
+];
+
+const SOCIALS = [
+  { name: 'medium', icon: '/static/socials/social-medium.png', href: '#' },
+  { name: 'discord', icon: '/static/socials/social-discord.png', href: '#' },
+  { name: 'twitter', icon: '/static/socials/social-twitter.png', href: '#' }
 ];
 
 const RootStyle = styled('div')(({ theme }) => ({
   position: 'relative',
-  paddingTop: theme.spacing(10),
-  paddingBottom: theme.spacing(10),
-  backgroundColor: theme.palette.primary.dark
+  paddingTop: theme.spacing(5),
+  borderTop: '2px solid #202020',
+  borderBottom: '2px solid #202020',
+  backgroundColor: '#13121D'
 }));
 
 // ----------------------------------------------------------------------
 
 export default function MainFooter() {
-  const theme = useTheme();
   return (
     <RootStyle>
-      <Container maxWidth="lg">
-        <Grid
-          container
-          justifyContent={{ xs: 'center', md: 'space-between' }}
-          sx={{ textAlign: { xs: 'center', md: 'left' } }}
-        >
-          <Grid item xs={8} md={4}>
-            <Logo
-              sx={{ [theme.breakpoints.up('md')]: { margin: '0 !important' }, mx: { xs: 'auto', md: 'inherit' } }}
-            />
-            <Typography variant="body2" color="common.white" mt={2} sx={{ pr: { md: 5 } }}>
-              "Stay up to date" with an email field to subscribe
-            </Typography>
-          </Grid>
-
-          <Grid item xs={12} md={8}>
-            <Stack spacing={5} direction={{ xs: 'column', md: 'row' }} justifyContent="center">
-              {LINKS.map((list) => {
-                const { headline, children } = list;
-                return (
-                  <Stack key={headline} spacing={2}>
-                    <Typography component="p" variant="overline" color="common.white">
-                      {headline}
-                    </Typography>
-                    {children.map((link, i) => (
-                      <Stack key={link.name} spacing={1.5} direction="row" alignItems="center" justifyContent="center">
-                        <Box
-                          component="img"
-                          sx={{ width: 25, height: 'auto' }}
-                          src={`/static/home/social-${i + 1}.svg`}
-                        />
-                        <Link
-                          to={link.href}
-                          color="common.white"
-                          variant="body2"
-                          component={RouterLink}
-                          sx={{ display: 'block' }}
-                        >
-                          {link.name}
-                        </Link>
-                      </Stack>
-                    ))}
-                  </Stack>
-                );
-              })}
-            </Stack>
-          </Grid>
-        </Grid>
+      <Container maxWidth="sm">
+        <Stack spacing={5} alignItems="center" sx={{ marginBottom: 3 }}>
+          <Image src="/static/landing/footer-logo.png" sx={{ margin: 'auto' }} />
+          <Stack direction="row" spacing={2}>
+            {SOCIALS.map((link) => (
+              <Image key={link.name} src={link.icon} sx={{ margin: 'auto' }} />
+            ))}
+          </Stack>
+          <Stack direction={{ xs: 'column', md: 'row' }} spacing={{ xs: 2, md: 5 }}>
+            {LINKS.map((link) => (
+              <Link
+                key={link.name}
+                to={link.href}
+                color="common.white"
+                variant="body2"
+                component={RouterLink}
+                sx={{ display: 'block', textAlign: 'center' }}
+              >
+                {link.name}
+              </Link>
+            ))}
+          </Stack>
+        </Stack>
       </Container>
     </RootStyle>
   );

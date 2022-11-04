@@ -62,10 +62,6 @@ export default function Router() {
       element: <TradingLayout />,
       children: [{ path: '/', element: <TradingPage /> }]
     },
-    {
-      path: '/trading-old-view',
-      element: <TradingOldPage />
-    },
 
     { path: '*', element: <Navigate to="/404" replace /> }
   ]);
@@ -76,8 +72,6 @@ export default function Router() {
 const NotFound = Loadable(lazy(() => import('../pages/Page404')));
 // Main
 const LandingPage = Loadable(lazy(() => import('../pages/LandingPage')));
-// const LandingPage = Loadable(lazy(() => import('../pages/LandingOldPage')));
 const TradingPage = Loadable(lazy(() => import('../pages/TradingPage')));
-const TradingOldPage = Loadable(lazy(() => import('../pages/TradingOldPage')));
 
 const MarketingFunnel = Loadable(lazy(() => import('../pages/MarketingFunnel')));

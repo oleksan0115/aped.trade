@@ -13,14 +13,12 @@ import {
   Box,
   Slider,
   Stack,
-  Paper,
   Tabs,
   Tab,
   TextField,
   IconButton,
   List,
   ListItem,
-  Button,
   CircularProgress
 } from '@material-ui/core';
 
@@ -296,83 +294,67 @@ export default function LongShort() {
           </IconButton>
         </Stack>
         <Box m={2} />
-        <Paper variant="outlined" sx={{ p: 1 }}>
-          <Paper square>
-            <Tabs
-              value={selectedTab}
-              variant="fullWidth"
-              indicatorColor="primary"
-              textColor="primary"
-              onChange={handleChangeTab}
-              aria-label="disabled tabs example"
-              sx={{ '& .MuiButtonBase-root:not(:last-child)': { marginRight: 0 } }}
-            >
-              <Tab icon={<StopLess stopLess={stopLess} />} />
-              <Tab icon={<Leverage leverage={leverage} />} />
-              <Tab icon={<TakeProfit takeProfit={takeProfit} />} />
-            </Tabs>
-          </Paper>
-          <Box m={2} />
-          <Typography variant="body2" sx={{ textAlign: 'center' }}>
-            49.45% Of the Position Amount
-          </Typography>
-          <Box m={1} />
-          <Divider />
-          <Box m={1} />
-          <Stack direction="row" spacing={1} alignItems="center" justifyContent="center">
-            <CircularProgress
-              sx={{ width: '20px !important', height: '20px !important' }}
-              variant="determinate"
-              value={100}
-            />
-            <Typography variant="body2">Trailing Stop Loss</Typography>
-          </Stack>
-          <Box m={2} />
-
-          {/* leverage slider */}
-          <Typography variant="body2" sx={{ textAlign: 'center' }}>
-            Leverage Slider
-          </Typography>
-          <PrettoSlider
-            min={minMax.min}
-            max={minMax.max}
-            valueLabelDisplay="auto"
-            onChange={handleSlider}
-            aria-label="pretto slider"
-            defaultValue={20}
-          />
-          <Stack direction="row" spacing={1} sx={{ justifyContent: 'space-around' }}>
-            <Typography variant="body2">{sliderRange.startValue}</Typography>
-            <Typography variant="body2">
-              {selectedTab === 0 && '-'}
-              {sliderValue}
-              {sliderRange.unit}
-            </Typography>
-            <Typography variant="body2">{sliderRange.endValue}</Typography>
-          </Stack>
-        </Paper>
-
-        <Box m={2} />
-        <Paper variant="outlined" sx={{ p: 1 }}>
-          <List>
-            {profitsList.map((item, index) => (
-              <ListItem key={index} sx={{ justifyContent: 'space-between !important' }}>
-                <Typography variant="body2">{item.name}</Typography>
-                <Typography variant="body2">{item.value}</Typography>
-              </ListItem>
-            ))}
-          </List>
-        </Paper>
-
-        <Box m={2} />
-        <Button
-          fullWidth
-          variant="contained"
-          color="error"
-          startIcon={<Box component="img" src="/static/trading/connect-wallet-icon.svg" sx={{ width: 20 }} />}
+        <Tabs
+          value={selectedTab}
+          variant="fullWidth"
+          indicatorColor="primary"
+          textColor="primary"
+          onChange={handleChangeTab}
+          aria-label="disabled tabs example"
+          sx={{ '& .MuiButtonBase-root:not(:last-child)': { marginRight: 0 } }}
         >
-          Connect Wallet
-        </Button>
+          <Tab icon={<StopLess stopLess={stopLess} />} />
+          <Tab icon={<Leverage leverage={leverage} />} />
+          <Tab icon={<TakeProfit takeProfit={takeProfit} />} />
+        </Tabs>
+        <Box m={2} />
+        <Typography variant="body2" sx={{ textAlign: 'center' }}>
+          49.45% Of the Position Amount
+        </Typography>
+        <Box m={1} />
+        <Divider />
+        <Box m={1} />
+        <Stack direction="row" spacing={1} alignItems="center" justifyContent="center">
+          <CircularProgress
+            sx={{ width: '20px !important', height: '20px !important' }}
+            variant="determinate"
+            value={100}
+          />
+          <Typography variant="body2">Trailing Stop Loss</Typography>
+        </Stack>
+        <Box m={2} />
+
+        {/* leverage slider */}
+        <Typography variant="body2" sx={{ textAlign: 'center' }}>
+          Leverage Slider
+        </Typography>
+        <PrettoSlider
+          min={minMax.min}
+          max={minMax.max}
+          valueLabelDisplay="auto"
+          onChange={handleSlider}
+          aria-label="pretto slider"
+          defaultValue={20}
+        />
+        <Stack direction="row" spacing={1} sx={{ justifyContent: 'space-around' }}>
+          <Typography variant="body2">{sliderRange.startValue}</Typography>
+          <Typography variant="body2">
+            {selectedTab === 0 && '-'}
+            {sliderValue}
+            {sliderRange.unit}
+          </Typography>
+          <Typography variant="body2">{sliderRange.endValue}</Typography>
+        </Stack>
+
+        <Box m={2} />
+        <List>
+          {profitsList.map((item, index) => (
+            <ListItem key={index} sx={{ justifyContent: 'space-between !important' }}>
+              <Typography variant="body2">{item.name}</Typography>
+              <Typography variant="body2">{item.value}</Typography>
+            </ListItem>
+          ))}
+        </List>
       </CardContent>
     </Card>
   );

@@ -8,6 +8,7 @@ export default function Card(theme) {
           boxShadow: theme.customShadows.z16,
           borderRadius: theme.shape.borderRadiusMd,
           position: 'relative',
+          background: '#232133',
           zIndex: 0 // Fix Safari overflow: hidden with border radius
         }
       }

@@ -19,7 +19,7 @@ function responsiveFontSizes({ sm, md, lg }) {
 }
 
 // const FONT_PRIMARY = 'BarlowBold'; // Google Font
-const FONT_PRIMARY = 'JetBrains Mono, monospace'; // Google Font
+const FONT_PRIMARY = "'Inter', sans-serif"; // Google Font
 // const FONT_SECONDARY = 'sans-serif'; // Local Font
 
 const typography = {
