@@ -21,9 +21,11 @@ export default function OpenTradeOrders(props) {
       <CardHeader
         sx={{
           backgroundColor: alpha(theme.palette.grey[500], 0.12),
-          textAlign: 'center',
           paddingTop: 2,
-          paddingBottom: 2
+          paddingBottom: 2,
+          '& .MuiTypography-root': {
+            fontWeight: 200
+          }
         }}
         title={title}
       />

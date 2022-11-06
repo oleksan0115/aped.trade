@@ -1,352 +1,320 @@
 import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { withStyles, experimentalStyled as styled } from '@material-ui/core/styles';
+import { experimentalStyled as styled, useTheme } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-import AddIcon from '@material-ui/icons/Add';
-import RemoveIcon from '@material-ui/icons/Remove';
 import {
-  ToggleButton,
-  ToggleButtonGroup,
-  Divider,
   Typography,
   Box,
-  Slider,
   Stack,
   Tabs,
   Tab,
   TextField,
-  IconButton,
   List,
   ListItem,
-  CircularProgress
+  Button,
+  InputAdornment,
+  Grid
 } from '@material-ui/core';
 
-import LowDAIDialog from './LowDAIDialog';
+import CryptoPopover from './CryptoPopover';
 
-const ToggleButtonStyle = withStyles((theme) => ({
-  root: {
-    width: '100%',
-    '&.Mui-selected': {
-      backgroundColor: theme.palette.primary.main,
-      color: theme.palette.common.white
+const TabContainer = styled(Tabs)(({ theme }) => ({
+  minHeight: 24,
+  borderRadius: '10px',
+  '& .MuiTabs-indicator': { display: 'none' },
+  '& .MuiButtonBase-root:not(:last-child)': { marginRight: 0 },
+  '& .MuiTabs-flexContainer': {
+    justifyContent: 'space-between',
+    padding: 2,
+    borderRadius: '10px',
+    backgroundColor: '#0E0D14',
+    width: '168px',
+    [theme.breakpoints.up('md')]: {
+      width: '164px'
     },
-    '&.Mui-selected:hover': {
-      backgroundColor: theme.palette.primary.main
+    '& .MuiButtonBase-root': {
+      fontWeight: 300,
+      minHeight: 24,
+      padding: theme.spacing(0, 1.7),
+      borderRadius: 15
     }
   }
-}))(ToggleButton);
-
-const StopLessBadge = styled('div')(({ theme }) => ({
-  marginTop: theme.spacing(1),
-  backgroundColor: theme.palette.error.main,
-  borderRadius: theme.spacing(0.5),
-  color: 'white',
-  padding: theme.spacing(0, 1)
 }));
 
-const LeverageBadge = styled('div')(({ theme }) => ({
-  marginTop: theme.spacing(1),
-  backgroundColor: theme.palette.grey[300],
-  borderRadius: theme.spacing(0.5),
-  color: 'black'
+const TabStyles = styled(Tab)(() => ({
+  '&.Mui-selected': {
+    backgroundColor: '#5600C3'
+  }
 }));
-
-const TakeProfitBadge = styled('div')(({ theme }) => ({
-  marginTop: theme.spacing(1),
-  backgroundColor: theme.palette.primary.light,
-  borderRadius: theme.spacing(0.5),
-  color: 'black'
-}));
-
-const PrettoSlider = withStyles({
-  root: {
-    color: '#52af77',
-    height: 8
-  },
-  thumb: {
-    height: 24,
-    width: 24,
-    backgroundColor: '#fff',
-    border: '2px solid currentColor',
-    marginTop: -8,
-    marginLeft: -12,
-    '&:focus, &:hover, &$active': {
-      boxShadow: 'inherit'
-    }
-  },
-  active: {},
-  valueLabel: {
-    left: 'calc(-50% + 4px)'
-  },
-  track: {
-    height: 8,
-    borderRadius: 4
-  },
-  rail: {
-    height: 8,
-    borderRadius: 4
-  }
-})(Slider);
-
-const StopLess = ({ stopLess }) => (
-  <Box>
-    <StopLessBadge>-${stopLess}</StopLessBadge>
-    <Typography variant="body2">Stop Less</Typography>
-  </Box>
-);
-
-StopLess.propTypes = {
-  stopLess: PropTypes.number
-};
-
-const Leverage = ({ leverage }) => (
-  <Box>
-    <LeverageBadge>{leverage}x</LeverageBadge>
-    <Typography variant="body2">Leverage</Typography>
-  </Box>
-);
-
-Leverage.propTypes = {
-  leverage: PropTypes.number
-};
-
-const TakeProfit = ({ takeProfit }) => (
-  <Box>
-    <TakeProfitBadge>${takeProfit}</TakeProfitBadge>
-    <Typography variant="body2" sx={{ letterSpacing: '-1px' }}>
-      Take Profit
-    </Typography>
-  </Box>
-);
-
-TakeProfit.propTypes = {
-  takeProfit: PropTypes.number
-};
-const profitsList = [
-  {
-    name: 'Profits In',
-    value: 'BSC'
-  },
-  {
-    name: 'Leverage',
-    value: '2x'
-  },
-  {
-    name: 'Entry Price',
-    value: '$89.34'
-  },
-  {
-    name: 'Liq. Price',
-    value: '-'
-  },
-  {
-    name: 'Fees',
-    value: '-'
-  }
-];
-
-const SLIDER_RANGE = [
-  {
-    startValue: '-10%',
-    endValue: '-75%',
-    unit: '%'
-  },
-  {
-    startValue: '0x',
-    endValue: '250x',
-    unit: 'x'
-  },
-  {
-    startValue: '25%',
-    endValue: '100%',
-    unit: '%'
-  }
-];
-
-const MIN_MAX = [
-  {
-    min: 10,
-    max: 75
-  },
-  {
-    min: 1,
-    max: 250
-  },
-  {
-    min: 25,
-    max: 100
-  }
-];
 
 export default function LongShort() {
-  const [sliderValue, setSliderValue] = useState(20);
-  const [selectedTab, setSelectedTab] = useState(1);
+  const theme = useTheme();
+  const [viewMode, setViewMode] = useState(1);
+  const [sliderValue, setSliderValue] = useState(10.0);
   const [longShort, setLongShort] = useState('long');
-  const [trailingValue, setTrailingValue] = useState(57);
 
-  const [sliderRange, setSliderRange] = useState(SLIDER_RANGE[1]);
-  const [minMax, setMinMax] = useState(MIN_MAX[1]);
-
-  const [stopLess, setStopLess] = useState(MIN_MAX[0].min);
-  const [leverage, setLeverage] = useState(20);
-  const [takeProfit, setTakeProfit] = useState(MIN_MAX[2].min);
-
-  const [showLowDAIDialog, setShowLowDAIDialog] = useState(false);
+  const [minMax, setMinMax] = useState({});
 
   useEffect(() => {
-    const value = leverage;
-    const newStopLess = leverage * trailingValue - (leverage * trailingValue * (100 - value)) / 100;
-    const newTakeProfit = leverage * trailingValue + (leverage * trailingValue * value) / 100;
-    setStopLess(Number(newStopLess.toFixed(1)));
-    setLeverage(value);
-    setTakeProfit(Number(newTakeProfit.toFixed(1)));
-  }, [leverage, trailingValue]);
+    setMinMax(MIN_MAX);
+  }, []);
 
-  const handleChange = (event, value) => {
-    if (value !== null) {
-      setLongShort(value);
-    }
+  const handleChangeLS = (value) => {
+    setLongShort(value);
   };
 
-  const handleChangeTab = (event, newValue) => {
-    switch (newValue) {
-      case 0:
-        setSliderRange(SLIDER_RANGE[0]);
-        setMinMax(MIN_MAX[0]);
-        break;
-      case 1:
-        setSliderRange(SLIDER_RANGE[1]);
-        setMinMax(MIN_MAX[1]);
-        break;
-      case 2:
-        setSliderRange(SLIDER_RANGE[2]);
-        setMinMax(MIN_MAX[2]);
-        break;
-      default:
-        console.log('default');
-        break;
-    }
-    setSelectedTab(newValue);
+  const handleChangeViewMode = (event, value) => {
+    setViewMode(value);
   };
 
   const handleSlider = (e) => {
     const { value } = e.target;
-    const newStopLess = leverage * trailingValue - (leverage * trailingValue * (100 - value)) / 100;
-    const newTakeProfit = leverage * trailingValue + (leverage * trailingValue * value) / 100;
-    switch (selectedTab) {
-      case 0:
-        setStopLess(Number(newStopLess.toFixed(2)));
-        break;
-      case 1:
-        setLeverage(value);
-        break;
-      case 2:
-        setTakeProfit(Number(newTakeProfit.toFixed(2)));
-        break;
-      default:
-        console.log('default');
-        break;
-    }
     setSliderValue(value);
   };
 
   return (
-    <Card>
+    <Card
+      sx={{
+        minWidth: 480,
+        [theme.breakpoints.down('md')]: { minWidth: '100%' }
+      }}
+    >
       <CardContent>
-        <LowDAIDialog showDialog={showLowDAIDialog} onShowDialog={() => setShowLowDAIDialog(false)} />
-        <ToggleButtonGroup
-          size="small"
-          sx={{ width: '100%' }}
-          value={longShort}
-          exclusive
-          onChange={handleChange}
-          onClick={() => setShowLowDAIDialog(true)}
-          aria-label="text alignment"
-        >
-          <ToggleButtonStyle value="long" aria-label="left aligned">
-            <Stack direction="row" spacing={1}>
-              <Typography variant="body2">Long</Typography>
-              <Box component="img" sx={{ width: 15 }} src="/static/trading/long-btn-icon.svg" />
-            </Stack>
-          </ToggleButtonStyle>
-          <ToggleButtonStyle value="short" aria-label="centered">
-            <Stack direction="row" spacing={1}>
-              <Typography variant="body2">Short</Typography>
-              <Box component="img" sx={{ width: 15 }} src="/static/trading/short-btn-icon.svg" />
-            </Stack>
-          </ToggleButtonStyle>
-        </ToggleButtonGroup>
-        <Box m={2} />
-        <Stack direction="row" spacing={2} justifyContent="space-between" alignItems="center">
-          <IconButton aria-label="minus" onClick={() => setTrailingValue(Number(trailingValue) - 1)}>
-            <RemoveIcon />
-          </IconButton>
-          <TextField
-            size="small"
-            type="number"
-            onChange={(e) => setTrailingValue(e.target.value)}
-            sx={{ '& .MuiOutlinedInput-input': { textAlign: 'center' } }}
-            value={trailingValue}
-          />
-          <IconButton aria-label="plus" onClick={() => setTrailingValue(Number(trailingValue) + 1)}>
-            <AddIcon />
-          </IconButton>
+        <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 1 }}>
+          <TabContainer value={viewMode} onChange={handleChangeViewMode} aria-label="basic tabs example">
+            <TabStyles label="Basic" />
+            <TabStyles label="Advanced" />
+          </TabContainer>
+          <Typography variant="body2">Market</Typography>
         </Stack>
-        <Box m={2} />
-        <Tabs
-          value={selectedTab}
-          variant="fullWidth"
-          indicatorColor="primary"
-          textColor="primary"
-          onChange={handleChangeTab}
-          aria-label="disabled tabs example"
-          sx={{ '& .MuiButtonBase-root:not(:last-child)': { marginRight: 0 } }}
-        >
-          <Tab icon={<StopLess stopLess={stopLess} />} />
-          <Tab icon={<Leverage leverage={leverage} />} />
-          <Tab icon={<TakeProfit takeProfit={takeProfit} />} />
-        </Tabs>
-        <Box m={2} />
-        <Typography variant="body2" sx={{ textAlign: 'center' }}>
-          49.45% Of the Position Amount
-        </Typography>
-        <Box m={1} />
-        <Divider />
-        <Box m={1} />
-        <Stack direction="row" spacing={1} alignItems="center" justifyContent="center">
-          <CircularProgress
-            sx={{ width: '20px !important', height: '20px !important' }}
-            variant="determinate"
-            value={100}
-          />
-          <Typography variant="body2">Trailing Stop Loss</Typography>
+
+        <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} alignItems="center">
+          <Stack direction="row" spacing={2} alignItems="center" sx={{ width: '100%' }}>
+            <Button
+              fullWidth
+              variant="contained"
+              onClick={() => handleChangeLS('long')}
+              sx={{
+                backgroundColor: '#0E0D14',
+                boxShadow: 'none',
+                height: 50,
+                ...(longShort === 'long'
+                  ? {
+                      backgroundColor: '#5600C3',
+                      '&:hover': {
+                        backgroundColor: '#420391d6'
+                      }
+                    }
+                  : {
+                      '&:hover': {
+                        backgroundColor: '#000000'
+                      }
+                    })
+              }}
+            >
+              Long
+            </Button>
+            <Button
+              fullWidth
+              variant="contained"
+              onClick={() => handleChangeLS('short')}
+              sx={{
+                backgroundColor: '#0E0D14',
+                boxShadow: 'none',
+                height: 50,
+                ...(longShort === 'short'
+                  ? {
+                      backgroundColor: '#5600C3',
+                      '&:hover': {
+                        backgroundColor: '#420391d6'
+                      }
+                    }
+                  : {
+                      '&:hover': {
+                        backgroundColor: '#000000'
+                      }
+                    })
+              }}
+            >
+              Short
+            </Button>
+          </Stack>
+          {viewMode === 1 && (
+            <Stack direction="row" spacing={2} alignItems="center">
+              <TextField
+                id="outlined-start-adornment"
+                value="19,386.52"
+                sx={{
+                  backgroundColor: '#0E0D14',
+                  borderRadius: '10px',
+                  minWidth: 110,
+                  height: 40,
+                  '& .MuiOutlinedInput-input': { padding: theme.spacing(1.5, 2), fontWeight: 300, fontSize: 12 },
+                  '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
+                }}
+              />
+
+              <TextField
+                id="outlined-start-adornment"
+                value="+$ 32.5"
+                color="primary"
+                sx={{
+                  backgroundColor: '#0E0D14',
+                  borderRadius: '10px',
+                  minWidth: 100,
+                  color: 'red',
+                  height: 40,
+                  '& .MuiOutlinedInput-input': {
+                    padding: theme.spacing(1.5, 2),
+                    fontWeight: 300,
+                    fontSize: 12,
+                    color: theme.palette.primary.light
+                  },
+                  '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
+                }}
+              />
+            </Stack>
+          )}
         </Stack>
-        <Box m={2} />
+        <Box my={4} mx={viewMode === 1 ? 0 : 3}>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={viewMode === 1 ? 5 : 12}>
+              <Typography variant="body2" sx={{ mb: 1 }}>
+                {viewMode ? 'COLLATERAL' : 'PAY'}
+              </Typography>
+              <Box
+                sx={{ display: 'flex', alignItems: 'center', px: 1, backgroundColor: '#0E0D14', borderRadius: '10px' }}
+              >
+                <CryptoPopover />
+                <TextField
+                  id="outlined-start-adornment"
+                  value="10.00"
+                  color="primary"
+                  sx={{
+                    backgroundColor: '#0E0D14',
+                    borderRadius: '10px',
+                    height: 40,
+                    '& .MuiOutlinedInput-input': {
+                      padding: theme.spacing(1),
+                      fontWeight: 300
+                    },
+                    '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
+                  }}
+                />
+              </Box>
+            </Grid>
+            {viewMode === 1 && (
+              <Grid item xs={12} md={7}>
+                <Typography variant="body2" sx={{ mb: 1 }}>
+                  Stop Loss
+                </Typography>
+                <Stack direction="row" spacing={2}>
+                  <TextField
+                    id="outlined-start-adornment"
+                    value="4,852.69"
+                    sx={{
+                      backgroundColor: '#0E0D14',
+                      borderRadius: '10px',
+                      maxWidth: 110,
+                      height: 40,
+                      '& .MuiOutlinedInput-input': { padding: theme.spacing(1.5, 2), fontWeight: 300, fontSize: 12 },
+                      '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
+                    }}
+                  />
+
+                  <TextField
+                    id="outlined-start-adornment"
+                    value="-$ 2.7"
+                    color="primary"
+                    sx={{
+                      backgroundColor: '#0E0D14',
+                      borderRadius: '10px',
+                      maxWidth: 100,
+                      height: 40,
+                      '& .MuiOutlinedInput-input': {
+                        padding: theme.spacing(1.5, 2),
+                        fontWeight: 300,
+                        fontSize: 12,
+                        color: theme.palette.error.main
+                      },
+                      '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
+                    }}
+                  />
+                </Stack>
+              </Grid>
+            )}
+          </Grid>
+          <Box my={4} />
+          <Typography variant="body2" sx={{ mb: 1 }}>
+            LEVERAGE MULTIPLER
+          </Typography>
+          <Stack direction="row" spacing={2}>
+            <TextField
+              id="outlined-start-adornment"
+              value={sliderValue}
+              InputProps={{
+                startAdornment: <InputAdornment position="start">x</InputAdornment>
+              }}
+              sx={{
+                backgroundColor: '#0E0D14',
+                borderRadius: '10px',
+                height: 40,
+                maxWidth: 150,
+                '& .MuiOutlinedInput-input': { padding: theme.spacing(1, 2), fontWeight: 300 },
+                '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
+              }}
+            />
+            <Stack direction="column" spacing={0}>
+              <Typography variant="caption" color="text.secondary">
+                Liquidation Price:
+              </Typography>
+              <Typography variant="body2">17,419.82</Typography>
+            </Stack>
+          </Stack>
+        </Box>
+
+        <Box my={4} />
 
         {/* leverage slider */}
-        <Typography variant="body2" sx={{ textAlign: 'center' }}>
-          Leverage Slider
-        </Typography>
-        <PrettoSlider
+        <input
+          type="range"
           min={minMax.min}
           max={minMax.max}
-          valueLabelDisplay="auto"
           onChange={handleSlider}
-          aria-label="pretto slider"
-          defaultValue={20}
+          value={sliderValue}
+          step={0.01}
+          className="range purple"
         />
-        <Stack direction="row" spacing={1} sx={{ justifyContent: 'space-around' }}>
-          <Typography variant="body2">{sliderRange.startValue}</Typography>
-          <Typography variant="body2">
-            {selectedTab === 0 && '-'}
-            {sliderValue}
-            {sliderRange.unit}
-          </Typography>
-          <Typography variant="body2">{sliderRange.endValue}</Typography>
+        <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-between">
+          <Typography variant="body2">1x</Typography>
+          <Typography variant="body2">1000x</Typography>
         </Stack>
+        <Box my={4} sx={{ textAlign: 'center' }}>
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: '#5600C3',
+              boxShadow: 'none',
+              fontSize: '20px',
+              '&:hover': {
+                backgroundColor: '#420391d6'
+              }
+            }}
+          >
+            MARKET LONG
+          </Button>
+        </Box>
 
         <Box m={2} />
+        <List>
+          {detailList.map((item, index) => (
+            <ListItem key={index} sx={{ justifyContent: 'space-between !important' }}>
+              <Typography variant="body2">{item.name}</Typography>
+              <Typography variant="body2">{item.value}</Typography>
+            </ListItem>
+          ))}
+        </List>
+        <Box m={1} />
         <List>
           {profitsList.map((item, index) => (
             <ListItem key={index} sx={{ justifyContent: 'space-between !important' }}>
@@ -359,3 +327,33 @@ export default function LongShort() {
     </Card>
   );
 }
+const detailList = [
+  {
+    name: 'Buying Power',
+    value: '0 DAI'
+  },
+  {
+    name: 'Wallet Balance',
+    value: '0 DAI'
+  }
+];
+
+const profitsList = [
+  {
+    name: 'Profits in',
+    value: 'DAI'
+  },
+  {
+    name: 'Entry Price',
+    value: '19,386.52'
+  },
+  {
+    name: 'Fees',
+    value: '-'
+  }
+];
+
+const MIN_MAX = {
+  min: 1,
+  max: 1000
+};

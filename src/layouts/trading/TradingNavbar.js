@@ -18,7 +18,10 @@ export default function MainNavbar() {
 
   return (
     <AppBar color="default" sx={{ [theme.breakpoints.up('md')]: { position: 'relative', boxShadow: 0 } }}>
-      <Toolbar disableGutters sx={{ bgcolor: 'background.default', boxShadow: 'none' }}>
+      <Toolbar
+        disableGutters
+        sx={{ bgcolor: 'background.default', boxShadow: 'none', borderBottom: '1px solid rgba(255, 255, 255, 0.22)' }}
+      >
         <Container
           maxWidth="xl"
           sx={{
