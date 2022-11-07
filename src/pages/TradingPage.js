@@ -5,22 +5,25 @@ import { Container, Box, Stack } from '@material-ui/core';
 // components
 import Page from '../components/Page';
 
-import { Chart, LongShort, OpenTradeOrders } from '../components/_external-pages/trading';
+import { Chart, ChartStatus, LongShort, OpenTradeOrders } from '../components/_external-pages/trading';
 // ----------------------------------------------------------------------
 
 export default function DesktopVersion() {
   const [currency, setCurrency] = useState('btc');
   const [chartViewMode, setChartViewMode] = useState(1);
+  const [lastPrice, setLastPrice] = useState({});
 
-  console.log(chartViewMode);
   return (
     <Page title="Trading | LVRJ">
       <Container maxWidth="xl" m={1} sx={{ mb: 10 }}>
         <Box m={4} />
         <Stack direction={{ xs: 'column', md: 'row' }} spacing={4}>
-          <Box sx={{ width: '100%' }}>
-            <Chart currency={currency} chartViewMode={1} />
-          </Box>
+          <Stack spacing={1} direction="column" sx={{ width: '100%' }}>
+            <ChartStatus lastPrice={lastPrice} chartViewMode={chartViewMode} />
+            <Box sx={{ width: '100%', height: '100%' }}>
+              <Chart currency={currency} chartViewMode={1} onSetLastPrice={(price) => setLastPrice(price)} />
+            </Box>
+          </Stack>
           <LongShort onChartCurrency={(cur) => setCurrency(cur)} onChartViewMode={(vm) => setChartViewMode(vm)} />
         </Stack>
         <Box m={3} />

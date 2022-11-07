@@ -1,13 +1,15 @@
+/* eslint-disable */
 import PropTypes from 'prop-types';
 import React, { useState, useEffect, useRef } from 'react';
 import { createChart, CrosshairMode } from 'lightweight-charts';
 
 Chart.propTypes = {
   currency: PropTypes.string,
-  chartViewMode: PropTypes.number
+  chartViewMode: PropTypes.number,
+  onSetLastPrice: PropTypes.func
 };
 
-export default function Chart({ currency, chartViewMode }) {
+export default function Chart({ currency, chartViewMode, onSetLastPrice }) {
   const chartContainerRef = useRef(null);
   const chart = useRef(null);
   const resizeObserver = useRef();
@@ -60,7 +62,8 @@ export default function Chart({ currency, chartViewMode }) {
   }, [chartViewMode]);
 
   useEffect(() => {
-    const { candleStickData, baseLineData } = processingData(priceData);
+    const { candleStickData, baseLineData, lastPrice } = processingData(priceData);
+    onSetLastPrice({ ...lastPrice, currency });
     if (chart.current) {
       if (chartViewMode) {
         candleSeriesRef.current.setData(candleStickData);
@@ -116,6 +119,7 @@ function processingData(chartArr) {
   chartArr.reverse();
   const candleStickData = [];
   const baseLineData = [];
+  let lastPrice = {};
   chartArr.map((tdate) => {
     baseLineData.push({
       time: new Date(tdate.time).getTime() / 1000,
@@ -130,7 +134,14 @@ function processingData(chartArr) {
       volume: tdate.volume
     });
 
+    lastPrice = {
+      open: Number(tdate.open),
+      close: Number(tdate.close),
+      high: Number(tdate.high),
+      low: Number(tdate.low),
+      volume: tdate.volume
+    };
     return 0;
   });
-  return { baseLineData, candleStickData };
+  return { baseLineData, candleStickData, lastPrice };
 }

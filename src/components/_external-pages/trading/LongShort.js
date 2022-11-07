@@ -56,7 +56,7 @@ LongShort.propTypes = {
 export default function LongShort({ onChartCurrency, onChartViewMode }) {
   const theme = useTheme();
   const [viewMode, setViewMode] = useState(1);
-  const [sliderValue, setSliderValue] = useState(10.0);
+  const [sliderValue, setSliderValue] = useState(25.0);
   const [longShort, setLongShort] = useState('long');
 
   const [minMax, setMinMax] = useState({});
@@ -65,7 +65,7 @@ export default function LongShort({ onChartCurrency, onChartViewMode }) {
   const [currency, setCurrency] = useState('btc');
   const [curPrice, setCurPrice] = useState(0);
 
-  const [collateralValue, setCollateralValue] = useState(10);
+  const [collateralValue, setCollateralValue] = useState(27.59);
   const [profit, setProfit] = useState(0);
   const [loss, setLoss] = useState(0);
 
