@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTheme } from '@material-ui/core/styles';
 // material
 import { Container, Box, Stack } from '@material-ui/core';
 
@@ -9,13 +10,14 @@ import { Chart, ChartStatus, LongShort, OpenTradeOrders } from '../components/_e
 // ----------------------------------------------------------------------
 
 export default function DesktopVersion() {
+  const theme = useTheme();
   const [currency, setCurrency] = useState('btc');
   const [chartViewMode, setChartViewMode] = useState(1);
   const [lastPrice, setLastPrice] = useState({});
 
   return (
     <Page title="Trading | LVRJ">
-      <Container maxWidth="xl" m={1} sx={{ mb: 10 }}>
+      <Container maxWidth="xl" m={1} sx={{ mb: 10, mt: 10, [theme.breakpoints.up('md')]: { mt: 1 } }}>
         <Box m={4} />
         <Stack direction={{ xs: 'column', md: 'row' }} spacing={4}>
           <Stack spacing={1} direction="column" sx={{ width: '100%' }}>

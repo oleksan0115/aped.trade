@@ -1,5 +1,6 @@
 import { upperCase } from 'change-case-all';
 import PropTypes from 'prop-types';
+import { useTheme } from '@material-ui/core/styles';
 import { Box, Stack, Typography } from '@material-ui/core';
 
 ChartStatus.propTypes = {
@@ -9,28 +10,42 @@ ChartStatus.propTypes = {
 };
 
 function ChartStatus({ chartViewMode, lastPrice, other }) {
+  const theme = useTheme();
   const { currency, close, high, low } = lastPrice;
   return (
     <Box {...other}>
-      <Stack direction="row" spacing={2} sx={{ width: '100%', mb: 2 }} justifyContent="space-between">
-        <Stack direction="row" spacing={0} alignItems="center">
-          <Typography variant="h4">{currency ? upperCase(currency) : 'BTC'}</Typography>
-          <img src="/static/icons/trading_ui/two_down_arrow.svg" alt="two arrow" style={{ width: 25 }} />
-          <Typography variant="h6" sx={{ color: '#FD02BD' }}>
-            {close}
-          </Typography>
-          <img
-            src="/static/icons/trading_ui/trading_arrow_button.png"
-            alt="two arrow"
-            style={{ width: 40, height: 'auto', marginLeft: 5, marginRight: 10 }}
-          />
+      <Stack
+        direction={{ xs: 'column', md: 'row' }}
+        spacing={2}
+        sx={{ width: '100%', mb: 2 }}
+        justifyContent="space-between"
+      >
+        <Stack direction={{ xs: 'column', md: 'row' }} spacing={0} alignItems="center">
+          <Stack direction="row" spacing={0} alignItems="center">
+            <Typography variant="h4">{currency ? upperCase(currency) : 'BTC'}</Typography>
+            <img src="/static/icons/trading_ui/two_down_arrow.svg" alt="two arrow" style={{ width: 25 }} />
+            <Typography variant="h6" sx={{ color: '#FD02BD' }}>
+              {close}
+            </Typography>
+            <img
+              src="/static/icons/trading_ui/trading_arrow_button.png"
+              alt="two arrow"
+              style={{ width: 40, height: 'auto', marginLeft: 5, marginRight: 10 }}
+            />
+          </Stack>
+
           <Typography variant="caption">
             24h Volume: 234M &nbsp;&nbsp;&nbsp; H: <span style={{ color: '#FD02BD' }}>{high}</span> &nbsp;&nbsp;L:&nbsp;
             <span style={{ color: '#5600C3' }}>{low}</span>
           </Typography>
         </Stack>
 
-        <Stack direction="row" spacing={2} alignItems="center">
+        <Stack
+          direction="row"
+          spacing={2}
+          alignItems="center"
+          sx={{ [theme.breakpoints.down('md')]: { display: 'none' } }}
+        >
           <img src="/static/icons/trading_ui/five_min_button.png" alt="two arrow" style={{ height: 40 }} />
           <img src="/static/icons/trading_ui/setting_button.png" alt="two arrow" style={{ height: 40 }} />
         </Stack>

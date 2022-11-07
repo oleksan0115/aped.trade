@@ -104,7 +104,7 @@ export default function Chart({ currency, chartViewMode, onSetLastPrice }) {
     }
   };
 
-  return <div ref={chartContainerRef} className="chart-container" style={{ height: '100%' }} />;
+  return <div ref={chartContainerRef} className="chart-container" />;
 }
 
 function processingData(chartArr) {

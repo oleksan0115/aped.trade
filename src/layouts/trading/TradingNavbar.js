@@ -39,7 +39,7 @@ export default function MainNavbar() {
               className="trading-gradient-button"
               variant="contained"
               color="error"
-              sx={{ px: 4 }}
+              sx={{ px: 1, [theme.breakpoints.up('md')]: { px: 4 } }}
               startIcon={<Box component="img" src="/static/trading/connect-wallet-icon.png" sx={{ width: 20 }} />}
             >
               CONNECT
