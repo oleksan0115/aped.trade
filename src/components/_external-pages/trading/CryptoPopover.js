@@ -1,4 +1,5 @@
-import { useRef, useState } from 'react';
+import PropTypes from 'prop-types';
+import { useRef, useState, useEffect } from 'react';
 // material
 import { alpha } from '@material-ui/core/styles';
 import { Box, MenuItem, ListItemIcon, ListItemText } from '@material-ui/core';
@@ -9,11 +10,21 @@ import { MIconButton } from '../../@material-extend';
 
 // ----------------------------------------------------------------------
 
-export default function CryptoPopover() {
+CryptoPopover.propTypes = {
+  currency: PropTypes.string,
+  onChangeCurrency: PropTypes.func
+};
+
+export default function CryptoPopover({ currency, onChangeCurrency }) {
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
 
-  const [currentLang, setCurrentLang] = useState(LANGS[0]);
+  const [currentCurrency, setCurrentCurrency] = useState(CURRENCIES[0]);
+
+  useEffect(() => {
+    const cur = CURRENCIES.filter((curObj) => curObj.value === currency);
+    setCurrentCurrency(cur[0]);
+  }, [currency]);
 
   const handleOpen = () => {
     setOpen(true);
@@ -24,7 +35,8 @@ export default function CryptoPopover() {
   };
 
   const handleChangeLang = (value) => {
-    setCurrentLang(value);
+    setCurrentCurrency(value);
+    onChangeCurrency(value.value);
     handleClose();
   };
 
@@ -44,15 +56,15 @@ export default function CryptoPopover() {
           })
         }}
       >
-        <img src={currentLang.icon} alt={currentLang.label} />
+        <img src={currentCurrency.icon} alt={currentCurrency.label} />
         <img src="/static/icons/popup_arrow.svg" alt="arrow" style={{ position: 'absolute', bottom: 0, right: -5 }} />
       </MIconButton>
 
       <MenuPopover open={open} onClose={handleClose} anchorEl={anchorRef.current} sx={{ py: 1 }}>
-        {LANGS.map((option) => (
+        {CURRENCIES.map((option) => (
           <MenuItem
             key={option.value}
-            selected={option.value === currentLang.value}
+            selected={option.value === currentCurrency.value}
             onClick={() => handleChangeLang(option)}
             sx={{ py: 1, px: 2.5 }}
           >
@@ -67,12 +79,7 @@ export default function CryptoPopover() {
   );
 }
 
-const LANGS = [
-  {
-    value: 'dai',
-    label: 'DAI',
-    icon: '/static/icons/crypto/dai.webp'
-  },
+const CURRENCIES = [
   {
     value: 'btc',
     label: 'Bitcoin',

@@ -1,3 +1,4 @@
+import { upperCase } from 'change-case-all';
 import React, { useEffect, useState } from 'react';
 import { experimentalStyled as styled, useTheme } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
@@ -55,9 +56,32 @@ export default function LongShort() {
 
   const [minMax, setMinMax] = useState({});
 
+  const [cryptoPrice, setCryptoPrice] = useState({});
+  const [currency, setCurrency] = useState('btc');
+  const [curPrice, setCurPrice] = useState(0);
+
+  const [collateralValue, setCollateralValue] = useState(10);
+  const [profit, setProfit] = useState(0);
+  const [loss, setLoss] = useState(0);
+
   useEffect(() => {
     setMinMax(MIN_MAX);
-  }, []);
+    fetchData(currency);
+  }, [currency]);
+
+  useEffect(() => {
+    const price = cryptoPrice[`${upperCase(currency)}/USD`];
+    if (price) {
+      setProfit(price + collateralValue * 9);
+      setLoss(price + collateralValue * 0.9);
+      setCurPrice(price);
+    }
+  }, [cryptoPrice, collateralValue, currency]);
+
+  const fetchData = (curr) =>
+    fetch(`http://146.190.222.139/crypto/${curr}`)
+      .then((response) => response.json())
+      .then((data) => setCryptoPrice(data));
 
   const handleChangeLS = (value) => {
     setLongShort(value);
@@ -143,11 +167,11 @@ export default function LongShort() {
             <Stack direction="row" spacing={2} alignItems="center">
               <TextField
                 id="outlined-start-adornment"
-                value="19,386.52"
+                value={`${curPrice}`}
                 sx={{
                   backgroundColor: '#0E0D14',
                   borderRadius: '10px',
-                  minWidth: 110,
+                  minWidth: 90,
                   height: 40,
                   '& .MuiOutlinedInput-input': { padding: theme.spacing(1.5, 2), fontWeight: 300, fontSize: 12 },
                   '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
@@ -156,7 +180,7 @@ export default function LongShort() {
 
               <TextField
                 id="outlined-start-adornment"
-                value="+$ 32.5"
+                value={`+$${profit}`}
                 color="primary"
                 sx={{
                   backgroundColor: '#0E0D14',
@@ -185,10 +209,11 @@ export default function LongShort() {
               <Box
                 sx={{ display: 'flex', alignItems: 'center', px: 1, backgroundColor: '#0E0D14', borderRadius: '10px' }}
               >
-                <CryptoPopover />
+                <CryptoPopover currency={currency} onChangeCurrency={(cur) => setCurrency(cur)} />
                 <TextField
                   id="outlined-start-adornment"
-                  value="10.00"
+                  value={collateralValue}
+                  onChange={(e) => setCollateralValue(e.target.value)}
                   color="primary"
                   sx={{
                     backgroundColor: '#0E0D14',
@@ -211,11 +236,11 @@ export default function LongShort() {
                 <Stack direction="row" spacing={2}>
                   <TextField
                     id="outlined-start-adornment"
-                    value="4,852.69"
+                    value={`${curPrice}`}
                     sx={{
                       backgroundColor: '#0E0D14',
                       borderRadius: '10px',
-                      maxWidth: 110,
+                      maxWidth: 105,
                       height: 40,
                       '& .MuiOutlinedInput-input': { padding: theme.spacing(1.5, 2), fontWeight: 300, fontSize: 12 },
                       '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
@@ -224,7 +249,7 @@ export default function LongShort() {
 
                   <TextField
                     id="outlined-start-adornment"
-                    value="-$ 2.7"
+                    value={`-$${loss}`}
                     color="primary"
                     sx={{
                       backgroundColor: '#0E0D14',
