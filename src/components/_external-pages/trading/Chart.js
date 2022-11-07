@@ -116,6 +116,8 @@ function processingData(chartArr) {
   //   }/${dateFormat.getFullYear()} ${dateFormat.getHours()}:${dateFormat.getMinutes()}:${dateFormat.getSeconds()}`
   // );
 
+  console.log('AAA:', chartArr);
+
   chartArr.reverse();
   const candleStickData = [];
   const baseLineData = [];

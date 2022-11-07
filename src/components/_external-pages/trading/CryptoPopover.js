@@ -94,5 +94,70 @@ const CURRENCIES = [
     value: 'ada',
     label: 'Cardano',
     icon: '/static/icons/crypto/ada.webp'
+  },
+  {
+    value: 'ltc',
+    label: 'Lite coin',
+    icon: '/static/icons/crypto/ltc.png'
+  },
+  {
+    value: 'xlm',
+    label: 'XLM',
+    icon: '/static/icons/crypto/xlm.png'
+  },
+  {
+    value: 'neo',
+    label: 'NEO',
+    icon: '/static/icons/crypto/neo.png'
+  },
+  {
+    value: 'iota',
+    label: 'IOTA',
+    icon: '/static/icons/crypto/iota.png'
+  },
+  {
+    value: 'sol',
+    label: 'Solana',
+    icon: '/static/icons/crypto/sol.png'
+  },
+  {
+    value: 'vet',
+    label: 'VET',
+    icon: '/static/icons/crypto/vet.png'
+  },
+  {
+    value: 'eos',
+    label: 'EOS',
+    icon: '/static/icons/crypto/eos.png'
+  },
+  {
+    value: 'matic',
+    label: 'MATIC',
+    icon: '/static/icons/crypto/matic.webp'
+  },
+  {
+    value: 'dot',
+    label: 'DOT',
+    icon: '/static/icons/crypto/dot.png'
+  },
+  {
+    value: 'axs',
+    label: 'AXS',
+    icon: '/static/icons/crypto/axs.png'
+  },
+  {
+    value: 'uni',
+    label: 'UNI',
+    icon: '/static/icons/crypto/uni.png'
+  },
+  {
+    value: 'link',
+    label: 'LINK',
+    icon: '/static/icons/crypto/link.png'
+  },
+  {
+    value: 'fil',
+    label: 'FIL',
+    icon: '/static/icons/crypto/fil.png'
   }
 ];
