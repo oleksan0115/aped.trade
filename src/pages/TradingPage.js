@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 // material
 import { Container, Box, Stack } from '@material-ui/core';
-import { useTheme } from '@material-ui/core/styles';
 
 // components
 import Page from '../components/Page';
@@ -10,18 +9,19 @@ import { Chart, LongShort, OpenTradeOrders } from '../components/_external-pages
 // ----------------------------------------------------------------------
 
 export default function DesktopVersion() {
-  const theme = useTheme();
-  const isLight = theme.palette.mode === 'light';
+  const [currency, setCurrency] = useState('btc');
+  const [chartViewMode, setChartViewMode] = useState(1);
 
+  console.log(chartViewMode);
   return (
     <Page title="Trading | LVRJ">
       <Container maxWidth="xl" m={1} sx={{ mb: 10 }}>
         <Box m={4} />
         <Stack direction={{ xs: 'column', md: 'row' }} spacing={4}>
           <Box sx={{ width: '100%' }}>
-            <Chart isLight={isLight} />
+            <Chart currency={currency} chartViewMode={1} />
           </Box>
-          <LongShort />
+          <LongShort onChartCurrency={(cur) => setCurrency(cur)} onChartViewMode={(vm) => setChartViewMode(vm)} />
         </Stack>
         <Box m={3} />
         <OpenTradeOrders

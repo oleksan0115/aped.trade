@@ -1,67 +1,136 @@
-import React, { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { createChart, CrosshairMode, ColorType } from 'lightweight-charts';
-import { priceData } from './priceData';
-
-const initialData = [
-  { time: '2018-12-22', value: 32.51 },
-  { time: '2018-12-23', value: 31.11 },
-  { time: '2018-12-24', value: 27.02 },
-  { time: '2018-12-25', value: 27.32 },
-  { time: '2018-12-26', value: 25.17 },
-  { time: '2018-12-27', value: 28.89 },
-  { time: '2018-12-28', value: 25.46 },
-  { time: '2018-12-29', value: 23.92 },
-  { time: '2018-12-30', value: 22.68 },
-  { time: '2018-12-31', value: 22.67 }
-];
+import React, { useState, useEffect, useRef } from 'react';
+import { createChart, CrosshairMode } from 'lightweight-charts';
 
 Chart.propTypes = {
-  isLight: PropTypes.bool
+  currency: PropTypes.string,
+  chartViewMode: PropTypes.number
 };
 
-function Chart(props) {
-  return <ChartComponent {...props} data={initialData} />;
-}
+export default function Chart({ currency, chartViewMode }) {
+  const chartContainerRef = useRef(null);
+  const chart = useRef(null);
+  const resizeObserver = useRef();
 
-export default Chart;
+  const candleSeriesRef = useRef();
 
-export const ChartComponent = (props) => {
-  const { data } = props;
-  const backgroundColor = 'white';
-  const lineColor = '#2962FF';
-  const textColor = 'black';
-  const areaTopColor = '#2962FF';
-  const areaBottomColor = 'rgba(41, 98, 255, 0.28)';
-
-  const chartContainerRef = useRef();
+  const [priceData, setPriceData] = useState([]);
 
   useEffect(() => {
-    const handleResize = () => {
-      chart.applyOptions({ width: chartContainerRef.current.clientWidth });
-    };
+    if (!chart.current) {
+      chart.current = createChart(chartContainerRef.current, {
+        width: chartContainerRef.current.clientWidth,
+        layout: {
+          backgroundColor: '#0D0C17',
+          textColor: 'rgba(255, 255, 255, 0.9)'
+        },
+        grid: {
+          vertLines: {
+            color: '#0D0C17'
+          },
+          horzLines: {
+            color: '#0D0C17'
+          }
+        },
+        crosshair: {
+          mode: CrosshairMode.Normal
+        },
+        priceScale: {
+          borderColor: '#485c7b'
+        },
+        timeScale: {
+          timeVisible: true,
+          borderColor: '#485c7b'
+        }
+      });
+    }
 
-    const chart = createChart(chartContainerRef.current, {
-      layout: {
-        background: { type: ColorType.Solid, color: backgroundColor },
-        textColor
-      },
-      width: chartContainerRef.current.clientWidth,
-      height: 300
+    if (chartViewMode) {
+      candleSeriesRef.current = chart.current.addCandlestickSeries({
+        upColor: '#4bffb5',
+        downColor: '#ff4976',
+        borderDownColor: '#ff4976',
+        borderUpColor: '#4bffb5',
+        wickDownColor: '#838ca1',
+        wickUpColor: '#838ca1'
+      });
+    } else {
+      candleSeriesRef.current = chart.current.addBaselineSeries();
+    }
+  }, [chartViewMode]);
+
+  useEffect(() => {
+    const { candleStickData, baseLineData } = processingData(priceData);
+    if (chart.current) {
+      if (chartViewMode) {
+        candleSeriesRef.current.setData(candleStickData);
+      } else {
+        candleSeriesRef.current.setData(baseLineData);
+      }
+      chart.current.timeScale().fitContent();
+    }
+  }, [priceData, chartViewMode]);
+
+  // Resize chart on container resizes.
+
+  useEffect(() => {
+    resizeObserver.current = new ResizeObserver((entries) => {
+      const { width, height } = entries[0].contentRect;
+      chart.current.applyOptions({ width, height });
+      setTimeout(() => {
+        chart.current.timeScale().fitContent();
+      }, 0);
     });
-    chart.timeScale().fitContent();
 
-    const newSeries = chart.addAreaSeries({ lineColor, topColor: areaTopColor, bottomColor: areaBottomColor });
-    newSeries.setData(data);
+    resizeObserver.current.observe(chartContainerRef.current);
 
-    window.addEventListener('resize', handleResize);
+    return () => resizeObserver.current.disconnect();
+  }, []);
 
-    return () => {
-      window.removeEventListener('resize', handleResize);
+  useEffect(() => {
+    fetchData(currency);
+  }, [currency]);
 
-      chart.remove();
-    };
-  }, [data, backgroundColor, lineColor, textColor, areaTopColor, areaBottomColor]);
+  const fetchData = (curr) => {
+    try {
+      fetch(`${process.env.REACT_APP_CHART_API_URL}/ohcl/crypto/${curr}/1min`)
+        .then((response) => response.json())
+        .then((data) => setPriceData(data));
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
-  return <div ref={chartContainerRef} />;
-};
+  return <div ref={chartContainerRef} className="chart-container" style={{ height: '100%' }} />;
+}
+
+function processingData(chartArr) {
+  // const timeStamp = 1667778600000;
+  // const dateFormat = new Date(timeStamp);
+  // console.log(
+  //   `'Date: ${dateFormat.getDate()}/${
+  //     dateFormat.getMonth() + 1
+  //   }/${dateFormat.getFullYear()} ${dateFormat.getHours()}:${dateFormat.getMinutes()}:${dateFormat.getSeconds()}`
+  // );
+
+  chartArr.reverse();
+  const candleStickData = [];
+  const baseLineData = [];
+  chartArr.map((tdate) => {
+    baseLineData.push({
+      time: new Date(tdate.time).getTime() / 1000,
+      value: Number(tdate.high)
+    });
+    candleStickData.push({
+      time: new Date(tdate.time).getTime() / 1000,
+      open: Number(tdate.open),
+      close: Number(tdate.close),
+      high: Number(tdate.high),
+      low: Number(tdate.low),
+      volume: tdate.volume
+    });
+
+    return 0;
+  });
+  return { baseLineData, candleStickData };
+}

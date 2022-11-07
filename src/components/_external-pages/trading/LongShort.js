@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { upperCase } from 'change-case-all';
 import React, { useEffect, useState } from 'react';
 import { experimentalStyled as styled, useTheme } from '@material-ui/core/styles';
@@ -48,7 +49,11 @@ const TabStyles = styled(Tab)(() => ({
   }
 }));
 
-export default function LongShort() {
+LongShort.propTypes = {
+  onChartViewMode: PropTypes.func,
+  onChartCurrency: PropTypes.func
+};
+export default function LongShort({ onChartCurrency, onChartViewMode }) {
   const theme = useTheme();
   const [viewMode, setViewMode] = useState(1);
   const [sliderValue, setSliderValue] = useState(10.0);
@@ -67,7 +72,9 @@ export default function LongShort() {
   useEffect(() => {
     setMinMax(MIN_MAX);
     fetchData(currency);
-  }, [currency]);
+    onChartCurrency(currency);
+    onChartViewMode(viewMode);
+  }, [currency, viewMode, onChartCurrency, onChartViewMode]);
 
   useEffect(() => {
     const price = cryptoPrice[`${upperCase(currency)}/USD`];
@@ -79,7 +86,7 @@ export default function LongShort() {
   }, [cryptoPrice, collateralValue, currency]);
 
   const fetchData = (curr) =>
-    fetch(`http://146.190.222.139/crypto/${curr}`)
+    fetch(`${process.env.REACT_APP_CHART_API_URL}/crypto/${curr}`)
       .then((response) => response.json())
       .then((data) => setCryptoPrice(data));
 

@@ -23,6 +23,9 @@ html {
   scroll-behavior: smooth;
 }
 
+.chart-container .tv-lightweight-charts:first-child {
+  /* display: none; */
+}
 .aped-button {
   /* width: 185px; */
   height: 58px;
