@@ -1,12 +1,11 @@
+import { upperCase } from 'change-case-all';
 import PropTypes from 'prop-types';
 import { useRef, useState, useEffect } from 'react';
 // material
-import { alpha } from '@material-ui/core/styles';
-import { Box, MenuItem, ListItemIcon, ListItemText } from '@material-ui/core';
+import { Box, MenuItem, ListItemIcon, ListItemText, Stack, Typography } from '@material-ui/core';
 // hooks
 // components
 import MenuPopover from '../../MenuPopover';
-import { MIconButton } from '../../@material-extend';
 
 // ----------------------------------------------------------------------
 
@@ -42,23 +41,22 @@ export default function CryptoPopover({ currency, onChangeCurrency }) {
 
   return (
     <>
-      <MIconButton
+      <Stack
         ref={anchorRef}
         onClick={handleOpen}
+        direction="row"
+        spacing={0}
+        alignItems="center"
         sx={{
-          position: 'relative',
-          padding: 0,
-          width: 31,
-          height: 31,
-          mr: 1,
-          ...(open && {
-            bgcolor: (theme) => alpha(theme.palette.primary.main, theme.palette.action.focusOpacity)
-          })
+          cursor: 'pointer',
+          pl: 1,
+          borderRadius: 1,
+          '&:hover': { backgroundColor: '#00000047' }
         }}
       >
-        <img src={currentCurrency.icon} alt={currentCurrency.label} />
-        <img src="/static/icons/popup_arrow.svg" alt="arrow" style={{ position: 'absolute', bottom: 0, right: -5 }} />
-      </MIconButton>
+        <Typography variant="h4">{currency ? upperCase(currency) : 'BTC'}</Typography>
+        <img src="/static/icons/trading_ui/two_down_arrow.svg" alt="two arrow" style={{ width: 25 }} />
+      </Stack>
 
       <MenuPopover open={open} onClose={handleClose} anchorEl={anchorRef.current} sx={{ py: 1 }}>
         {CURRENCIES.map((option) => (

@@ -1,17 +1,27 @@
-import { upperCase } from 'change-case-all';
+/* eslint-disable */
 import PropTypes from 'prop-types';
+import { useState, useEffect } from 'react';
 import { useTheme } from '@material-ui/core/styles';
 import { Box, Stack, Typography } from '@material-ui/core';
+
+// components
+import CryptoPopover from './CryptoPopover';
 
 ChartStatus.propTypes = {
   chartViewMode: PropTypes.number,
   lastPrice: PropTypes.object,
+  onChartCurrency: PropTypes.func,
   other: PropTypes.object
 };
 
-function ChartStatus({ chartViewMode, lastPrice, other }) {
+function ChartStatus({ chartViewMode, lastPrice, onChartCurrency, other }) {
+  const { close, high, low } = lastPrice;
   const theme = useTheme();
-  const { currency, close, high, low } = lastPrice;
+  const [currency, setCurrency] = useState('btc');
+
+  useEffect(() => {
+    onChartCurrency(currency);
+  }, [currency]);
   return (
     <Box {...other}>
       <Stack
@@ -22,8 +32,7 @@ function ChartStatus({ chartViewMode, lastPrice, other }) {
       >
         <Stack direction={{ xs: 'column', md: 'row' }} spacing={0} alignItems="center">
           <Stack direction="row" spacing={0} alignItems="center">
-            <Typography variant="h4">{currency ? upperCase(currency) : 'BTC'}</Typography>
-            <img src="/static/icons/trading_ui/two_down_arrow.svg" alt="two arrow" style={{ width: 25 }} />
+            <CryptoPopover currency={currency} onChangeCurrency={(cur) => setCurrency(cur)} />
             <Typography variant="h6" sx={{ color: '#FD02BD' }}>
               {close}
             </Typography>

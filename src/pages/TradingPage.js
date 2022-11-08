@@ -21,12 +21,16 @@ export default function DesktopVersion() {
         <Box m={4} />
         <Stack direction={{ xs: 'column', md: 'row' }} spacing={4}>
           <Stack spacing={1} direction="column" sx={{ width: '100%' }}>
-            <ChartStatus lastPrice={lastPrice} chartViewMode={chartViewMode} />
+            <ChartStatus
+              lastPrice={lastPrice}
+              chartViewMode={chartViewMode}
+              onChartCurrency={(cur) => setCurrency(cur)}
+            />
             <Box sx={{ width: '100%', height: '100%' }}>
               <Chart currency={currency} chartViewMode={1} onSetLastPrice={(price) => setLastPrice(price)} />
             </Box>
           </Stack>
-          <LongShort onChartCurrency={(cur) => setCurrency(cur)} onChartViewMode={(vm) => setChartViewMode(vm)} />
+          <LongShort currency={currency} onChartViewMode={(vm) => setChartViewMode(vm)} />
         </Stack>
         <Box m={3} />
         <OpenTradeOrders

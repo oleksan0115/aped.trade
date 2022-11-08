@@ -1,3 +1,4 @@
+/* eslint-disable */
 import PropTypes from 'prop-types';
 import { upperCase } from 'change-case-all';
 import React, { useEffect, useState } from 'react';
@@ -18,7 +19,7 @@ import {
   Grid
 } from '@material-ui/core';
 
-import CryptoPopover from './CryptoPopover';
+import StableCoinPopover from './StableCoinPopover';
 
 const TabContainer = styled(Tabs)(({ theme }) => ({
   minHeight: 24,
@@ -50,10 +51,10 @@ const TabStyles = styled(Tab)(() => ({
 }));
 
 LongShort.propTypes = {
-  onChartViewMode: PropTypes.func,
-  onChartCurrency: PropTypes.func
+  currency: PropTypes.string,
+  onChartViewMode: PropTypes.func
 };
-export default function LongShort({ onChartCurrency, onChartViewMode }) {
+export default function LongShort({ currency, onChartViewMode }) {
   const theme = useTheme();
   const [viewMode, setViewMode] = useState(1);
   const [sliderValue, setSliderValue] = useState(25.0);
@@ -62,7 +63,7 @@ export default function LongShort({ onChartCurrency, onChartViewMode }) {
   const [minMax, setMinMax] = useState({});
 
   const [cryptoPrice, setCryptoPrice] = useState({});
-  const [currency, setCurrency] = useState('btc');
+  // const [currency, setCurrency] = useState('btc');
   const [curPrice, setCurPrice] = useState(0);
 
   const [collateralValue, setCollateralValue] = useState(27.59);
@@ -72,9 +73,8 @@ export default function LongShort({ onChartCurrency, onChartViewMode }) {
   useEffect(() => {
     setMinMax(MIN_MAX);
     fetchData(currency);
-    onChartCurrency(currency);
     onChartViewMode(viewMode);
-  }, [currency, viewMode, onChartCurrency, onChartViewMode]);
+  }, [currency, viewMode]);
 
   useEffect(() => {
     const price = cryptoPrice[`${upperCase(currency)}/USD`];
@@ -216,7 +216,7 @@ export default function LongShort({ onChartCurrency, onChartViewMode }) {
               <Box
                 sx={{ display: 'flex', alignItems: 'center', px: 1, backgroundColor: '#0E0D14', borderRadius: '10px' }}
               >
-                <CryptoPopover currency={currency} onChangeCurrency={(cur) => setCurrency(cur)} />
+                <StableCoinPopover onChangeCurrency={(cur) => console.log(cur)} />
                 <TextField
                   id="outlined-start-adornment"
                   value={collateralValue}
