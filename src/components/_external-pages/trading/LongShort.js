@@ -79,9 +79,8 @@ export default function LongShort({ currency, ctype, onChartViewMode }) {
 
   useEffect(() => {
     let price = 0;
-
     if (ctype === 0) price = cryptoPrice[`${upperCase(currency)}/USD`];
-    else if (ctype === 1) price = 165.4;
+    else if (ctype === 1) price = cryptoPrice[`${upperCase(forexStrings[currency].replace('-', '/'))}`];
     else price = cryptoPrice.price;
     if (price) {
       setProfit(price + collateralValue * 9);
@@ -90,10 +89,14 @@ export default function LongShort({ currency, ctype, onChartViewMode }) {
     }
   }, [cryptoPrice, collateralValue, currency, ctype]);
 
-  const fetchData = (curr, ctype) =>
-    fetch(`${process.env.REACT_APP_CHART_API_URL}/${PriceTypes[ctype]}/${curr}`)
+  const fetchData = (curr, ctype) => {
+    let cString = curr;
+    if (ctype === 1) cString = forexStrings[curr];
+    const API_URL = `${process.env.REACT_APP_CHART_API_URL}/${PriceTypes[ctype]}/${cString}`;
+    return fetch(API_URL)
       .then((response) => response.json())
       .then((data) => setCryptoPrice(data));
+  };
 
   const handleChangeLS = (value) => {
     setLongShort(value);
@@ -396,3 +399,12 @@ const MIN_MAX = {
 };
 
 const PriceTypes = ['crypto', 'forex', 'stock'];
+
+const forexStrings = {
+  eur: 'eur-usd',
+  aud: 'aud-usd',
+  gbp: 'gbp-usd',
+  cnh: 'usd-cnh',
+  jpy: 'usd-jpy',
+  mxn: 'usd-mxn'
+};
