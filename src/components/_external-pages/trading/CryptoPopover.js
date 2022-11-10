@@ -14,16 +14,16 @@ import Iconify from '../../Iconify';
 
 CryptoPopover.propTypes = {
   currency: PropTypes.string,
-  onChangeCurrency: PropTypes.func
+  onChangeCurrency: PropTypes.func,
+  onChangeType: PropTypes.func
 };
 
-export default function CryptoPopover({ currency, onChangeCurrency }) {
+export default function CryptoPopover({ currency, onChangeCurrency, onChangeType }) {
   const theme = useTheme();
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(0);
 
-  const [currentCurrency, setCurrentCurrency] = useState(CRYPTOS[0]);
   const [cryptoPrices, setCryptoPrices] = useState([]);
   const [forexPrices, setForexPrices] = useState([]);
   const [stocksPrices, setStocksPrices] = useState([]);
@@ -35,10 +35,6 @@ export default function CryptoPopover({ currency, onChangeCurrency }) {
     fetchData(PriceTypes[1]);
     fetchData(PriceTypes[2]);
   }, []);
-
-  useEffect(() => {
-    console.log(currentCurrency);
-  }, [currentCurrency]);
 
   useEffect(() => {
     if (cryptoPrices.length > 0 && forexPrices.length > 0 && stocksPrices.length > 0) {
@@ -75,9 +71,8 @@ export default function CryptoPopover({ currency, onChangeCurrency }) {
           selectedPrice = CRYPTOS;
           break;
       }
-      const cur = selectedPrice.filter((curObj) => curObj.value === currency);
+      // const cur = selectedPrice.filter((curObj) => curObj.value === currency);
 
-      setCurrentCurrency(cur[0]);
       setNewPrices([...tmpPrices]);
     }
   }, [currency, cryptoPrices, forexPrices, stocksPrices, value]);
@@ -90,9 +85,9 @@ export default function CryptoPopover({ currency, onChangeCurrency }) {
     setOpen(false);
   };
 
-  const handleChangeCurrency = (value) => {
-    setCurrentCurrency(value);
-    onChangeCurrency(value.value);
+  const handleChangeCurrency = (price) => {
+    onChangeCurrency(price.value);
+    onChangeType(value);
     handleClose();
   };
 

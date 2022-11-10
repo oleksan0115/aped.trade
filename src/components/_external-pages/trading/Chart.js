@@ -5,11 +5,12 @@ import { createChart, CrosshairMode } from 'lightweight-charts';
 
 Chart.propTypes = {
   currency: PropTypes.string,
+  ctype: PropTypes.number,
   chartViewMode: PropTypes.number,
   onSetLastPrice: PropTypes.func
 };
 
-export default function Chart({ currency, chartViewMode, onSetLastPrice }) {
+export default function Chart({ currency, ctype, chartViewMode, onSetLastPrice }) {
   const chartContainerRef = useRef(null);
   const chart = useRef(null);
   const resizeObserver = useRef();
@@ -91,12 +92,12 @@ export default function Chart({ currency, chartViewMode, onSetLastPrice }) {
   }, []);
 
   useEffect(() => {
-    fetchData(currency);
-  }, [currency]);
+    fetchData(currency, ctype);
+  }, [currency, ctype]);
 
-  const fetchData = (curr) => {
+  const fetchData = (curr, ctype) => {
     try {
-      fetch(`${process.env.REACT_APP_CHART_API_URL}/ohcl/crypto/${curr}/1min`)
+      fetch(`${process.env.REACT_APP_CHART_API_URL}/ohcl/${PriceTypes[ctype]}/${curr}/1min`)
         .then((response) => response.json())
         .then((data) => setPriceData(data));
     } catch (e) {
@@ -145,3 +146,5 @@ function processingData(chartArr) {
   });
   return { baseLineData, candleStickData, lastPrice };
 }
+
+const PriceTypes = ['crypto', 'forex', 'stocks'];

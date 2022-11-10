@@ -11,17 +11,20 @@ ChartStatus.propTypes = {
   chartViewMode: PropTypes.number,
   lastPrice: PropTypes.object,
   onChartCurrency: PropTypes.func,
+  onCType: PropTypes.func,
   other: PropTypes.object
 };
 
-function ChartStatus({ chartViewMode, lastPrice, onChartCurrency, other }) {
+function ChartStatus({ chartViewMode, lastPrice, onChartCurrency, onCType, other }) {
   const { close, high, low } = lastPrice;
   const theme = useTheme();
   const [currency, setCurrency] = useState('btc');
+  const [type, setType] = useState(0);
 
   useEffect(() => {
     onChartCurrency(currency);
-  }, [currency]);
+    onCType(type);
+  }, [currency, type]);
   return (
     <Box {...other}>
       <Stack
@@ -32,7 +35,11 @@ function ChartStatus({ chartViewMode, lastPrice, onChartCurrency, other }) {
       >
         <Stack direction={{ xs: 'column', md: 'row' }} spacing={0} alignItems="center">
           <Stack direction="row" spacing={0} alignItems="center">
-            <CryptoPopover currency={currency} onChangeCurrency={(cur) => setCurrency(cur)} />
+            <CryptoPopover
+              currency={currency}
+              onChangeCurrency={(cur) => setCurrency(cur)}
+              onChangeType={(ctype) => setType(ctype)}
+            />
             <Typography variant="h6" sx={{ color: '#FD02BD' }}>
               {close}
             </Typography>

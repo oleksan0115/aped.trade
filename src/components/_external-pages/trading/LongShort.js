@@ -52,9 +52,10 @@ const TabStyles = styled(Tab)(() => ({
 
 LongShort.propTypes = {
   currency: PropTypes.string,
+  ctype: PropTypes.number,
   onChartViewMode: PropTypes.func
 };
-export default function LongShort({ currency, onChartViewMode }) {
+export default function LongShort({ currency, ctype, onChartViewMode }) {
   const theme = useTheme();
   const [viewMode, setViewMode] = useState(1);
   const [sliderValue, setSliderValue] = useState(25.0);
@@ -72,21 +73,25 @@ export default function LongShort({ currency, onChartViewMode }) {
 
   useEffect(() => {
     setMinMax(MIN_MAX);
-    fetchData(currency);
+    fetchData(currency, ctype);
     onChartViewMode(viewMode);
-  }, [currency, viewMode]);
+  }, [currency, ctype, viewMode]);
 
   useEffect(() => {
-    const price = cryptoPrice[`${upperCase(currency)}/USD`];
+    let price = 0;
+
+    if (ctype === 0) price = cryptoPrice[`${upperCase(currency)}/USD`];
+    else if (ctype === 1) price = 165.4;
+    else price = cryptoPrice.price;
     if (price) {
       setProfit(price + collateralValue * 9);
       setLoss(price + collateralValue * 0.9);
       setCurPrice(price);
     }
-  }, [cryptoPrice, collateralValue, currency]);
+  }, [cryptoPrice, collateralValue, currency, ctype]);
 
-  const fetchData = (curr) =>
-    fetch(`${process.env.REACT_APP_CHART_API_URL}/crypto/${curr}`)
+  const fetchData = (curr, ctype) =>
+    fetch(`${process.env.REACT_APP_CHART_API_URL}/${PriceTypes[ctype]}/${curr}`)
       .then((response) => response.json())
       .then((data) => setCryptoPrice(data));
 
@@ -389,3 +394,5 @@ const MIN_MAX = {
   min: 1,
   max: 1000
 };
+
+const PriceTypes = ['crypto', 'forex', 'stock'];
