@@ -44,38 +44,6 @@ const discovers = [
   {
     name: 'STOCKS',
     value: 4
-  },
-  {
-    name: 'COMMODITIES',
-    value: 1
-  },
-  {
-    name: 'FOREX',
-    value: 2
-  },
-  {
-    name: 'CRYPTO ',
-    value: 3
-  },
-  {
-    name: 'STOCKS',
-    value: 4
-  },
-  {
-    name: 'COMMODITIES',
-    value: 1
-  },
-  {
-    name: 'FOREX',
-    value: 2
-  },
-  {
-    name: 'CRYPTO ',
-    value: 3
-  },
-  {
-    name: 'STOCKS',
-    value: 4
   }
 ];
 
