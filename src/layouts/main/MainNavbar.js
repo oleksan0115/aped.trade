@@ -55,7 +55,7 @@ export default function MainNavbar() {
               JOIN WAITLIST
             </Button>
             <Button
-              className="aped-button"
+              className="aped-button reverse-gradient"
               variant="contained"
               // onClick={() => setDialogOpen(true)}
               href="/#discover"

@@ -36,6 +36,16 @@ html {
   border-radius: 8px;
   font-size: 18px;
   box-shadow: none;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  transition: all .5s;
+}
+
+.aped-button:hover {
+  transform: scale(1.1);
+}
+
+.reverse-gradient {
+  background: linear-gradient(90deg, #5600c4 -9.8%, #fd02bd 100%);
 }
 
 .aped-link-button {
