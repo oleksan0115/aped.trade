@@ -73,8 +73,14 @@ export default function LongShort({ currency, ctype, onChartViewMode }) {
 
   useEffect(() => {
     setMinMax(MIN_MAX);
-    fetchData(currency, ctype);
     onChartViewMode(viewMode);
+
+    fetchData(currency, ctype);
+    const interval = setInterval(() => {
+      fetchData(currency, ctype);
+    }, 5000);
+
+    return () => clearInterval(interval);
   }, [currency, ctype, viewMode]);
 
   useEffect(() => {

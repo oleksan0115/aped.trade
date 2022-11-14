@@ -93,6 +93,11 @@ export default function Chart({ currency, ctype, chartViewMode, onSetLastPrice }
 
   useEffect(() => {
     fetchData(currency, ctype);
+    const interval = setInterval(() => {
+      fetchData(currency, ctype);
+    }, 5000);
+
+    return () => clearInterval(interval);
   }, [currency, ctype]);
 
   const fetchData = (curr, ctype) => {
