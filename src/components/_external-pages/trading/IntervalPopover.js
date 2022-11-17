@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 
 import { useRef, useState } from 'react';
 // material
-import { MenuItem, ListItemIcon, ListItemText, Stack } from '@material-ui/core';
+import { MenuItem, ListItemIcon, ListItemText, Stack, Box } from '@material-ui/core';
 
 // components
 import MenuPopover from '../../MenuPopover';
@@ -11,10 +11,11 @@ import Iconify from '../../Iconify';
 // ----------------------------------------------------------------------
 
 IntervalPopover.propTypes = {
+  interval: PropTypes.number,
   onChangeInterval: PropTypes.func
 };
 
-export default function IntervalPopover({ onChangeInterval }) {
+export default function IntervalPopover({ interval, onChangeInterval }) {
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
 
@@ -33,7 +34,7 @@ export default function IntervalPopover({ onChangeInterval }) {
 
   return (
     <>
-      <Stack
+      <Box
         ref={anchorRef}
         onClick={handleOpen}
         direction="row"
@@ -46,8 +47,16 @@ export default function IntervalPopover({ onChangeInterval }) {
           '&:hover': { backgroundColor: '#00000047' }
         }}
       >
-        <img src="/static/icons/trading_ui/five_min_button.png" alt="two arrow" style={{ height: 40 }} />
-      </Stack>
+        {/* <img src="/static/icons/trading_ui/five_min_button.png" alt="two arrow" style={{ height: 40 }} /> */}
+        <Stack
+          direction="row"
+          spacing={1}
+          sx={{ backgroundColor: '#232133', py: 1, px: 2, borderRadius: '10px', fontWeight: 500 }}
+        >
+          {interval}min
+          <img src="/static/icons/trading_ui/trangle_icon.svg" alt="two arrow" />
+        </Stack>
+      </Box>
 
       <MenuPopover open={open} onClose={handleClose} anchorEl={anchorRef.current} sx={{ py: 1, width: 160 }}>
         {intervals.map((option) => (
