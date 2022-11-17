@@ -67,6 +67,8 @@ export default function LongShort({ currency, ctype, onChartViewMode }) {
   // const [currency, setCurrency] = useState('btc');
   const [curPrice, setCurPrice] = useState(0);
 
+  const [entryPrice, setEntryPrice] = useState(0);
+
   const [collateralValue, setCollateralValue] = useState(27.59);
   const [profit, setProfit] = useState(0);
   const [loss, setLoss] = useState(0);
@@ -88,6 +90,8 @@ export default function LongShort({ currency, ctype, onChartViewMode }) {
     if (ctype === 0) price = cryptoPrice[`${upperCase(currency)}/USD`];
     else if (ctype === 1) price = cryptoPrice[`${upperCase(forexStrings[currency].replace('-', '/'))}`];
     else price = cryptoPrice.price;
+
+    setEntryPrice(price);
     if (price) {
       setProfit(price + collateralValue * 9);
       setLoss(price + collateralValue * 0.9);
@@ -365,7 +369,7 @@ export default function LongShort({ currency, ctype, onChartViewMode }) {
           {profitsList.map((item, index) => (
             <ListItem key={index} sx={{ justifyContent: 'space-between !important' }}>
               <Typography variant="body2">{item.name}</Typography>
-              <Typography variant="body2">{item.value}</Typography>
+              <Typography variant="body2">{item.name === 'Entry Price' ? entryPrice : item.value}</Typography>
             </ListItem>
           ))}
         </List>

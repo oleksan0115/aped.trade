@@ -6,25 +6,29 @@ import { Box, Stack, Typography } from '@material-ui/core';
 
 // components
 import CryptoPopover from './CryptoPopover';
+import IntervalPopover from './IntervalPopover';
 
 ChartStatus.propTypes = {
   chartViewMode: PropTypes.number,
   lastPrice: PropTypes.object,
   onChartCurrency: PropTypes.func,
+  onChartInterval: PropTypes.func,
   onCType: PropTypes.func,
   other: PropTypes.object
 };
 
-function ChartStatus({ chartViewMode, lastPrice, onChartCurrency, onCType, other }) {
+function ChartStatus({ chartViewMode, lastPrice, onChartCurrency, onChartInterval, onCType, other }) {
   const { close, high, low } = lastPrice;
   const theme = useTheme();
   const [currency, setCurrency] = useState('btc');
+  const [interval, setInterval] = useState(1);
   const [type, setType] = useState(0);
 
   useEffect(() => {
     onChartCurrency(currency);
+    onChartInterval(interval);
     onCType(type);
-  }, [currency, type]);
+  }, [currency, interval, type]);
   return (
     <Box {...other}>
       <Stack
@@ -62,7 +66,7 @@ function ChartStatus({ chartViewMode, lastPrice, onChartCurrency, onCType, other
           alignItems="center"
           sx={{ [theme.breakpoints.down('md')]: { display: 'none' } }}
         >
-          <img src="/static/icons/trading_ui/five_min_button.png" alt="two arrow" style={{ height: 40 }} />
+          <IntervalPopover interval={interval} onChangeInterval={(interval) => setInterval(interval)} />
           <img src="/static/icons/trading_ui/setting_button.png" alt="two arrow" style={{ height: 40 }} />
         </Stack>
       </Stack>

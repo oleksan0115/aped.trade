@@ -12,6 +12,7 @@ import { Chart, ChartStatus, LongShort, OpenTradeOrders } from '../components/_e
 export default function DesktopVersion() {
   const theme = useTheme();
   const [currency, setCurrency] = useState('btc');
+  const [interval, setInterval] = useState(1);
   const [cType, setCType] = useState(0);
   const [chartViewMode, setChartViewMode] = useState(1);
   const [lastPrice, setLastPrice] = useState({});
@@ -26,11 +27,13 @@ export default function DesktopVersion() {
               lastPrice={lastPrice}
               chartViewMode={chartViewMode}
               onChartCurrency={(cur) => setCurrency(cur)}
+              onChartInterval={(int) => setInterval(int)}
               onCType={(ctype) => setCType(ctype)}
             />
             <Box sx={{ width: '100%', height: '100%' }}>
               <Chart
                 currency={currency}
+                interval={interval}
                 ctype={cType}
                 chartViewMode={1}
                 onSetLastPrice={(price) => setLastPrice(price)}

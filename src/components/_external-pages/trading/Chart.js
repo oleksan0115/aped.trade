@@ -5,12 +5,13 @@ import { createChart, CrosshairMode } from 'lightweight-charts';
 
 Chart.propTypes = {
   currency: PropTypes.string,
+  interval: PropTypes.number,
   ctype: PropTypes.number,
   chartViewMode: PropTypes.number,
   onSetLastPrice: PropTypes.func
 };
 
-export default function Chart({ currency, ctype, chartViewMode, onSetLastPrice }) {
+export default function Chart({ currency, interval, ctype, chartViewMode, onSetLastPrice }) {
   const chartContainerRef = useRef(null);
   const chart = useRef(null);
   const resizeObserver = useRef();
@@ -92,17 +93,17 @@ export default function Chart({ currency, ctype, chartViewMode, onSetLastPrice }
   }, []);
 
   useEffect(() => {
-    fetchData(currency, ctype);
-    const interval = setInterval(() => {
-      fetchData(currency, ctype);
+    fetchData(currency, interval, ctype);
+    const timeInterval = setInterval(() => {
+      fetchData(currency, interval, ctype);
     }, 5000);
 
-    return () => clearInterval(interval);
-  }, [currency, ctype]);
+    return () => clearInterval(timeInterval);
+  }, [currency, interval, ctype]);
 
-  const fetchData = (curr, ctype) => {
+  const fetchData = (curr, interval, ctype) => {
     try {
-      fetch(`${process.env.REACT_APP_CHART_API_URL}/ohcl/${PriceTypes[ctype]}/${curr}/1min`)
+      fetch(`${process.env.REACT_APP_CHART_API_URL}/ohcl/${PriceTypes[ctype]}/${curr}/${interval}min`)
         .then((response) => response.json())
         .then((data) => setPriceData(data));
     } catch (e) {
