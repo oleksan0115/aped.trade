@@ -34,12 +34,12 @@ export default function CryptoPopover({ currency, onChangeCurrency, onChangeType
     fetchData(PriceTypes[0]);
     fetchData(PriceTypes[1]);
     fetchData(PriceTypes[2]);
-    const interval = setInterval(() => {
-      fetchData(PriceTypes[0]);
-      fetchData(PriceTypes[1]);
-      fetchData(PriceTypes[2]);
-    }, 5000);
-    return () => clearInterval(interval);
+    // const interval = setInterval(() => {
+    //   fetchData(PriceTypes[0]);
+    //   fetchData(PriceTypes[1]);
+    //   fetchData(PriceTypes[2]);
+    // }, 5000);
+    // return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {

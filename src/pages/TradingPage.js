@@ -1,3 +1,4 @@
+import { io } from 'socket.io-client';
 import React, { useState } from 'react';
 import { useTheme } from '@material-ui/core/styles';
 // material
@@ -7,9 +8,12 @@ import { Container, Box, Stack } from '@material-ui/core';
 import Page from '../components/Page';
 
 import { Chart, ChartStatus, LongShort, OpenTradeOrders } from '../components/_external-pages/trading';
+
+const ENDPOINT = process.env.REACT_APP_WS_API_URL;
+const socket = io(`${ENDPOINT}`);
 // ----------------------------------------------------------------------
 
-export default function DesktopVersion() {
+export default function TradingView() {
   const theme = useTheme();
   const [currency, setCurrency] = useState('btc');
   const [interval, setInterval] = useState(1);
@@ -26,9 +30,11 @@ export default function DesktopVersion() {
             <ChartStatus
               lastPrice={lastPrice}
               chartViewMode={chartViewMode}
+              currency={currency}
               onChartCurrency={(cur) => setCurrency(cur)}
               onChartInterval={(int) => setInterval(int)}
               onCType={(ctype) => setCType(ctype)}
+              socket={socket}
             />
             <Box sx={{ width: '100%', height: '100%' }}>
               <Chart
@@ -37,10 +43,11 @@ export default function DesktopVersion() {
                 ctype={cType}
                 chartViewMode={1}
                 onSetLastPrice={(price) => setLastPrice(price)}
+                socket={socket}
               />
             </Box>
           </Stack>
-          <LongShort currency={currency} ctype={cType} onChartViewMode={(vm) => setChartViewMode(vm)} />
+          <LongShort currency={currency} ctype={cType} onChartViewMode={(vm) => setChartViewMode(vm)} socket={socket} />
         </Stack>
         <Box m={3} />
         <OpenTradeOrders

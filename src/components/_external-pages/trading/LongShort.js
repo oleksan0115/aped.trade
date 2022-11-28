@@ -1,6 +1,6 @@
 /* eslint-disable */
 import PropTypes from 'prop-types';
-import { upperCase } from 'change-case-all';
+
 import React, { useEffect, useState } from 'react';
 import { experimentalStyled as styled, useTheme } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
@@ -20,6 +20,8 @@ import {
 } from '@material-ui/core';
 
 import StableCoinPopover from './StableCoinPopover';
+
+import { getPreviousChartData } from './api';
 
 const TabContainer = styled(Tabs)(({ theme }) => ({
   minHeight: 24,
@@ -53,9 +55,10 @@ const TabStyles = styled(Tab)(() => ({
 LongShort.propTypes = {
   currency: PropTypes.string,
   ctype: PropTypes.number,
-  onChartViewMode: PropTypes.func
+  onChartViewMode: PropTypes.func,
+  socket: PropTypes.object
 };
-export default function LongShort({ currency, ctype, onChartViewMode }) {
+export default function LongShort({ currency, ctype, onChartViewMode, socket }) {
   const theme = useTheme();
   const [viewMode, setViewMode] = useState(1);
   const [sliderValue, setSliderValue] = useState(25.0);
@@ -63,7 +66,7 @@ export default function LongShort({ currency, ctype, onChartViewMode }) {
 
   const [minMax, setMinMax] = useState({});
 
-  const [cryptoPrice, setCryptoPrice] = useState({});
+  const [cPrice, setCPrice] = useState(0);
   // const [currency, setCurrency] = useState('btc');
   const [curPrice, setCurPrice] = useState(0);
 
@@ -76,37 +79,74 @@ export default function LongShort({ currency, ctype, onChartViewMode }) {
   useEffect(() => {
     setMinMax(MIN_MAX);
     onChartViewMode(viewMode);
-
-    fetchData(currency, ctype);
-    const interval = setInterval(() => {
-      fetchData(currency, ctype);
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [currency, ctype, viewMode]);
+  }, [viewMode]);
 
   useEffect(() => {
-    let price = 0;
-    if (ctype === 0) price = cryptoPrice[`${upperCase(currency)}/USD`];
-    else if (ctype === 1) price = cryptoPrice[`${upperCase(forexStrings[currency].replace('-', '/'))}`];
-    else price = cryptoPrice.price;
-
-    setEntryPrice(price);
-    if (price) {
-      setProfit(price + collateralValue * 9);
-      setLoss(price + collateralValue * 0.9);
-      setCurPrice(price);
+    setEntryPrice(cPrice);
+    if (cPrice) {
+      setProfit(cPrice + collateralValue * 9);
+      setLoss(cPrice + collateralValue * 0.9);
+      setCurPrice(cPrice);
     }
-  }, [cryptoPrice, collateralValue, currency, ctype]);
+  }, [cPrice, collateralValue, currency]);
 
-  const fetchData = (curr, ctype) => {
-    let cString = curr;
-    if (ctype === 1) cString = forexStrings[curr];
-    const API_URL = `${process.env.REACT_APP_CHART_API_URL}/${PriceTypes[ctype]}/${cString}`;
-    return fetch(API_URL)
-      .then((response) => response.json())
-      .then((data) => setCryptoPrice(data));
-  };
+  useEffect(() => {
+    let lastOHLCData = {};
+    let pairString = '';
+    const lastTime = Date.now();
+    const startTime = lastTime - 3 * 24 * 60 * 60 * 1000;
+
+    if (PriceTypes[ctype] === 'crypto') pairString = `${currency.toUpperCase()}-USD`;
+    else if (PriceTypes[ctype] === 'forex') pairString = `${currency.toUpperCase()}/USD`;
+    else pairString = `${currency.toUpperCase()}`;
+
+    getPreviousChartData(currency, 1, PriceTypes[ctype], startTime, lastTime).then((pastData) => {
+      if (pastData) {
+        pastData.map((d) => {
+          const currentDate = new Date();
+          const mil = currentDate.getTimezoneOffset();
+          const time = new Date(d.t).getTime() / 1000 - mil * 60;
+
+          lastOHLCData = {
+            close: d.c,
+            high: d.h,
+            low: d.l,
+            open: d.o,
+            time
+          };
+          return lastOHLCData;
+        });
+
+        setCPrice(lastOHLCData.close);
+      }
+    });
+
+    const handler = (t) => {
+      let closePrice = 0;
+      let pair = '';
+      if (PriceTypes[ctype] === 'crypto') {
+        closePrice = t.p;
+        pair = t.pair;
+      } else if (PriceTypes[ctype] === 'forex') {
+        closePrice = t.a;
+        pair = t.p;
+      } else {
+        closePrice = (t.ap + t.bp) / 2;
+        pair = t.sym;
+      }
+      try {
+        if (pair === pairString) setCPrice(closePrice.toFixed(3));
+      } catch (e) {
+        /* Error hanlding codes */
+      }
+    };
+
+    socket.on(`${PriceTypes[ctype]}_trade_data`, handler);
+
+    return () => {
+      socket.off(`${PriceTypes[ctype]}_trade_data`, handler);
+    };
+  }, [currency, ctype]);
 
   const handleChangeLS = (value) => {
     setLongShort(value);
@@ -408,13 +448,4 @@ const MIN_MAX = {
   max: 1000
 };
 
-const PriceTypes = ['crypto', 'forex', 'stock'];
-
-const forexStrings = {
-  eur: 'eur-usd',
-  aud: 'aud-usd',
-  gbp: 'gbp-usd',
-  cnh: 'usd-cnh',
-  jpy: 'usd-jpy',
-  mxn: 'usd-mxn'
-};
+const PriceTypes = ['crypto', 'forex', 'stocks'];

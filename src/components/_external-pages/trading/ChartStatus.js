@@ -9,6 +9,8 @@ import CryptoPopover from './CryptoPopover';
 import IntervalPopover from './IntervalPopover';
 
 ChartStatus.propTypes = {
+  socket: PropTypes.object,
+  currency: PropTypes.string,
   chartViewMode: PropTypes.number,
   lastPrice: PropTypes.object,
   onChartCurrency: PropTypes.func,
@@ -17,17 +19,54 @@ ChartStatus.propTypes = {
   other: PropTypes.object
 };
 
-function ChartStatus({ chartViewMode, lastPrice, onChartCurrency, onChartInterval, onCType, other }) {
+function ChartStatus({ socket, currency, chartViewMode, lastPrice, onChartCurrency, onChartInterval, onCType, other }) {
   const { close, high, low } = lastPrice;
   const theme = useTheme();
-  const [currency, setCurrency] = useState('btc');
   const [interval, setInterval] = useState(1);
   const [type, setType] = useState(0);
 
+  const [price, setPrice] = useState(0);
+
   useEffect(() => {
-    onChartCurrency(currency);
+    setPrice(close);
+  }, [close]);
+
+  useEffect(() => {
+    // onChartCurrency(currency);
     onChartInterval(interval);
     onCType(type);
+
+    let pairString = '';
+
+    if (PriceTypes[type] === 'crypto') pairString = `${currency.toUpperCase()}-USD`;
+    else if (PriceTypes[type] === 'forex') pairString = `${currency.toUpperCase()}/USD`;
+    else pairString = `${currency.toUpperCase()}`;
+
+    const handler = (t) => {
+      let closePrice = 0;
+      let pair = '';
+      if (PriceTypes[type] === 'crypto') {
+        closePrice = t.p;
+        pair = t.pair;
+      } else if (PriceTypes[type] === 'forex') {
+        closePrice = t.a;
+        pair = t.p;
+      } else {
+        closePrice = (t.ap + t.bp) / 2;
+        pair = t.sym;
+      }
+      try {
+        if (pair === pairString) setPrice(closePrice);
+      } catch (e) {
+        /* Error hanlding codes */
+      }
+    };
+
+    socket.on(`${PriceTypes[type]}_trade_data`, handler);
+
+    return () => {
+      socket.off(`${PriceTypes[type]}_trade_data`, handler);
+    };
   }, [currency, interval, type]);
   return (
     <Box {...other}>
@@ -41,11 +80,11 @@ function ChartStatus({ chartViewMode, lastPrice, onChartCurrency, onChartInterva
           <Stack direction="row" spacing={0} alignItems="center">
             <CryptoPopover
               currency={currency}
-              onChangeCurrency={(cur) => setCurrency(cur)}
-              onChangeType={(ctype) => setType(ctype)}
+              onChangeCurrency={(cur) => onChartCurrency(cur)}
+              onChangeType={(type) => setType(type)}
             />
             <Typography variant="h6" sx={{ color: '#FD02BD' }}>
-              {close}
+              {price}
             </Typography>
             <img
               src="/static/icons/trading_ui/trading_arrow_button.png"
@@ -95,3 +134,5 @@ function ChartStatus({ chartViewMode, lastPrice, onChartCurrency, onChartInterva
 }
 
 export default ChartStatus;
+
+const PriceTypes = ['crypto', 'forex', 'stocks'];
