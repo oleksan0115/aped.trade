@@ -47,7 +47,7 @@ export default function Router() {
       ]
     },
     {
-      path: '/haha',
+      path: '/',
       element: <MainLayout />,
       children: [{ path: '/', element: <LandingPage /> }]
     },
@@ -58,7 +58,7 @@ export default function Router() {
     },
     // trading layouts
     {
-      path: '/',
+      path: '/trading-view',
       element: <TradingLayout />,
       children: [{ path: '/', element: <TradingPage /> }]
     },
