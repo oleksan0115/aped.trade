@@ -34,6 +34,7 @@ export default function CryptoPopover({ currency, onChangeCurrency, onChangeType
     fetchData(PriceTypes[0]);
     fetchData(PriceTypes[1]);
     fetchData(PriceTypes[2]);
+    console.log(STOCKS);
   }, []);
 
   useEffect(() => {

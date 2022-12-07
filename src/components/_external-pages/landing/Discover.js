@@ -229,6 +229,7 @@ export default function Discover() {
     fetchData(PriceTypes[0]);
     fetchData(PriceTypes[1]);
     fetchData(PriceTypes[2]);
+    console.log(STOCKS);
   }, []);
 
   const fetchData = async (currencyName) => {
