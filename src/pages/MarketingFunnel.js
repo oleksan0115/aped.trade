@@ -39,7 +39,7 @@ const ContentBox = styled((props) => <Stack spacing={3} {...props} />)(({ theme 
 
 export default function MarketingFunnel() {
   return (
-    <RootStyle title="Marketing Funnel | LVRJ" id="move_top" className="gradient-background">
+    <RootStyle title="Marketing Funnel | APED" id="move_top" className="gradient-background">
       <ContainerStyle>
         <HeaderStyle>
           <Link underline="none" component={RouterLink} to="/">

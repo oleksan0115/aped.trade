@@ -40,7 +40,7 @@ export default function MainLayout() {
             <Typography variant="caption" component="p">
               © All rights reserved
               <br /> made by &nbsp;
-              <Link href="https://lvrj.trade/">lvrj.trade</Link>
+              <Link href="https://aped.trade/">aped.trade</Link>
             </Typography>
           </Container>
         </Box>

@@ -34,16 +34,11 @@ export default function CryptoPopover({ currency, onChangeCurrency, onChangeType
     fetchData(PriceTypes[0]);
     fetchData(PriceTypes[1]);
     fetchData(PriceTypes[2]);
-    // const interval = setInterval(() => {
-    //   fetchData(PriceTypes[0]);
-    //   fetchData(PriceTypes[1]);
-    //   fetchData(PriceTypes[2]);
-    // }, 5000);
-    // return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
-    if (cryptoPrices.length > 0 && forexPrices.length > 0 && stocksPrices.length > 0) {
+    if (cryptoPrices.length > 0 && forexPrices.length > 0) {
+      // if (cryptoPrices.length > 0 && forexPrices.length > 0 && stocksPrices.length > 0) {
       const tmpPrices = [];
       let selectedPrice = CRYPTOS;
       let mPrice = '';
@@ -67,11 +62,11 @@ export default function CryptoPopover({ currency, onChangeCurrency, onChangeType
           });
           break;
         case 2:
-          selectedPrice = STOCKS;
-          selectedPrice.map((item, index) => {
-            tmpPrices.push({ ...item, price: stocksPrices[index][item.label] });
-            return 0;
-          });
+          // selectedPrice = STOCKS;
+          // selectedPrice.map((item, index) => {
+          //   tmpPrices.push({ ...item, price: stocksPrices[index][item.label] });
+          //   return 0;
+          // });
           break;
         default:
           selectedPrice = CRYPTOS;
@@ -101,14 +96,18 @@ export default function CryptoPopover({ currency, onChangeCurrency, onChangeType
     setValue(newValue);
   };
 
-  const fetchData = (currencyName) =>
-    fetch(`${process.env.REACT_APP_CHART_API_URL}/${currencyName}`)
-      .then((response) => response.json())
-      .then((data) => {
-        if (currencyName === 'cryptos') setCryptoPrices(data);
-        else if (currencyName === 'forex') setForexPrices(data);
-        else setStocksPrices(data.prices);
-      });
+  const fetchData = async (currencyName) => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_CHART_API_URL}/${currencyName}`).then((res) => res.json());
+      if (response.length) {
+        if (currencyName === 'cryptos') setCryptoPrices(response);
+        else if (currencyName === 'forex') setForexPrices(response);
+        else setStocksPrices(response.prices);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   return (
     <>

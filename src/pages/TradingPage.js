@@ -22,7 +22,7 @@ export default function TradingView() {
   const [lastPrice, setLastPrice] = useState({});
 
   return (
-    <Page title="Trading | LVRJ">
+    <Page title="Trading | APED">
       <Container maxWidth="xl" m={1} sx={{ mb: 10, mt: 10, [theme.breakpoints.up('md')]: { mt: 1 } }}>
         <Box m={4} />
         <Stack direction={{ xs: 'column', md: 'row' }} spacing={4}>

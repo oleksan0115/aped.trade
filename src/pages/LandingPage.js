@@ -31,7 +31,7 @@ const ContentStyle = styled('div')(({ theme }) => ({
 
 export default function LandingPage() {
   return (
-    <RootStyle title="Home | LVRJ" id="move_top">
+    <RootStyle title="Home | APED" id="move_top">
       <LandingHero />
       <ContentStyle>
         <PoweredBy />
