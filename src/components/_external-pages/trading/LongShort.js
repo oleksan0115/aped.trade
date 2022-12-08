@@ -75,6 +75,7 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
   const [collateralValue, setCollateralValue] = useState(27.59);
   const [profit, setProfit] = useState(0);
   const [loss, setLoss] = useState(0);
+  const [liqPrice, LiqPrice] = useState(0);
 
   useEffect(() => {
     setMinMax(MIN_MAX);
@@ -84,11 +85,18 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
   useEffect(() => {
     setEntryPrice(cPrice);
     if (cPrice) {
-      setProfit(cPrice + collateralValue * 9);
-      setLoss(cPrice + collateralValue * 0.9);
+      const pf = Number(cPrice) + collateralValue * 9;
+      const ls = Number(cPrice) - collateralValue * 0.9;
+      setProfit(pf.toFixed(3));
+      setLoss(ls.toFixed(3));
       setCurPrice(cPrice);
     }
   }, [cPrice, collateralValue, currency]);
+
+  useEffect(() => {
+    const lq = (1 / sliderValue) * Number(cPrice);
+    LiqPrice(lq.toFixed(3));
+  }, [sliderValue, cPrice]);
 
   useEffect(() => {
     let lastOHLCData = {};
@@ -305,6 +313,38 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
                     sx={{
                       backgroundColor: '#0E0D14',
                       borderRadius: '10px',
+                      minWidth: 90,
+                      height: 40,
+                      '& .MuiOutlinedInput-input': { padding: theme.spacing(1.5, 2), fontWeight: 300, fontSize: 12 },
+                      '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
+                    }}
+                  />
+
+                  <TextField
+                    id="outlined-start-adornment"
+                    value={`-$${loss}`}
+                    color="primary"
+                    sx={{
+                      backgroundColor: '#0E0D14',
+                      borderRadius: '10px',
+                      minWidth: 100,
+                      color: 'red',
+                      height: 40,
+                      '& .MuiOutlinedInput-input': {
+                        padding: theme.spacing(1.5, 2),
+                        fontWeight: 300,
+                        fontSize: 12,
+                        color: theme.palette.error.main
+                      },
+                      '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
+                    }}
+                  />
+                  {/* <TextField
+                    id="outlined-start-adornment"
+                    value={`${curPrice}`}
+                    sx={{
+                      backgroundColor: '#0E0D14',
+                      borderRadius: '10px',
                       maxWidth: 105,
                       height: 40,
                       '& .MuiOutlinedInput-input': { padding: theme.spacing(1.5, 2), fontWeight: 300, fontSize: 12 },
@@ -329,7 +369,7 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
                       },
                       '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
                     }}
-                  />
+                  /> */}
                 </Stack>
               </Grid>
             )}
@@ -358,7 +398,7 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
               <Typography variant="caption" color="text.secondary">
                 Liquidation Price:
               </Typography>
-              <Typography variant="body2">17,419.82</Typography>
+              <Typography variant="body2">{liqPrice}</Typography>
             </Stack>
           </Stack>
         </Box>

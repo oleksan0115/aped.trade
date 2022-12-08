@@ -31,12 +31,12 @@ const ContentStyle = styled((props) => <Stack spacing={5} {...props} />)(({ them
 
 const discovers = [
   {
-    name: 'FOREX',
+    name: 'CRYPTO',
     value: 1,
     prices: []
   },
   {
-    name: 'CRYPTO ',
+    name: 'FOREX',
     value: 2,
     prices: []
   },
@@ -132,9 +132,12 @@ export default function Discover() {
               </Box>
             </div>
             <div className="flip-card-back">
+              <Typography variant="subtitle1" my={1}>
+                {slide.name}
+              </Typography>
               {slide.prices.length > 0 ? (
                 <>
-                  {slide.prices.slice(0, 6).map((option) => (
+                  {slide.prices.slice(0, 5).map((option) => (
                     <MenuItem key={option.value} sx={{ py: 1, px: 2.5 }}>
                       <ListItemIcon>
                         <Box component="img" alt={option.label} src={option.icon} sx={{ width: 30, height: 30 }} />
@@ -145,9 +148,9 @@ export default function Discover() {
                       </ListItemText>
                     </MenuItem>
                   ))}
-                  {slide.prices.length > 6 && (
+                  {slide.prices.length > 5 && (
                     <Typography variant="body2" sx={{ textAlign: 'center', mt: 2 }}>
-                      {slide.prices.length - 6} more pairs available
+                      {slide.prices.length - 5} more pairs available
                     </Typography>
                   )}
                 </>
@@ -235,6 +238,7 @@ export default function Discover() {
   const fetchData = async (currencyName) => {
     try {
       const response = await fetch(`${process.env.REACT_APP_CHART_API_URL}/${currencyName}`).then((res) => res.json());
+      console.log(response);
       if (response.length) {
         if (currencyName === 'cryptos') setCryptoPrices(response);
         else if (currencyName === 'forex') setForexPrices(response);
@@ -247,7 +251,7 @@ export default function Discover() {
 
   return (
     <RootStyle initial="initial" animate="animate" variants={varWrapEnter} id="discover">
-      <Container>
+      <Container sx={{ maxWidth: '1400px !important' }}>
         <ContentStyle>
           <Box>
             <Typography
@@ -301,8 +305,8 @@ export default function Discover() {
             </Typography>
           </Box>
         </ContentStyle>
+        <Slider {...settings}>{renderSlides()}</Slider>
       </Container>
-      <Slider {...settings}>{renderSlides()}</Slider>
     </RootStyle>
   );
 }
