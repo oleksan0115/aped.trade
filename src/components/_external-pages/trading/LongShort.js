@@ -94,9 +94,16 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
   }, [cPrice, collateralValue, currency]);
 
   useEffect(() => {
-    const lq = (1 / sliderValue) * Number(cPrice);
+    // Liquidation Price Distance = Open Price * (Collateral * 0.9 ) / Collateral / Leverage.
+    // If Long: Open Price - Liquidation Price Distance
+    // If Short: Open Price + Liquidation Price Distance.
+    const priceDis = (Number(cPrice) * (collateralValue * 0.9)) / collateralValue / sliderValue;
+
+    const lql = Number(cPrice) - priceDis;
+    const lqs = Number(cPrice) + priceDis;
+    const lq = longShort === 'long' ? lql : lqs;
     LiqPrice(lq.toFixed(3));
-  }, [sliderValue, cPrice]);
+  }, [sliderValue, collateralValue, cPrice, longShort]);
 
   useEffect(() => {
     let lastOHLCData = {};
@@ -431,7 +438,7 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
               }
             }}
           >
-            MARKET LONG
+            MARKET {longShort.toUpperCase()}
           </Button>
         </Box>
 

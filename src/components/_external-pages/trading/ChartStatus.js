@@ -28,7 +28,10 @@ function ChartStatus({ socket, currency, chartViewMode, lastPrice, onChartCurren
   const [price, setPrice] = useState(0);
 
   useEffect(() => {
-    setPrice(close);
+    if (close) {
+      console.log(close.toFixed(3));
+      setPrice(close.toFixed(3));
+    }
   }, [close]);
 
   useEffect(() => {
@@ -56,7 +59,7 @@ function ChartStatus({ socket, currency, chartViewMode, lastPrice, onChartCurren
         pair = t.sym;
       }
       try {
-        if (pair === pairString) setPrice(closePrice);
+        if (pair === pairString) setPrice(closePrice.toFixed(3));
       } catch (e) {
         /* Error hanlding codes */
       }
