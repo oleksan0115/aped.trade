@@ -166,8 +166,9 @@ export default function Discover() {
     ));
 
   useEffect(() => {
-    if (cryptoPrices.length > 0 && forexPrices.length > 0) {
-      // if (cryptoPrices.length > 0 && forexPrices.length > 0 && stocksPrices.length > 0) {
+    // if (cryptoPrices.length > 0 && forexPrices.length > 0) {
+    // console.log(cryptoPrices.length, forexPrices.length, stocksPrices.length);
+    if (cryptoPrices.length > 0 && forexPrices.length > 0 && stocksPrices.length > 0) {
       let selectedPrice = CRYPTOS;
       let mPrice = '';
 
@@ -204,11 +205,11 @@ export default function Discover() {
           });
         } else if (index === 2) {
           const tmpPrices = [];
-          // selectedPrice = STOCKS;
-          // selectedPrice.map((item, index) => {
-          //   tmpPrices.push({ ...item, price: stocksPrices[index][item.label] });
-          //   return 0;
-          // });
+          selectedPrice = STOCKS;
+          selectedPrice.map((item, index) => {
+            tmpPrices.push({ ...item, price: stocksPrices[index][item.label] });
+            return 0;
+          });
           tmpDiscovers.push({
             ...item,
             prices: tmpPrices
@@ -232,14 +233,14 @@ export default function Discover() {
     fetchData(PriceTypes[0]);
     fetchData(PriceTypes[1]);
     fetchData(PriceTypes[2]);
-    console.log(STOCKS);
+    // console.log(STOCKS);
   }, []);
 
   const fetchData = async (currencyName) => {
     try {
       const response = await fetch(`${process.env.REACT_APP_CHART_API_URL}/${currencyName}`).then((res) => res.json());
-      console.log(response);
-      if (response.length) {
+      console.log(currencyName, response, response.length);
+      if (response) {
         if (currencyName === 'cryptos') setCryptoPrices(response);
         else if (currencyName === 'forex') setForexPrices(response);
         else setStocksPrices(response.prices);

@@ -38,8 +38,8 @@ export default function CryptoPopover({ currency, onChangeCurrency, onChangeType
   }, []);
 
   useEffect(() => {
-    if (cryptoPrices.length > 0 && forexPrices.length > 0) {
-      // if (cryptoPrices.length > 0 && forexPrices.length > 0 && stocksPrices.length > 0) {
+    // if (cryptoPrices.length > 0 && forexPrices.length > 0) {
+    if (cryptoPrices.length > 0 && forexPrices.length > 0 && stocksPrices.length > 0) {
       const tmpPrices = [];
       let selectedPrice = CRYPTOS;
       let mPrice = '';
@@ -63,11 +63,11 @@ export default function CryptoPopover({ currency, onChangeCurrency, onChangeType
           });
           break;
         case 2:
-          // selectedPrice = STOCKS;
-          // selectedPrice.map((item, index) => {
-          //   tmpPrices.push({ ...item, price: stocksPrices[index][item.label] });
-          //   return 0;
-          // });
+          selectedPrice = STOCKS;
+          selectedPrice.map((item, index) => {
+            tmpPrices.push({ ...item, price: stocksPrices[index][item.label] });
+            return 0;
+          });
           break;
         default:
           selectedPrice = CRYPTOS;
