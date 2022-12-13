@@ -146,6 +146,13 @@ export default function Discover() {
                       <ListItemText primaryTypographyProps={{ variant: 'caption' }} sx={{ color: '#2FD593' }}>
                         {option.price}
                       </ListItemText>
+                      <ListItemText
+                        primaryTypographyProps={{ variant: 'caption' }}
+                        sx={{ color: option.changes > 0 ? '#2FD593' : '#FF4976' }}
+                      >
+                        {option.changes > 0 ? '+' : ''}
+                        {option.changes?.toFixed(2)}%
+                      </ListItemText>
                     </MenuItem>
                   ))}
                   {slide.prices.length > 5 && (
@@ -174,14 +181,16 @@ export default function Discover() {
 
       const tmpDiscovers = [];
 
-      const tmpDis = discovers;
-
-      tmpDis.map((item, index) => {
+      discovers.map((item, index) => {
         if (index === 0) {
           const tmpPrices = [];
           selectedPrice = CRYPTOS;
-          selectedPrice.map((item, index) => {
-            tmpPrices.push({ ...item, price: cryptoPrices[index][item.label] });
+          selectedPrice.map((item, idx) => {
+            tmpPrices.push({
+              ...item,
+              price: cryptoPrices[idx][item.label],
+              changes: cryptoPrices[idx].changes_24hrs
+            });
             return 0;
           });
           tmpDiscovers.push({
@@ -191,12 +200,13 @@ export default function Discover() {
         } else if (index === 1) {
           const tmpPrices = [];
           selectedPrice = FOREX;
-          selectedPrice.map((item) => {
+          console.log('Hello World', forexPrices);
+          selectedPrice.map((item, idx) => {
             forexPrices.map((forex) => {
               if (forex[item.label]) mPrice = forex[item.label];
               return 0;
             });
-            tmpPrices.push({ ...item, price: mPrice });
+            tmpPrices.push({ ...item, price: mPrice, changes: forexPrices[idx].changes_24hrs });
             return 0;
           });
           tmpDiscovers.push({
@@ -206,8 +216,12 @@ export default function Discover() {
         } else if (index === 2) {
           const tmpPrices = [];
           selectedPrice = STOCKS;
-          selectedPrice.map((item, index) => {
-            tmpPrices.push({ ...item, price: stocksPrices[index][item.label] });
+          selectedPrice.map((item, idx) => {
+            tmpPrices.push({
+              ...item,
+              price: stocksPrices[idx][item.label],
+              changes: stocksPrices[idx].changes_24hrs
+            });
             return 0;
           });
           tmpDiscovers.push({
@@ -239,11 +253,11 @@ export default function Discover() {
   const fetchData = async (currencyName) => {
     try {
       const response = await fetch(`${process.env.REACT_APP_CHART_API_URL}/${currencyName}`).then((res) => res.json());
-      console.log(currencyName, response, response.length);
+      console.log(`${process.env.REACT_APP_CHART_API_URL}/${currencyName}`, response, response.length);
       if (response) {
         if (currencyName === 'cryptos') setCryptoPrices(response);
         else if (currencyName === 'forex') setForexPrices(response);
-        else setStocksPrices(response.prices);
+        else setStocksPrices(response);
       }
     } catch (e) {
       console.error(e);
@@ -349,7 +363,7 @@ const CRYPTOS = [
   },
   {
     value: 'iota',
-    label: 'IOTA/USD',
+    label: 'IOT/USD',
     icon: '/static/icons/crypto/iota.png'
   },
   {
@@ -411,17 +425,17 @@ const FOREX = [
     icon: '/static/icons/crypto/fil.png'
   },
   {
-    label: 'USD/CNH',
+    label: 'CNH/USD',
     value: 'cnh',
     icon: '/static/icons/crypto/fil.png'
   },
   {
-    label: 'USD/JPY',
+    label: 'JPY/USD',
     value: 'jpy',
     icon: '/static/icons/crypto/fil.png'
   },
   {
-    label: 'USD/MXN',
+    label: 'MXN/USD',
     value: 'mxn',
     icon: '/static/icons/crypto/fil.png'
   }
