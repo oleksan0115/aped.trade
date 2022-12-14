@@ -29,29 +29,6 @@ const ContentStyle = styled((props) => <Stack spacing={5} {...props} />)(({ them
   zIndex: 10
 }));
 
-const discovers = [
-  {
-    name: 'CRYPTO',
-    value: 1,
-    prices: []
-  },
-  {
-    name: 'FOREX',
-    value: 2,
-    prices: []
-  },
-  {
-    name: 'STOCKS',
-    value: 3,
-    prices: []
-  },
-  {
-    name: 'COMMODITIES',
-    value: 4,
-    prices: []
-  }
-];
-
 // ----------------------------------------------------------------------
 
 export default function Discover() {
@@ -143,12 +120,15 @@ export default function Discover() {
                         <Box component="img" alt={option.label} src={option.icon} sx={{ width: 30, height: 30 }} />
                       </ListItemIcon>
                       <ListItemText primaryTypographyProps={{ variant: 'body2' }}>{option.label}</ListItemText>
-                      <ListItemText primaryTypographyProps={{ variant: 'caption' }} sx={{ color: '#2FD593' }}>
+                      <ListItemText
+                        primaryTypographyProps={{ variant: 'caption' }}
+                        sx={{ color: '#2FD593', textAlign: 'right' }}
+                      >
                         {option.price}
                       </ListItemText>
                       <ListItemText
                         primaryTypographyProps={{ variant: 'caption' }}
-                        sx={{ color: option.changes > 0 ? '#2FD593' : '#FF4976' }}
+                        sx={{ color: option.changes > 0 ? '#2FD593' : '#FF4976', textAlign: 'right' }}
                       >
                         {option.changes > 0 ? '+' : ''}
                         {option.changes?.toFixed(2)}%
@@ -173,87 +153,78 @@ export default function Discover() {
     ));
 
   useEffect(() => {
-    // if (cryptoPrices.length > 0 && forexPrices.length > 0) {
-    // console.log(cryptoPrices.length, forexPrices.length, stocksPrices.length);
-    if (cryptoPrices.length > 0 && forexPrices.length > 0 && stocksPrices.length > 0) {
-      let selectedPrice = CRYPTOS;
-      let mPrice = '';
+    let selectedPrice = CRYPTOS;
+    let mPrice = '';
 
-      const tmpDiscovers = [];
+    const tmpDiscovers = [];
 
-      discovers.map((item, index) => {
-        if (index === 0) {
-          const tmpPrices = [];
-          selectedPrice = CRYPTOS;
-          selectedPrice.map((item, idx) => {
-            tmpPrices.push({
-              ...item,
-              price: cryptoPrices[idx][item.label],
-              changes: cryptoPrices[idx].changes_24hrs
-            });
+    discovers.map((item, index) => {
+      if (index === 0 && cryptoPrices.length > 0) {
+        const tmpPrices = [];
+        selectedPrice = CRYPTOS;
+        selectedPrice.map((item, idx) => {
+          tmpPrices.push({
+            ...item,
+            price: cryptoPrices[idx][item.label],
+            changes: cryptoPrices[idx].changes_24hrs
+          });
+          return 0;
+        });
+        tmpDiscovers.push({
+          ...item,
+          prices: tmpPrices
+        });
+      } else if (index === 1 && forexPrices.length > 0) {
+        const tmpPrices = [];
+        selectedPrice = FOREX;
+        selectedPrice.map((item, idx) => {
+          forexPrices.map((forex) => {
+            if (forex[item.label]) mPrice = forex[item.label];
             return 0;
           });
-          tmpDiscovers.push({
+          tmpPrices.push({ ...item, price: mPrice, changes: forexPrices[idx].changes_24hrs });
+          return 0;
+        });
+        tmpDiscovers.push({
+          ...item,
+          prices: tmpPrices
+        });
+      } else if (index === 2 && stocksPrices.length > 0) {
+        const tmpPrices = [];
+        selectedPrice = STOCKS;
+        selectedPrice.map((item, idx) => {
+          tmpPrices.push({
             ...item,
-            prices: tmpPrices
+            price: stocksPrices[idx][item.label],
+            changes: stocksPrices[idx].changes_24hrs
           });
-        } else if (index === 1) {
-          const tmpPrices = [];
-          selectedPrice = FOREX;
-          console.log('Hello World', forexPrices);
-          selectedPrice.map((item, idx) => {
-            forexPrices.map((forex) => {
-              if (forex[item.label]) mPrice = forex[item.label];
-              return 0;
-            });
-            tmpPrices.push({ ...item, price: mPrice, changes: forexPrices[idx].changes_24hrs });
-            return 0;
-          });
-          tmpDiscovers.push({
-            ...item,
-            prices: tmpPrices
-          });
-        } else if (index === 2) {
-          const tmpPrices = [];
-          selectedPrice = STOCKS;
-          selectedPrice.map((item, idx) => {
-            tmpPrices.push({
-              ...item,
-              price: stocksPrices[idx][item.label],
-              changes: stocksPrices[idx].changes_24hrs
-            });
-            return 0;
-          });
-          tmpDiscovers.push({
-            ...item,
-            prices: tmpPrices
-          });
-        } else {
-          tmpDiscovers.push({
-            ...item,
-            prices: []
-          });
-        }
-        return tmpDiscovers;
-      });
+          return 0;
+        });
+        tmpDiscovers.push({
+          ...item,
+          prices: tmpPrices
+        });
+      } else {
+        tmpDiscovers.push({
+          ...item,
+          prices: []
+        });
+      }
+      return tmpDiscovers;
+    });
 
-      console.log(tmpDiscovers);
-
-      setNewDiscovers([...tmpDiscovers]);
-    }
+    setNewDiscovers([...tmpDiscovers]);
   }, [cryptoPrices, forexPrices, stocksPrices]);
 
   useEffect(() => {
     fetchData(PriceTypes[0]);
     fetchData(PriceTypes[1]);
     fetchData(PriceTypes[2]);
-    // console.log(STOCKS);
   }, []);
 
   const fetchData = async (currencyName) => {
     try {
       const response = await fetch(`${process.env.REACT_APP_CHART_API_URL}/${currencyName}`).then((res) => res.json());
-      console.log(`${process.env.REACT_APP_CHART_API_URL}/${currencyName}`, response, response.length);
       if (response) {
         if (currencyName === 'cryptos') setCryptoPrices(response);
         else if (currencyName === 'forex') setForexPrices(response);
@@ -509,3 +480,26 @@ const STOCKS = [
   }
 ];
 const PriceTypes = ['cryptos', 'forex', 'stocks'];
+
+const discovers = [
+  {
+    name: 'CRYPTO',
+    value: 1,
+    prices: []
+  },
+  {
+    name: 'FOREX',
+    value: 2,
+    prices: []
+  },
+  {
+    name: 'STOCKS',
+    value: 3,
+    prices: []
+  },
+  {
+    name: 'COMMODITIES',
+    value: 4,
+    prices: []
+  }
+];

@@ -34,49 +34,55 @@ export default function CryptoPopover({ currency, onChangeCurrency, onChangeType
     fetchData(PriceTypes[0]);
     fetchData(PriceTypes[1]);
     fetchData(PriceTypes[2]);
-    console.log(STOCKS);
   }, []);
 
   useEffect(() => {
-    // if (cryptoPrices.length > 0 && forexPrices.length > 0) {
-    if (cryptoPrices.length > 0 && forexPrices.length > 0 && stocksPrices.length > 0) {
-      const tmpPrices = [];
-      let selectedPrice = CRYPTOS;
-      let mPrice = '';
-      switch (value) {
-        case 0:
+    const tmpPrices = [];
+    let selectedPrice = CRYPTOS;
+    let mPrice = '';
+    switch (value) {
+      case 0:
+        if (cryptoPrices.length > 0) {
           selectedPrice = CRYPTOS;
-          selectedPrice.map((item, index) => {
-            tmpPrices.push({ ...item, price: cryptoPrices[index][item.label] });
+          selectedPrice.map((item, idx) => {
+            tmpPrices.push({
+              ...item,
+              price: cryptoPrices[idx][item.label],
+              changes: cryptoPrices[idx].changes_24hrs
+            });
             return 0;
           });
-          break;
-        case 1:
+        }
+        break;
+      case 1:
+        if (forexPrices.length > 0) {
           selectedPrice = FOREX;
-          selectedPrice.map((item) => {
+          selectedPrice.map((item, idx) => {
             forexPrices.map((forex) => {
               if (forex[item.label]) mPrice = forex[item.label];
               return 0;
             });
-            tmpPrices.push({ ...item, price: mPrice });
+            tmpPrices.push({ ...item, price: mPrice, changes: forexPrices[idx].changes_24hrs });
             return 0;
           });
-          break;
-        case 2:
+        }
+        break;
+      case 2:
+        if (stocksPrices.length > 0) {
           selectedPrice = STOCKS;
-          selectedPrice.map((item, index) => {
-            tmpPrices.push({ ...item, price: stocksPrices[index][item.label] });
+          selectedPrice.map((item, idx) => {
+            tmpPrices.push({ ...item, price: stocksPrices[idx][item.label], changes: stocksPrices[idx].changes_24hrs });
             return 0;
           });
-          break;
-        default:
-          selectedPrice = CRYPTOS;
-          break;
-      }
-      // const cur = selectedPrice.filter((curObj) => curObj.value === currency);
-
-      setNewPrices([...tmpPrices]);
+        }
+        break;
+      default:
+        selectedPrice = CRYPTOS;
+        break;
     }
+    // const cur = selectedPrice.filter((curObj) => curObj.value === currency);
+
+    setNewPrices([...tmpPrices]);
   }, [currency, cryptoPrices, forexPrices, stocksPrices, value]);
 
   const handleOpen = () => {
@@ -103,7 +109,7 @@ export default function CryptoPopover({ currency, onChangeCurrency, onChangeType
       if (response.length) {
         if (currencyName === 'cryptos') setCryptoPrices(response);
         else if (currencyName === 'forex') setForexPrices(response);
-        else setStocksPrices(response.prices);
+        else setStocksPrices(response);
       }
     } catch (e) {
       console.error(e);
@@ -163,8 +169,18 @@ export default function CryptoPopover({ currency, onChangeCurrency, onChangeType
                 <Box component="img" alt={option.label} src={option.icon} sx={{ width: 30, height: 30 }} />
               </ListItemIcon>
               <ListItemText primaryTypographyProps={{ variant: 'body2' }}>{option.label}</ListItemText>
-              <ListItemText primaryTypographyProps={{ variant: 'caption' }} sx={{ color: '#2FD593' }}>
+              <ListItemText
+                primaryTypographyProps={{ variant: 'caption' }}
+                sx={{ color: '#2FD593', textAlign: 'right' }}
+              >
                 {option.price}
+              </ListItemText>
+              <ListItemText
+                primaryTypographyProps={{ variant: 'caption' }}
+                sx={{ color: option.changes > 0 ? '#2FD593' : '#FF4976', textAlign: 'right' }}
+              >
+                {option.changes > 0 ? '+' : ''}
+                {option.changes?.toFixed(2)}%
               </ListItemText>
             </MenuItem>
           ))}
@@ -181,8 +197,18 @@ export default function CryptoPopover({ currency, onChangeCurrency, onChangeType
                 <Box component="img" alt={option.label} src={option.icon} sx={{ width: 30, height: 30 }} />
               </ListItemIcon>
               <ListItemText primaryTypographyProps={{ variant: 'body2' }}>{option.label}</ListItemText>
-              <ListItemText primaryTypographyProps={{ variant: 'caption' }} sx={{ color: '#2FD593' }}>
+              <ListItemText
+                primaryTypographyProps={{ variant: 'caption' }}
+                sx={{ color: '#2FD593', textAlign: 'right' }}
+              >
                 {option.price}
+              </ListItemText>
+              <ListItemText
+                primaryTypographyProps={{ variant: 'caption' }}
+                sx={{ color: option.changes > 0 ? '#2FD593' : '#FF4976', textAlign: 'right' }}
+              >
+                {option.changes > 0 ? '+' : ''}
+                {option.changes?.toFixed(2)}%
               </ListItemText>
             </MenuItem>
           ))}
@@ -199,8 +225,18 @@ export default function CryptoPopover({ currency, onChangeCurrency, onChangeType
                 <Box component="img" alt={option.label} src={option.icon} sx={{ width: 30, height: 30 }} />
               </ListItemIcon>
               <ListItemText primaryTypographyProps={{ variant: 'body2' }}>{option.label}</ListItemText>
-              <ListItemText primaryTypographyProps={{ variant: 'caption' }} sx={{ color: '#2FD593' }}>
+              <ListItemText
+                primaryTypographyProps={{ variant: 'caption' }}
+                sx={{ color: '#2FD593', textAlign: 'right' }}
+              >
                 {option.price}
+              </ListItemText>
+              <ListItemText
+                primaryTypographyProps={{ variant: 'caption' }}
+                sx={{ color: option.changes > 0 ? '#2FD593' : '#FF4976', textAlign: 'right' }}
+              >
+                {option.changes > 0 ? '+' : ''}
+                {option.changes?.toFixed(2)}%
               </ListItemText>
             </MenuItem>
           ))}
@@ -280,8 +316,8 @@ const CRYPTOS = [
     icon: '/static/icons/crypto/eos.png'
   },
   {
-    value: 'iota',
-    label: 'IOTA/USD',
+    value: 'iot',
+    label: 'IOT/USD',
     icon: '/static/icons/crypto/iota.png'
   },
   {
