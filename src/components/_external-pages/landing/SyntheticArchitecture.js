@@ -87,7 +87,7 @@ export default function SyntheticArchitecture() {
                 textAlign: 'center'
               }}
             >
-              A UNIQUE, FULLY-SYNTHETIC
+              UNIQUE, FULLY-SYNTHETIC
               <br />
               ARCHITECTURE
             </Typography>
@@ -118,7 +118,7 @@ export default function SyntheticArchitecture() {
                     <Typography
                       sx={{
                         color: 'common.white',
-                        fontFamily: 'BarlowRegular',
+                        fontFamily: 'monospace',
                         fontWeight: 100,
                         fontSize: '16px',
                         maxWidth: 220,
@@ -164,7 +164,7 @@ export default function SyntheticArchitecture() {
 
         <BoxStyle>
           <Stack direction={{ xs: 'column', md: 'row' }} spacing={3} alignItems="center" justifyContent="space-between">
-            <Box sx={{ maxWidth: 500 }}>
+            <Box sx={{ maxWidth: 500, textAlign: 'left' }}>
               <Typography
                 variant="h2"
                 sx={{
@@ -173,16 +173,19 @@ export default function SyntheticArchitecture() {
                   [theme.breakpoints.down('md')]: { fontSize: '28px', textAlign: 'center' }
                 }}
               >
-                JOIN OUR <span className="gradient-text">WAITLIST</span>
+                JOIN <span className="gradient-text">WAITLIST</span>
               </Typography>
               <Typography
                 variant="body1"
                 sx={{
-                  fontFamily: 'BarlowRegular',
-                  [theme.breakpoints.down('md')]: { fontSize: '14px', textAlign: 'center' }
+                  fontFamily: 'monospace',
+                  [theme.breakpoints.down('md')]: {
+                    fontSize: '14px',
+                    textAlign: 'left'
+                  }
                 }}
               >
-                Connect wallet to become an early ape.
+                Join Discord to become an early ape.
               </Typography>
             </Box>
 
@@ -190,10 +193,11 @@ export default function SyntheticArchitecture() {
               <Button
                 className="aped-button"
                 variant="contained"
-                onClick={() => setDialogOpen(true)}
+                // onClick={() => setDialogOpen(true)}
+                href="https://discord.com/invite/FbFjCz4PAR"
                 sx={{ zIndex: 3 }}
               >
-                JOIN WAITLIST
+                Join Discord
               </Button>
             </motion.div>
           </Stack>
@@ -270,14 +274,14 @@ export default function SyntheticArchitecture() {
 
 const architectures = [
   {
-    title: 'No sign up required',
+    title: 'No Sign-Up Required',
     content:
-      'Keep what’s important to you. We don’t believe in having access to your funds or identity past what is required for us to operate. As of now, we only need trader collateral on a trade-by-trade basis.'
+      'Keep what’s important to you. We don’t believe in having access to your funds or identity past what is required for us to operate. As of now, we only need trader collateral on a trade-by-trade basis. Your keys, your crypto.'
   },
   {
     title: 'Most Accurate Asset Pricing Available',
     content:
-      'The most accurate asset pricing. We average prices from multiple exchanges to eliminate the need for an order book. Learn more about Chainlink Dons. (link out to documentation about chainlink dons using Chainlink Dons text as hyperlink)'
+      'The most accurate asset pricing. We average prices from multiple exchanges to eliminate the need for an order book.'
   },
   {
     title: 'Completely Decentralized architecture',
@@ -290,12 +294,12 @@ const architectures = [
       'No more scam wicks. Many exchanges accept scam wicks as a norm in times of low volume. Using custom Chainlink Dons, we average prices from multiple exchanges to protect traders.'
   },
   {
-    title: 'Chain-agnostic',
-    content: 'Available for on preferred network. launch planned on arbitrum, optimism & polygon.'
+    title: 'Chain-Agnostic',
+    content: 'Trade on your preferred network. Planning to launch on Polygon, Arbitrum & Optimism.'
   },
   {
-    title: 'UP TO 1000X LEVERAGE',
-    content: 'Crypto 5x to 150x, Forex 10x to 1000x, Stocks 5x to 100x'
+    title: 'Up to 1000x Leverage',
+    content: 'Crypto up to 150x, Forex up to 1000x, Stocks and Commodities up to 100x'
   },
   {
     title: 'Fully Synthetic',
@@ -303,9 +307,8 @@ const architectures = [
       'Synthetic architectures means no underlying assets being traded are actually bought or sold by us. We simulate these actions through smart contracts. Critical trade statistics are tracked algorithmically.'
   },
   {
-    title: 'Lower trading fees',
-    content:
-      'Lower overhead means lower fees. Decentralized architecture passes savings back to users.(link to docs about dao governance)'
+    title: 'Lower Trading Fees',
+    content: 'Lower overhead means lower fees. Decentralized architecture passes savings back to users.'
   },
   {
     title: 'Superior capital efficiency',
@@ -313,7 +316,17 @@ const architectures = [
       'With no order book and trades handled synthetically, we only need one liquidity pool. Adding new pairs is instant. Specific pair liquidity is no longer a problem.'
   },
   {
-    title: 'USDC, USDT & DAI accpeted',
-    content: 'Trade and paid in the stablecoin of your choice. currently accepting usdc, usdt & dai.'
+    title: 'USDC, USDT & DAI Accepted',
+    content: 'Trade and get paid in the stablecoin of your choice. Initially accepting USDC, USDT & DAI.'
+  },
+  {
+    title: 'Bonding Curve',
+    content:
+      "The Aped token's bonding curve ensures that its price is always reflective of its underlying value. As more and more users participate in the Aped ecosystem and demand for the token increases, the price of the Aped token will naturally rise along the bonding curve."
+  },
+  {
+    title: 'Proof of Reserve',
+    content:
+      'Proof of Reserves built in by default. The on-chain vault provides full transparency and guaranteed liquidity.'
   }
 ];
