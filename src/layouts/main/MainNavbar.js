@@ -10,7 +10,7 @@ import Logo from '../../components/Logo';
 import JoinWaitlistDialog from '../../components/JoinWaitlistDialog';
 // import Label from '../../components/Label';
 import { MHidden } from '../../components/@material-extend';
-import Iconify from '../../components/Iconify';
+// import Iconify from '../../components/Iconify';
 //
 import MenuMobile from './MenuMobile';
 import navConfig from './MenuConfig';
@@ -49,12 +49,14 @@ export default function MainNavbar() {
             <Button
               className="aped-button"
               variant="contained"
-              onClick={() => setDialogOpen(true)}
+              // onClick={() => setDialogOpen(true)}
+              href="https://discord.com/invite/FbFjCz4PAR"
+              _target="blank"
               sx={{ marginLeft: 9 }}
             >
-              JOIN WAITLIST
+              Join Discord
             </Button>
-            <Button
+            {/* <Button
               className="aped-button reverse-gradient"
               variant="contained"
               // onClick={() => setDialogOpen(true)}
@@ -62,7 +64,7 @@ export default function MainNavbar() {
               sx={{ marginLeft: 9, paddingLeft: '5px !important', paddingRight: '5px !important' }}
             >
               <Iconify icon="fluent-mdl2:world" sx={{ width: 30, height: 30 }} />
-            </Button>
+            </Button> */}
           </MHidden>
           <MHidden width="mdUp">
             <MenuMobile isOffset={isOffset} isHome={isHome} navConfig={navConfig} />

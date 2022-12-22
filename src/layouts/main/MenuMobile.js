@@ -118,7 +118,7 @@ export default function MenuMobile({ isOffset, isHome }) {
           <Iconify icon="line-md:menu-to-close-alt-transition" sx={{ width: 30, height: 30 }} />
         </MIconButton>
         <Scrollbar>
-          <Box sx={{ textAlign: 'center' }}>
+          <Box sx={{ textAlign: 'center', py: 2 }}>
             <Stack direction="column" spacing={1} sx={{ marginTop: 20 }}>
               {menuConfig.map((link) => (
                 <LinkStyle key={link.title} href={link.path} onClick={handleDrawerClose}>
@@ -126,8 +126,14 @@ export default function MenuMobile({ isOffset, isHome }) {
                 </LinkStyle>
               ))}
             </Stack>
-            <Button className="aped-button" variant="contained" onClick={() => setDialogOpen(true)} sx={{ mt: 5 }}>
-              JOIN WAITLIST
+            <Button
+              className="aped-button"
+              variant="contained"
+              href="https://discord.com/invite/FbFjCz4PAR"
+              // onClick={() => setDialogOpen(true)}
+              sx={{ mt: 5 }}
+            >
+              JOIN DISCORD
             </Button>
           </Box>
         </Scrollbar>
