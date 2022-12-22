@@ -173,7 +173,7 @@ export default function SyntheticArchitecture() {
                   [theme.breakpoints.down('md')]: { fontSize: '28px', textAlign: 'center' }
                 }}
               >
-                JOIN <span className="gradient-text">WAITLIST</span>
+                JOIN <span className="gradient-text">DISCORD</span>
               </Typography>
               <Typography
                 variant="body1"
