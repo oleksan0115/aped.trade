@@ -91,8 +91,13 @@ export default function LandingHero() {
                 </Typography>
               </motion.div>
               <motion.div variants={varFadeInRight}>
-                <Button className="aped-button" variant="contained" onClick={() => setDialogOpen(true)}>
-                  JOIN WAITLIST
+                <Button
+                  className="aped-button"
+                  href="https://discord.com/invite/FbFjCz4PAR"
+                  variant="contained"
+                  // onClick={() => setDialogOpen(true)}
+                >
+                  Join Discord
                 </Button>
               </motion.div>
 
