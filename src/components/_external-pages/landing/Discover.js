@@ -109,13 +109,22 @@ export default function Discover() {
               </Box>
             </div>
             <div className="flip-card-back">
-              <Typography variant="subtitle1" my={1}>
-                {slide.name}
-              </Typography>
+              <Stack direction="row" justifyContent="space-around" sx={{ fontStyle: 'italic' }}>
+                <Typography variant="subtitle1" my={1}>
+                  MARKETS
+                </Typography>
+                <Typography variant="subtitle1" my={1} sx={{ marginLeft: 3 }}>
+                  PRICE
+                </Typography>
+                <Typography variant="subtitle1" my={1}>
+                  CHANGE
+                </Typography>
+              </Stack>
+
               {slide.prices.length > 0 ? (
                 <>
                   {slide.prices.slice(0, 5).map((option) => (
-                    <MenuItem key={option.value} sx={{ py: 1, px: 2.5, [theme.breakpoints.down('md')]: { px: 0 } }}>
+                    <MenuItem key={option.value} sx={{ p: 1, [theme.breakpoints.down('md')]: { px: 0 } }}>
                       <ListItemIcon>
                         <Box
                           component="img"
@@ -127,7 +136,7 @@ export default function Discover() {
                       <ListItemText primaryTypographyProps={{ variant: 'body2' }}>{option.label}</ListItemText>
                       <ListItemText
                         primaryTypographyProps={{ variant: 'caption' }}
-                        sx={{ color: option.changes > 0 ? '#2FD593' : '#FF4976', textAlign: 'right' }}
+                        sx={{ color: option.changes > 0 ? '#2FD593' : '#FF4976', textAlign: 'right', mr: 1 }}
                       >
                         {option.price > 0 ? (
                           <span>{option.price > 99 ? option.price : option.price?.toFixed(4)}</span>
