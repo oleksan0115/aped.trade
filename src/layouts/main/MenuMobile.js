@@ -5,14 +5,14 @@ import menu2Fill from '@iconify/icons-eva/menu-2-fill';
 import { NavLink as RouterLink, useLocation } from 'react-router-dom';
 // material
 import { alpha, experimentalStyled as styled, useTheme } from '@material-ui/core/styles';
-import { Box, Drawer, Link, ListItem, ListItemText, Stack, Button } from '@material-ui/core';
+import { Box, Drawer, ListItem, ListItemText, Button } from '@material-ui/core';
 // components
 import Iconify from '../../components/Iconify';
 import Scrollbar from '../../components/Scrollbar';
 import { MIconButton } from '../../components/@material-extend';
 import JoinWaitlistDialog from '../../components/JoinWaitlistDialog';
 //
-import menuConfig from './MenuConfig';
+// import menuConfig from './MenuConfig';
 
 // ----------------------------------------------------------------------
 
@@ -28,15 +28,15 @@ const ListItemStyle = styled(ListItem)(({ theme }) => ({
   color: theme.palette.text.secondary
 }));
 
-const LinkStyle = styled(Link)(({ theme }) => ({
-  fontFamily: 'BarlowExtraBold',
-  height: ITEM_SIZE,
-  fontSize: '20px',
-  textTransform: 'uppercase',
-  padding: theme.spacing(1.8, 0),
-  margin: `${theme.spacing(2, 0)} !important`,
-  color: 'white'
-}));
+// const LinkStyle = styled(Link)(({ theme }) => ({
+//   fontFamily: 'BarlowExtraBold',
+//   height: ITEM_SIZE,
+//   fontSize: '20px',
+//   textTransform: 'uppercase',
+//   padding: theme.spacing(1.8, 0),
+//   margin: `${theme.spacing(2, 0)} !important`,
+//   color: 'white'
+// }));
 
 // ----------------------------------------------------------------------
 
@@ -118,20 +118,29 @@ export default function MenuMobile({ isOffset, isHome }) {
           <Iconify icon="line-md:menu-to-close-alt-transition" sx={{ width: 30, height: 30 }} />
         </MIconButton>
         <Scrollbar>
-          <Box sx={{ textAlign: 'center', py: 2 }}>
-            <Stack direction="column" spacing={1} sx={{ marginTop: 20 }}>
+          <Box
+            sx={{
+              textAlign: 'center',
+              py: 2,
+              display: 'flex',
+              height: '100vh',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            {/* <Stack direction="column" spacing={1} sx={{ marginTop: 20 }}>
               {menuConfig.map((link) => (
                 <LinkStyle key={link.title} href={link.path} onClick={handleDrawerClose}>
                   {link.title}
                 </LinkStyle>
               ))}
-            </Stack>
+            </Stack> */}
             <Button
               className="aped-button"
               variant="contained"
               href="https://discord.com/invite/FbFjCz4PAR"
               // onClick={() => setDialogOpen(true)}
-              sx={{ mt: 5 }}
+              // sx={{ mt: 5 }}
             >
               JOIN DISCORD
             </Button>
