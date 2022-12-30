@@ -111,7 +111,7 @@ export default function MenuMobile({ isOffset, isHome }) {
         open={mobileOpen}
         onClose={handleDrawerClose}
         ModalProps={{ keepMounted: true }}
-        PaperProps={{ sx: { pb: 5, width: '100%' } }}
+        PaperProps={{ sx: { width: '100%' } }}
         sx={{ '& .MuiPaper-root': { backgroundColor: theme.palette.grey[900] } }}
       >
         <MIconButton onClick={handleDrawerClose} sx={{ position: 'absolute', right: 5, top: 5 }}>
@@ -121,7 +121,7 @@ export default function MenuMobile({ isOffset, isHome }) {
           <Box
             sx={{
               textAlign: 'center',
-              py: 2,
+              // py: 2,
               display: 'flex',
               height: '100vh',
               alignItems: 'center',
