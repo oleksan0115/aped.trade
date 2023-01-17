@@ -134,7 +134,7 @@ export default function CryptoPopover({ currency, onChnageCurrencyDetail, onChan
         <img
           src="/static/icons/trading_ui/trading_arrow_button.png"
           alt="two arrow"
-          style={{ width: 40, height: 'auto', marginLeft: 5, marginRight: 10 }}
+          style={{ width: 35, height: 'auto', marginLeft: 5, marginRight: 10 }}
         />
       </Stack>
 
