@@ -180,7 +180,7 @@ export default function SyntheticArchitecture() {
                 sx={{
                   fontFamily: 'monospace',
                   [theme.breakpoints.down('md')]: {
-                    fontSize: '14px',
+                    fontSize: '12px',
                     textAlign: 'left'
                   }
                 }}

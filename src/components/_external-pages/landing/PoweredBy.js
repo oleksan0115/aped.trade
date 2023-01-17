@@ -95,7 +95,6 @@ const POWEREDBY = [
   '/static/landing/poweredby/zksync.png',
   '/static/landing/poweredby/arbitrum.png',
   '/static/landing/poweredby/polygon.png',
-  '/static/landing/poweredby/optimism.png',
   '/static/landing/poweredby/chainlink.svg',
   '/static/landing/poweredby/marker.png'
 ];

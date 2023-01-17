@@ -88,30 +88,30 @@ const CURRENCIES = [
     value: 'usdc',
     label: 'USD Coin',
     icon: '/static/icons/crypto/usdc.png'
-  },
-  {
-    value: 'busd',
-    label: 'Binance USD',
-    icon: '/static/icons/crypto/busd.png'
-  },
-  {
-    value: 'frax',
-    label: 'Frax',
-    icon: '/static/icons/crypto/frax.png'
-  },
-  {
-    value: 'pax',
-    label: 'Pax Dollar',
-    icon: '/static/icons/crypto/pax.webp'
-  },
-  {
-    value: 'tusd',
-    label: 'TrueUSD',
-    icon: '/static/icons/crypto/tusd.png'
-  },
-  {
-    value: 'gemd',
-    label: 'Gemini Dollar',
-    icon: '/static/icons/crypto/gemd.png'
   }
+  // {
+  //   value: 'busd',
+  //   label: 'Binance USD',
+  //   icon: '/static/icons/crypto/busd.png'
+  // },
+  // {
+  //   value: 'frax',
+  //   label: 'Frax',
+  //   icon: '/static/icons/crypto/frax.png'
+  // },
+  // {
+  //   value: 'pax',
+  //   label: 'Pax Dollar',
+  //   icon: '/static/icons/crypto/pax.webp'
+  // },
+  // {
+  //   value: 'tusd',
+  //   label: 'TrueUSD',
+  //   icon: '/static/icons/crypto/tusd.png'
+  // },
+  // {
+  //   value: 'gemd',
+  //   label: 'Gemini Dollar',
+  //   icon: '/static/icons/crypto/gemd.png'
+  // }
 ];

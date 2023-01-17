@@ -109,34 +109,56 @@ export default function Discover() {
               </Box>
             </div>
             <div className="flip-card-back">
-              <Typography variant="subtitle1" my={1}>
-                {slide.name}
-              </Typography>
+              <Stack direction="row" justifyContent="space-around" sx={{ fontStyle: 'italic' }}>
+                <Typography variant="subtitle1" my={1}>
+                  MARKETS
+                </Typography>
+                <Typography variant="subtitle1" my={1} sx={{ marginLeft: 3 }}>
+                  PRICE
+                </Typography>
+                <Typography variant="subtitle1" my={1}>
+                  CHANGE
+                </Typography>
+              </Stack>
+
               {slide.prices.length > 0 ? (
                 <>
                   {slide.prices.slice(0, 5).map((option) => (
-                    <MenuItem key={option.value} sx={{ py: 1, px: 2.5 }}>
+                    <MenuItem key={option.value} sx={{ p: 1, [theme.breakpoints.down('md')]: { px: 0 } }}>
                       <ListItemIcon>
-                        <Box component="img" alt={option.label} src={option.icon} sx={{ width: 30, height: 30 }} />
+                        <Box
+                          component="img"
+                          alt={option.label}
+                          src={option.icon}
+                          sx={{ width: 30, height: 30, borderRadius: '50%' }}
+                        />
                       </ListItemIcon>
                       <ListItemText primaryTypographyProps={{ variant: 'body2' }}>{option.label}</ListItemText>
                       <ListItemText
                         primaryTypographyProps={{ variant: 'caption' }}
-                        sx={{ color: '#2FD593', textAlign: 'right' }}
+                        sx={{ color: option.changes > 0 ? '#2FD593' : '#FF4976', textAlign: 'right', mr: 1 }}
                       >
-                        {option.price}
+                        {option.price > 0 ? (
+                          <span>{option.price > 99 ? option.price : option.price?.toFixed(4)}</span>
+                        ) : (
+                          <span>CLOSED</span>
+                        )}
                       </ListItemText>
                       <ListItemText
                         primaryTypographyProps={{ variant: 'caption' }}
                         sx={{ color: option.changes > 0 ? '#2FD593' : '#FF4976', textAlign: 'right' }}
                       >
-                        {option.changes > 0 ? '+' : ''}
-                        {option.changes?.toFixed(2)}%
+                        {option.price > 0 && (
+                          <span>
+                            {option.changes > 0 ? '+' : ''}
+                            {option.changes?.toFixed(2)}% (24H)
+                          </span>
+                        )}
                       </ListItemText>
                     </MenuItem>
                   ))}
                   {slide.prices.length > 5 && (
-                    <Typography variant="body2" sx={{ textAlign: 'center', mt: 2 }}>
+                    <Typography variant="body2" sx={{ textAlign: 'center', mt: 0 }}>
                       {slide.prices.length - 5} more pairs available
                     </Typography>
                   )}
@@ -383,32 +405,32 @@ const FOREX = [
   {
     label: 'EUR/USD',
     value: 'eur',
-    icon: '/static/icons/crypto/fil.png'
+    icon: '/static/icons/forex/EU.svg'
   },
   {
     label: 'AUD/USD',
     value: 'aud',
-    icon: '/static/icons/crypto/fil.png'
+    icon: '/static/icons/forex/AU.svg'
   },
   {
     label: 'GBP/USD',
     value: 'gbp',
-    icon: '/static/icons/crypto/fil.png'
+    icon: '/static/icons/forex/GB.svg'
   },
   {
     label: 'CNH/USD',
     value: 'cnh',
-    icon: '/static/icons/crypto/fil.png'
+    icon: '/static/icons/forex/CN.svg'
   },
   {
     label: 'JPY/USD',
     value: 'jpy',
-    icon: '/static/icons/crypto/fil.png'
+    icon: '/static/icons/forex/JP.svg'
   },
   {
     label: 'MXN/USD',
     value: 'mxn',
-    icon: '/static/icons/crypto/fil.png'
+    icon: '/static/icons/forex/MX.svg'
   }
 ];
 
@@ -416,67 +438,67 @@ const STOCKS = [
   {
     label: 'TSLA',
     value: 'tsla',
-    icon: '/static/icons/crypto/stock.png'
+    icon: '/static/icons/stocks/tesla.svg'
   },
   {
     label: 'AAPL',
     value: 'aapl',
-    icon: '/static/icons/crypto/stock.png'
+    icon: '/static/icons/stocks/apple.svg'
   },
   {
     label: 'AMZN',
     value: 'amzn',
-    icon: '/static/icons/crypto/stock.png'
+    icon: '/static/icons/stocks/amazon.svg'
   },
   {
     label: 'MSFT',
     value: 'msft',
-    icon: '/static/icons/crypto/stock.png'
+    icon: '/static/icons/stocks/microsoft.svg'
   },
   {
     label: 'SNAP',
     value: 'snap',
-    icon: '/static/icons/crypto/stock.png'
+    icon: '/static/icons/stocks/snap.svg'
   },
   {
     label: 'AXP',
     value: 'axp',
-    icon: '/static/icons/crypto/stock.png'
+    icon: '/static/icons/stocks/american-express.svg'
   },
   {
     label: 'CSCO',
     value: 'csco',
-    icon: '/static/icons/crypto/stock.png'
+    icon: '/static/icons/stocks/cisco.svg'
   },
   {
     label: 'T',
     value: 't',
-    icon: '/static/icons/crypto/stock.png'
+    icon: '/static/icons/stocks/at-and-t.svg'
   },
   {
     label: 'DIS',
     value: 'dis',
-    icon: '/static/icons/crypto/stock.png'
+    icon: '/static/icons/stocks/walt-disney.svg'
   },
   {
     label: 'ABBV',
     value: 'abbv',
-    icon: '/static/icons/crypto/stock.png'
+    icon: '/static/icons/stocks/abbvie.svg'
   },
   {
     label: 'MMM',
     value: 'mmm',
-    icon: '/static/icons/crypto/stock.png'
+    icon: '/static/icons/stocks/3m.svg'
   },
   {
     label: 'JPM',
     value: 'jpm',
-    icon: '/static/icons/crypto/stock.png'
+    icon: '/static/icons/stocks/jpmorgan-chase.svg'
   },
   {
     label: 'JNJ',
     value: 'jnj',
-    icon: '/static/icons/crypto/stock.png'
+    icon: '/static/icons/stocks/johnson-and-johnson.svg'
   }
 ];
 const PriceTypes = ['cryptos', 'forex', 'stocks'];
