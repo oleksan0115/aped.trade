@@ -14,11 +14,12 @@ import Iconify from '../../Iconify';
 
 CryptoPopover.propTypes = {
   currency: PropTypes.string,
+  onChnageCurrencyDetail: PropTypes.func,
   onChangeCurrency: PropTypes.func,
   onChangeType: PropTypes.func
 };
 
-export default function CryptoPopover({ currency, onChangeCurrency, onChangeType }) {
+export default function CryptoPopover({ currency, onChnageCurrencyDetail, onChangeCurrency, onChangeType }) {
   const theme = useTheme();
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
@@ -80,8 +81,8 @@ export default function CryptoPopover({ currency, onChangeCurrency, onChangeType
         selectedPrice = CRYPTOS;
         break;
     }
-    // const cur = selectedPrice.filter((curObj) => curObj.value === currency);
-
+    const cur = tmpPrices.find((curObj) => curObj.value === currency);
+    onChnageCurrencyDetail(cur);
     setNewPrices([...tmpPrices]);
   }, [currency, cryptoPrices, forexPrices, stocksPrices, value]);
 
@@ -127,12 +128,14 @@ export default function CryptoPopover({ currency, onChangeCurrency, onChangeType
         sx={{
           cursor: 'pointer',
           pl: 1,
-          borderRadius: 1,
-          '&:hover': { backgroundColor: '#00000047' }
+          borderRadius: 1
         }}
       >
-        <Typography variant="h4">{currency ? upperCase(currency) : 'BTC'}</Typography>
-        <img src="/static/icons/trading_ui/two_down_arrow.svg" alt="two arrow" style={{ width: 25 }} />
+        <img
+          src="/static/icons/trading_ui/trading_arrow_button.png"
+          alt="two arrow"
+          style={{ width: 40, height: 'auto', marginLeft: 5, marginRight: 10 }}
+        />
       </Stack>
 
       <MenuPopover open={open} onClose={handleClose} anchorEl={anchorRef.current} sx={{ py: 1, width: 320 }}>
@@ -194,7 +197,12 @@ export default function CryptoPopover({ currency, onChangeCurrency, onChangeType
               sx={{ py: 1, px: 2.5 }}
             >
               <ListItemIcon>
-                <Box component="img" alt={option.label} src={option.icon} sx={{ width: 30, height: 30 }} />
+                <Box
+                  component="img"
+                  alt={option.label}
+                  src={option.icon}
+                  sx={{ width: 30, height: 30, borderRadius: '50%' }}
+                />
               </ListItemIcon>
               <ListItemText primaryTypographyProps={{ variant: 'body2' }}>{option.label}</ListItemText>
               <ListItemText
@@ -222,7 +230,12 @@ export default function CryptoPopover({ currency, onChangeCurrency, onChangeType
               sx={{ py: 1, px: 2.5 }}
             >
               <ListItemIcon>
-                <Box component="img" alt={option.label} src={option.icon} sx={{ width: 30, height: 30 }} />
+                <Box
+                  component="img"
+                  alt={option.label}
+                  src={option.icon}
+                  sx={{ width: 30, height: 30, borderRadius: '50%' }}
+                />
               </ListItemIcon>
               <ListItemText primaryTypographyProps={{ variant: 'body2' }}>{option.label}</ListItemText>
               <ListItemText
@@ -316,7 +329,7 @@ const CRYPTOS = [
     icon: '/static/icons/crypto/eos.png'
   },
   {
-    value: 'iot',
+    value: 'iota',
     label: 'IOT/USD',
     icon: '/static/icons/crypto/iota.png'
   },
@@ -366,32 +379,32 @@ const FOREX = [
   {
     label: 'EUR/USD',
     value: 'eur',
-    icon: '/static/icons/crypto/fil.png'
+    icon: '/static/icons/forex/EU.svg'
   },
   {
     label: 'AUD/USD',
     value: 'aud',
-    icon: '/static/icons/crypto/fil.png'
+    icon: '/static/icons/forex/AU.svg'
   },
   {
     label: 'GBP/USD',
     value: 'gbp',
-    icon: '/static/icons/crypto/fil.png'
+    icon: '/static/icons/forex/GB.svg'
   },
   {
-    label: 'USD/CNH',
+    label: 'CNH/USD',
     value: 'cnh',
-    icon: '/static/icons/crypto/fil.png'
+    icon: '/static/icons/forex/CN.svg'
   },
   {
-    label: 'USD/JPY',
+    label: 'JPY/USD',
     value: 'jpy',
-    icon: '/static/icons/crypto/fil.png'
+    icon: '/static/icons/forex/JP.svg'
   },
   {
-    label: 'USD/MXN',
+    label: 'MXN/USD',
     value: 'mxn',
-    icon: '/static/icons/crypto/fil.png'
+    icon: '/static/icons/forex/MX.svg'
   }
 ];
 
@@ -399,67 +412,67 @@ const STOCKS = [
   {
     label: 'TSLA',
     value: 'tsla',
-    icon: '/static/icons/crypto/stock.png'
+    icon: '/static/icons/stocks/tesla.svg'
   },
   {
     label: 'AAPL',
     value: 'aapl',
-    icon: '/static/icons/crypto/stock.png'
+    icon: '/static/icons/stocks/apple.svg'
   },
   {
     label: 'AMZN',
     value: 'amzn',
-    icon: '/static/icons/crypto/stock.png'
+    icon: '/static/icons/stocks/amazon.svg'
   },
   {
     label: 'MSFT',
     value: 'msft',
-    icon: '/static/icons/crypto/stock.png'
+    icon: '/static/icons/stocks/microsoft.svg'
   },
   {
     label: 'SNAP',
     value: 'snap',
-    icon: '/static/icons/crypto/stock.png'
+    icon: '/static/icons/stocks/snap.svg'
   },
   {
     label: 'AXP',
     value: 'axp',
-    icon: '/static/icons/crypto/stock.png'
+    icon: '/static/icons/stocks/american-express.svg'
   },
   {
     label: 'CSCO',
     value: 'csco',
-    icon: '/static/icons/crypto/stock.png'
+    icon: '/static/icons/stocks/cisco.svg'
   },
   {
     label: 'T',
     value: 't',
-    icon: '/static/icons/crypto/stock.png'
+    icon: '/static/icons/stocks/at-and-t.svg'
   },
   {
     label: 'DIS',
     value: 'dis',
-    icon: '/static/icons/crypto/stock.png'
+    icon: '/static/icons/stocks/walt-disney.svg'
   },
   {
     label: 'ABBV',
     value: 'abbv',
-    icon: '/static/icons/crypto/stock.png'
+    icon: '/static/icons/stocks/abbvie.svg'
   },
   {
     label: 'MMM',
     value: 'mmm',
-    icon: '/static/icons/crypto/stock.png'
+    icon: '/static/icons/stocks/3m.svg'
   },
   {
     label: 'JPM',
     value: 'jpm',
-    icon: '/static/icons/crypto/stock.png'
+    icon: '/static/icons/stocks/jpmorgan-chase.svg'
   },
   {
     label: 'JNJ',
     value: 'jnj',
-    icon: '/static/icons/crypto/stock.png'
+    icon: '/static/icons/stocks/johnson-and-johnson.svg'
   }
 ];
 const PriceTypes = ['cryptos', 'forex', 'stocks'];
