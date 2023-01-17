@@ -1,7 +1,8 @@
 /* eslint-disable */
+import { sentenceCase, upperCase } from 'change-case-all';
 import PropTypes from 'prop-types';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { experimentalStyled as styled, useTheme } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -16,10 +17,18 @@ import {
   ListItem,
   Button,
   InputAdornment,
-  Grid
+  Grid,
+  ListItemText,
+  MenuItem
 } from '@material-ui/core';
 
+// components
+import MenuPopover from '../../MenuPopover';
+
 import StableCoinPopover from './StableCoinPopover';
+
+// utils
+import { fCurrency } from '../../../utils/formatNumber';
 
 import { getPreviousChartData } from './api';
 
@@ -60,9 +69,16 @@ LongShort.propTypes = {
 };
 export default function LongShort({ currency, ctype, onChartViewMode, socket }) {
   const theme = useTheme();
+
+  const anchorRef = useRef(null);
+  const [open, setOpen] = useState(false);
+
   const [viewMode, setViewMode] = useState(1);
   const [sliderValue, setSliderValue] = useState(25.0);
+  const [sliderLoseValue, setSliderLoseValue] = useState(5);
   const [longShort, setLongShort] = useState('long');
+  const [marketLimit, setMarketLimit] = useState('market');
+  const [showLoseSlideBar, setShowLoseSildeBar] = useState(false);
 
   const [minMax, setMinMax] = useState({});
 
@@ -176,6 +192,27 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
     setSliderValue(value);
   };
 
+  const handleSliderLoseValue = (e) => {
+    const { value } = e.target;
+    setSliderLoseValue(value);
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleChangeMarket = (type) => {
+    setMarketLimit(type);
+    handleClose();
+  };
+
+  const handChangeShowSliderBar = () => {
+    setShowLoseSildeBar(!showLoseSlideBar);
+  };
   return (
     <Card
       sx={{
@@ -189,7 +226,36 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
             <TabStyles label="Basic" />
             <TabStyles label="Advanced" />
           </TabContainer>
-          <Typography variant="body2">Market</Typography>
+
+          <Stack
+            ref={anchorRef}
+            onClick={handleOpen}
+            direction="row"
+            spacing={0}
+            alignItems="center"
+            sx={{
+              position: 'relative',
+              cursor: 'pointer',
+              pl: 4,
+              borderRadius: 1
+            }}
+          >
+            <Typography variant="body2">{sentenceCase(marketLimit)}</Typography>
+            <img
+              src="/static/icons/popup_arrow.svg"
+              alt="arrow"
+              style={{ position: 'absolute', bottom: 3, right: -10 }}
+            />
+          </Stack>
+
+          <MenuPopover open={open} onClose={handleClose} anchorEl={anchorRef.current} sx={{ py: 1, width: 150 }}>
+            <MenuItem onClick={() => handleChangeMarket('market')} sx={{ py: 1, px: 2.5 }}>
+              <ListItemText>Market</ListItemText>
+            </MenuItem>
+            <MenuItem onClick={() => handleChangeMarket('limit')} sx={{ py: 1, px: 2.5 }}>
+              <ListItemText>Limit</ListItemText>
+            </MenuItem>
+          </MenuPopover>
         </Stack>
 
         <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} alignItems="center">
@@ -201,7 +267,8 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
               sx={{
                 backgroundColor: '#0E0D14',
                 boxShadow: 'none',
-                height: 50,
+                fontSize: '20px',
+                // height: 50,
                 ...(longShort === 'long'
                   ? {
                       backgroundColor: '#5600C3',
@@ -225,7 +292,8 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
               sx={{
                 backgroundColor: '#0E0D14',
                 boxShadow: 'none',
-                height: 50,
+                fontSize: '20px',
+                // height: 50,
                 ...(longShort === 'short'
                   ? {
                       backgroundColor: '#5600C3',
@@ -247,42 +315,49 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
             <Stack direction="row" spacing={2} alignItems="center">
               <TextField
                 id="outlined-start-adornment"
-                value={`${curPrice}`}
-                sx={{
-                  backgroundColor: '#0E0D14',
-                  borderRadius: '10px',
-                  minWidth: 90,
-                  height: 40,
-                  '& .MuiOutlinedInput-input': { padding: theme.spacing(1.5, 2), fontWeight: 300, fontSize: 12 },
-                  '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
-                }}
-              />
-
-              <TextField
-                id="outlined-start-adornment"
-                value={`+$${profit}`}
-                color="primary"
+                value={`${fCurrency(curPrice)}`}
                 sx={{
                   backgroundColor: '#0E0D14',
                   borderRadius: '10px',
                   minWidth: 100,
-                  color: 'red',
-                  height: 40,
+                  // height: 40,
                   '& .MuiOutlinedInput-input': {
-                    padding: theme.spacing(1.5, 2),
+                    padding: theme.spacing(1),
                     fontWeight: 300,
-                    fontSize: 12,
-                    color: theme.palette.primary.light
+                    fontSize: '15px',
+                    ...(marketLimit === 'limit' && { textAlign: 'center' })
                   },
                   '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
                 }}
               />
+
+              {marketLimit === 'market' && (
+                <TextField
+                  id="outlined-start-adornment"
+                  value={`+${fCurrency(profit)}`}
+                  color="primary"
+                  sx={{
+                    backgroundColor: '#0E0D14',
+                    borderRadius: '10px',
+                    minWidth: 110,
+                    color: 'red',
+                    // height: 40,
+                    '& .MuiOutlinedInput-input': {
+                      padding: theme.spacing(1),
+                      fontWeight: 300,
+                      fontSize: '15px',
+                      color: theme.palette.primary.light
+                    },
+                    '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
+                  }}
+                />
+              )}
             </Stack>
           )}
         </Stack>
         <Box my={4} mx={viewMode === 1 ? 0 : 3}>
           <Grid container spacing={2}>
-            <Grid item xs={12} md={viewMode === 1 ? 5 : 12}>
+            <Grid item xs={12} md={viewMode === 1 ? 6 : 12}>
               <Typography variant="body2" sx={{ mb: 1 }}>
                 {viewMode ? 'COLLATERAL' : 'PAY'}
               </Typography>
@@ -309,75 +384,67 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
               </Box>
             </Grid>
             {viewMode === 1 && (
-              <Grid item xs={12} md={7}>
+              <Grid item xs={12} md={6}>
                 <Typography variant="body2" sx={{ mb: 1 }}>
                   Stop Loss
                 </Typography>
-                <Stack direction="row" spacing={2}>
-                  <TextField
-                    id="outlined-start-adornment"
-                    value={`${curPrice}`}
-                    sx={{
-                      backgroundColor: '#0E0D14',
-                      borderRadius: '10px',
-                      minWidth: 90,
-                      height: 40,
-                      '& .MuiOutlinedInput-input': { padding: theme.spacing(1.5, 2), fontWeight: 300, fontSize: 12 },
-                      '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
-                    }}
-                  />
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    px: 1,
+                    backgroundColor: '#0E0D14',
+                    borderRadius: '10px'
+                  }}
+                >
+                  {showLoseSlideBar ? (
+                    <>
+                      <Typography sx={{ padding: theme.spacing(1), width: '100%', textAlign: 'left' }}>
+                        Loss Price
+                      </Typography>
+                      <Typography sx={{ padding: theme.spacing(1), textAlign: 'center', color: '#FF0000' }}>
+                        {sliderLoseValue}%
+                      </Typography>
+                    </>
+                  ) : (
+                    <Typography sx={{ padding: theme.spacing(1), width: '100%', textAlign: 'center' }}>-</Typography>
+                  )}
 
-                  <TextField
-                    id="outlined-start-adornment"
-                    value={`-$${loss}`}
-                    color="primary"
-                    sx={{
-                      backgroundColor: '#0E0D14',
-                      borderRadius: '10px',
-                      minWidth: 100,
-                      color: 'red',
-                      height: 40,
-                      '& .MuiOutlinedInput-input': {
-                        padding: theme.spacing(1.5, 2),
-                        fontWeight: 300,
-                        fontSize: 12,
-                        color: theme.palette.error.main
-                      },
-                      '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
-                    }}
+                  <img
+                    src={
+                      showLoseSlideBar
+                        ? '/static/icons/trading_ui/trading_arrow_up_button.svg'
+                        : '/static/icons/trading_ui/trading_arrow_down_button.svg'
+                    }
+                    alt="two arrow"
+                    style={{ width: 30, height: 'auto', marginLeft: 5, cursor: 'pointer' }}
+                    onClick={handChangeShowSliderBar}
                   />
-                  {/* <TextField
-                    id="outlined-start-adornment"
-                    value={`${curPrice}`}
-                    sx={{
-                      backgroundColor: '#0E0D14',
-                      borderRadius: '10px',
-                      maxWidth: 105,
-                      height: 40,
-                      '& .MuiOutlinedInput-input': { padding: theme.spacing(1.5, 2), fontWeight: 300, fontSize: 12 },
-                      '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
-                    }}
-                  />
-
-                  <TextField
-                    id="outlined-start-adornment"
-                    value={`-$${loss}`}
-                    color="primary"
-                    sx={{
-                      backgroundColor: '#0E0D14',
-                      borderRadius: '10px',
-                      maxWidth: 100,
-                      height: 40,
-                      '& .MuiOutlinedInput-input': {
-                        padding: theme.spacing(1.5, 2),
-                        fontWeight: 300,
-                        fontSize: 12,
-                        color: theme.palette.error.main
-                      },
-                      '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
-                    }}
-                  /> */}
-                </Stack>
+                </Box>
+                {showLoseSlideBar && (
+                  <Stack spacing={1} sx={{ mt: 1 }}>
+                    <input
+                      type="range"
+                      min={5}
+                      max={95}
+                      onChange={handleSliderLoseValue}
+                      value={sliderLoseValue}
+                      step={5}
+                      className="range purple"
+                    />
+                    <Stack
+                      direction="row"
+                      justifyContent="space-around"
+                      sx={{ marginRight: '9px !important', marginLeft: '9px !important' }}
+                    >
+                      {[...Array(9)].map((_, idx) => (
+                        <span style={{ fontSize: '10px' }} key={idx}>
+                          {(idx + 1) * 10}
+                        </span>
+                      ))}
+                    </Stack>
+                  </Stack>
+                )}
               </Grid>
             )}
           </Grid>
@@ -438,7 +505,7 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
               }
             }}
           >
-            MARKET {longShort.toUpperCase()}
+            {upperCase(marketLimit)} {upperCase(longShort)}
           </Button>
         </Box>
 
