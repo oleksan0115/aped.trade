@@ -94,9 +94,9 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
   const [liqPrice, LiqPrice] = useState(0);
 
   useEffect(() => {
-    setMinMax(MIN_MAX);
+    setMinMax(MIN_MAX[ctype]);
     onChartViewMode(viewMode);
-  }, [viewMode]);
+  }, [viewMode, ctype]);
 
   useEffect(() => {
     setEntryPrice(cPrice);
@@ -455,6 +455,7 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
           <Stack direction="row" spacing={2}>
             <TextField
               id="outlined-start-adornment"
+              onChange={(e) => setSliderValue(e.target.value)}
               value={sliderValue}
               InputProps={{
                 startAdornment: <InputAdornment position="start">x</InputAdornment>
@@ -489,9 +490,12 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
           step={0.01}
           className="range purple"
         />
+        {/* <Stack direction="row" justifyContent="space-between">
+          {minMax.values && minMax.values.map((value, idx) => <span key={idx}>{value}</span>)}
+        </Stack> */}
         <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-between">
-          <Typography variant="body2">1x</Typography>
-          <Typography variant="body2">1000x</Typography>
+          <Typography variant="body2">{minMax.min}x</Typography>
+          <Typography variant="body2">{minMax.max}x</Typography>
         </Stack>
         <Box my={4} sx={{ textAlign: 'center' }}>
           <Button
@@ -557,9 +561,22 @@ const profitsList = [
   }
 ];
 
-const MIN_MAX = {
-  min: 1,
-  max: 1000
-};
+const MIN_MAX = [
+  {
+    min: 1,
+    max: 250,
+    values: [1, 5, 10, 25, 50, 75, 100, 150, 200, 250]
+  },
+  {
+    min: 1,
+    max: 1000,
+    values: [1, 5, 10, 25, 50, 75, 100, 200, 500, 1000]
+  },
+  {
+    min: 1,
+    max: 100,
+    values: [1, 5, 10, 15, 25, 35, 50, 60, 75, 100]
+  }
+];
 
 const PriceTypes = ['crypto', 'forex', 'stocks'];

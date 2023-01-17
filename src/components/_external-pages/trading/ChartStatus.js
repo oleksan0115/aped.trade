@@ -34,7 +34,6 @@ function ChartStatus({ socket, currency, chartViewMode, lastPrice, onChartCurren
 
   useEffect(() => {
     if (close) {
-      console.log(close.toFixed(3));
       setPrice(close.toFixed(3));
     }
   }, [close]);
