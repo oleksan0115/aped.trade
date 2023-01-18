@@ -24,7 +24,7 @@ export default function TradingView() {
   return (
     <Page title="Trading | APED">
       <Container maxWidth="xl" m={1} sx={{ mb: 10, mt: 10, [theme.breakpoints.up('md')]: { mt: 1 } }}>
-        <Box m={4} />
+        <Box m={{ xs: 1, md: 4 }} />
         <Stack direction={{ xs: 'column', md: 'row' }} spacing={4}>
           <Stack spacing={1} direction="column" sx={{ width: '100%' }}>
             <ChartStatus
