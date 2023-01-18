@@ -75,10 +75,14 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
 
   const [viewMode, setViewMode] = useState(1);
   const [sliderValue, setSliderValue] = useState(25.0);
+
   const [sliderLoseValue, setSliderLoseValue] = useState(5);
+  const [sliderProfitValue, setSliderProfitValue] = useState(5);
+
   const [longShort, setLongShort] = useState('long');
   const [marketLimit, setMarketLimit] = useState('market');
   const [showLoseSlideBar, setShowLoseSildeBar] = useState(false);
+  const [showProfitSlideBar, setShowProfitSildeBar] = useState(false);
 
   const [minMax, setMinMax] = useState({});
 
@@ -101,13 +105,21 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
   useEffect(() => {
     setEntryPrice(cPrice);
     if (cPrice) {
-      const pf = Number(cPrice) + collateralValue * 9;
-      const ls = Number(cPrice) - collateralValue * 0.9;
-      setProfit(pf.toFixed(3));
-      setLoss(ls.toFixed(3));
       setCurPrice(cPrice);
     }
-  }, [cPrice, collateralValue, currency]);
+  }, [cPrice]);
+
+  useEffect(() => {
+    const lsSign = longShort === 'long' ? -1 : 1;
+    const ls = Number(entryPrice) + lsSign * (entryPrice / sliderValue) * (sliderLoseValue / 100);
+    setLoss(ls);
+  }, [longShort, entryPrice, sliderLoseValue, sliderValue]);
+
+  useEffect(() => {
+    const pfSign = longShort === 'long' ? 1 : -1;
+    const pf = Number(entryPrice) + pfSign * (entryPrice / sliderValue) * (sliderProfitValue / 100);
+    setProfit(pf);
+  }, [longShort, entryPrice, sliderProfitValue, sliderValue]);
 
   useEffect(() => {
     // Liquidation Price Distance = Open Price * (Collateral * 0.9 ) / Collateral / Leverage.
@@ -197,6 +209,11 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
     setSliderLoseValue(value);
   };
 
+  const handleSliderProfitValue = (e) => {
+    const { value } = e.target;
+    setSliderProfitValue(value);
+  };
+
   const handleOpen = () => {
     setOpen(true);
   };
@@ -210,8 +227,12 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
     handleClose();
   };
 
-  const handChangeShowSliderBar = () => {
+  const handChangeShowLoseSliderBar = () => {
     setShowLoseSildeBar(!showLoseSlideBar);
+  };
+
+  const handChangeShowProfitSliderBar = () => {
+    setShowProfitSildeBar(!showProfitSlideBar);
   };
   return (
     <Card
@@ -258,7 +279,7 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
           </MenuPopover>
         </Stack>
 
-        <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} alignItems="center">
+        <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} alignItems="center" sx={{ mb: 2 }}>
           <Stack direction="row" spacing={2} alignItems="center" sx={{ width: '100%' }}>
             <Button
               fullWidth
@@ -311,8 +332,13 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
               Short
             </Button>
           </Stack>
-          {viewMode === 1 && (
-            <Stack direction="row" spacing={2} alignItems="center">
+        </Stack>
+        {viewMode === 1 && (
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={6}>
+              <Typography variant="body2" sx={{ mb: 1 }}>
+                Entry Price
+              </Typography>
               <TextField
                 id="outlined-start-adornment"
                 value={`${fCurrency(curPrice)}`}
@@ -325,36 +351,76 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
                     padding: theme.spacing(1),
                     fontWeight: 300,
                     fontSize: '15px',
-                    ...(marketLimit === 'limit' && { textAlign: 'center' })
+                    textAlign: 'center'
                   },
                   '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
                 }}
               />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Typography variant="body2" sx={{ mb: 1 }}>
+                Take Profit
+              </Typography>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  px: 1,
+                  backgroundColor: '#0E0D14',
+                  borderRadius: '10px'
+                }}
+              >
+                {showProfitSlideBar ? (
+                  <>
+                    <Typography sx={{ padding: theme.spacing(1), width: '100%', textAlign: 'left' }}>
+                      {fCurrency(profit)}
+                    </Typography>
+                    <Typography sx={{ padding: theme.spacing(1), textAlign: 'center', color: '#05FF00' }}>
+                      {sliderProfitValue}%
+                    </Typography>
+                  </>
+                ) : (
+                  <Typography sx={{ padding: theme.spacing(1), width: '100%', textAlign: 'center' }}>-</Typography>
+                )}
 
-              {marketLimit === 'market' && (
-                <TextField
-                  id="outlined-start-adornment"
-                  value={`+${fCurrency(profit)}`}
-                  color="primary"
-                  sx={{
-                    backgroundColor: '#0E0D14',
-                    borderRadius: '10px',
-                    minWidth: 110,
-                    color: 'red',
-                    // height: 40,
-                    '& .MuiOutlinedInput-input': {
-                      padding: theme.spacing(1),
-                      fontWeight: 300,
-                      fontSize: '15px',
-                      color: theme.palette.primary.light
-                    },
-                    '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
-                  }}
+                <img
+                  src={
+                    showProfitSlideBar
+                      ? '/static/icons/trading_ui/trading_arrow_up_button.svg'
+                      : '/static/icons/trading_ui/trading_arrow_down_button.svg'
+                  }
+                  alt="two arrow"
+                  style={{ width: 30, height: 'auto', marginLeft: 5, cursor: 'pointer' }}
+                  onClick={handChangeShowProfitSliderBar}
                 />
+              </Box>
+              {showProfitSlideBar && (
+                <Stack spacing={1} sx={{ mt: 1 }}>
+                  <input
+                    type="range"
+                    min={25}
+                    max={999}
+                    onChange={handleSliderProfitValue}
+                    value={sliderProfitValue}
+                    step={5}
+                    className="range purple"
+                  />
+                  <Stack
+                    direction="row"
+                    justifyContent="space-around"
+                    sx={{ marginRight: '9px !important', marginLeft: '9px !important' }}
+                  >
+                    {ProfitArray.map((inc, idx) => (
+                      <span style={{ fontSize: '10px' }} key={idx}>
+                        {inc}
+                      </span>
+                    ))}
+                  </Stack>
+                </Stack>
               )}
-            </Stack>
-          )}
-        </Stack>
+            </Grid>
+          </Grid>
+        )}
         <Box my={4} mx={viewMode === 1 ? 0 : 3}>
           <Grid container spacing={2}>
             <Grid item xs={12} md={viewMode === 1 ? 6 : 12}>
@@ -400,7 +466,7 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
                   {showLoseSlideBar ? (
                     <>
                       <Typography sx={{ padding: theme.spacing(1), width: '100%', textAlign: 'left' }}>
-                        Loss Price
+                        {fCurrency(loss)}
                       </Typography>
                       <Typography sx={{ padding: theme.spacing(1), textAlign: 'center', color: '#FF0000' }}>
                         {sliderLoseValue}%
@@ -418,7 +484,7 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
                     }
                     alt="two arrow"
                     style={{ width: 30, height: 'auto', marginLeft: 5, cursor: 'pointer' }}
-                    onClick={handChangeShowSliderBar}
+                    onClick={handChangeShowLoseSliderBar}
                   />
                 </Box>
                 {showLoseSlideBar && (
@@ -473,7 +539,7 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
               <Typography variant="caption" color="text.secondary">
                 Liquidation Price:
               </Typography>
-              <Typography variant="body2">{liqPrice}</Typography>
+              <Typography variant="body2">{fCurrency(liqPrice)}</Typography>
             </Stack>
           </Stack>
         </Box>
@@ -560,6 +626,8 @@ const profitsList = [
     value: '-'
   }
 ];
+
+const ProfitArray = [100, 250, 500, 750, 900];
 
 const MIN_MAX = [
   {
