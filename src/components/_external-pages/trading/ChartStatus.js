@@ -104,7 +104,10 @@ function ChartStatus({ socket, currency, chartViewMode, lastPrice, onChartCurren
                 alt="two arrow"
                 style={{ width: 18, margin: '0 5px' }}
               />
-              <Typography variant="h6" sx={{ color: '#FF0000', minWidth: 100 }}>
+              <Typography
+                variant="h6"
+                sx={{ color: currencyDetail?.changes > 0 ? '#05FF00' : '#FF0000', minWidth: 100 }}
+              >
                 {fCurrency(price)}
               </Typography>
             </Stack>
