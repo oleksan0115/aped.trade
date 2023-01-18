@@ -100,9 +100,13 @@ const initialState = {
   themeMode: 'dark',
   themeDirection: 'ltr',
   themeColor: 'default',
+  stopLossMode: 0,
+  takeProfitMode: 0,
   onChangeMode: () => {},
   onChangeDirection: () => {},
   onChangeColor: () => {},
+  onChangeStopLossMode: () => {},
+  onChangeTakeProfitMode: () => {},
   setColor: PRIMARY_COLOR[0],
   colorOption: []
 };
@@ -117,7 +121,9 @@ function SettingsProvider({ children }) {
   const [settings, setSettings] = useLocalStorage('settings', {
     themeMode: 'dark',
     themeDirection: 'ltr',
-    themeColor: 'default'
+    themeColor: 'default',
+    stopLossMode: 0,
+    takeProfitMode: 0
   });
 
   const onChangeMode = (event) => {
@@ -141,6 +147,21 @@ function SettingsProvider({ children }) {
     });
   };
 
+  const onChangeStopLossMode = (event, value) => {
+    console.log('VALUES', value);
+    setSettings({
+      ...settings,
+      stopLossMode: value
+    });
+  };
+
+  const onChangeTakeProfitMode = (event, value) => {
+    setSettings({
+      ...settings,
+      takeProfitMode: value
+    });
+  };
+
   return (
     <SettingsContext.Provider
       value={{
@@ -151,6 +172,9 @@ function SettingsProvider({ children }) {
         onChangeDirection,
         // Color
         onChangeColor,
+        // stop loss and take profit
+        onChangeStopLossMode,
+        onChangeTakeProfitMode,
         setColor: SetColor(settings.themeColor),
         colorOption: PRIMARY_COLOR.map((color) => ({
           name: color.name,

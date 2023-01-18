@@ -24,8 +24,10 @@ import {
 
 // components
 import MenuPopover from '../../MenuPopover';
-
 import StableCoinPopover from './StableCoinPopover';
+
+// hooks
+import useSettings from '../../../hooks/useSettings';
 
 // utils
 import { fCurrency } from '../../../utils/formatNumber';
@@ -69,6 +71,7 @@ LongShort.propTypes = {
 };
 export default function LongShort({ currency, ctype, onChartViewMode, socket }) {
   const theme = useTheme();
+  const { stopLossMode } = useSettings();
 
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
@@ -84,10 +87,11 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
   const [showLoseSlideBar, setShowLoseSildeBar] = useState(false);
   const [showProfitSlideBar, setShowProfitSildeBar] = useState(false);
 
+  const [editedLosePrice, setEditedLosePrice] = useState(0);
+
   const [minMax, setMinMax] = useState({});
 
   const [cPrice, setCPrice] = useState(0);
-  // const [currency, setCurrency] = useState('btc');
   const [curPrice, setCurPrice] = useState(0);
 
   const [entryPrice, setEntryPrice] = useState(0);
@@ -337,28 +341,6 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
           <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
               <Typography variant="body2" sx={{ mb: 1 }}>
-                Entry Price
-              </Typography>
-              <TextField
-                id="outlined-start-adornment"
-                value={`${fCurrency(curPrice)}`}
-                sx={{
-                  backgroundColor: '#0E0D14',
-                  borderRadius: '10px',
-                  minWidth: 100,
-                  // height: 40,
-                  '& .MuiOutlinedInput-input': {
-                    padding: theme.spacing(1),
-                    fontWeight: 300,
-                    fontSize: '15px',
-                    textAlign: 'center'
-                  },
-                  '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Typography variant="body2" sx={{ mb: 1 }}>
                 Take Profit
               </Typography>
               <Box
@@ -419,11 +401,97 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
                 </Stack>
               )}
             </Grid>
+            <Grid item xs={12} md={6}>
+              <Typography variant="body2" sx={{ mb: 1 }}>
+                Stop Loss
+              </Typography>
+              {!stopLossMode ? (
+                <TextField
+                  id="outlined-start-adornment"
+                  value={`${fCurrency(editedLosePrice)}`}
+                  onChange={(e) => setEditedLosePrice(e.target.value)}
+                  sx={{
+                    backgroundColor: '#0E0D14',
+                    borderRadius: '10px',
+                    minWidth: 100,
+                    // height: 40,
+                    '& .MuiOutlinedInput-input': {
+                      padding: theme.spacing(1),
+                      fontWeight: 500,
+                      fontSize: '15px',
+                      color: '#FF0000',
+                      textAlign: 'center'
+                    },
+                    '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
+                  }}
+                />
+              ) : (
+                <>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      px: 1,
+                      backgroundColor: '#0E0D14',
+                      borderRadius: '10px'
+                    }}
+                  >
+                    {showLoseSlideBar ? (
+                      <>
+                        <Typography sx={{ padding: theme.spacing(1), width: '100%', textAlign: 'left' }}>
+                          {fCurrency(loss)}
+                        </Typography>
+                        <Typography sx={{ padding: theme.spacing(1), textAlign: 'center', color: '#FF0000' }}>
+                          {sliderLoseValue}%
+                        </Typography>
+                      </>
+                    ) : (
+                      <Typography sx={{ padding: theme.spacing(1), width: '100%', textAlign: 'center' }}>-</Typography>
+                    )}
+
+                    <img
+                      src={
+                        showLoseSlideBar
+                          ? '/static/icons/trading_ui/trading_arrow_up_button.svg'
+                          : '/static/icons/trading_ui/trading_arrow_down_button.svg'
+                      }
+                      alt="two arrow"
+                      style={{ width: 30, height: 'auto', marginLeft: 5, cursor: 'pointer' }}
+                      onClick={handChangeShowLoseSliderBar}
+                    />
+                  </Box>
+                  {showLoseSlideBar && (
+                    <Stack spacing={1} sx={{ mt: 1 }}>
+                      <input
+                        type="range"
+                        min={5}
+                        max={95}
+                        onChange={handleSliderLoseValue}
+                        value={sliderLoseValue}
+                        step={5}
+                        className="range purple"
+                      />
+                      <Stack
+                        direction="row"
+                        justifyContent="space-around"
+                        sx={{ marginRight: '9px !important', marginLeft: '9px !important' }}
+                      >
+                        {[...Array(9)].map((_, idx) => (
+                          <span style={{ fontSize: '10px' }} key={idx}>
+                            {(idx + 1) * 10}
+                          </span>
+                        ))}
+                      </Stack>
+                    </Stack>
+                  )}
+                </>
+              )}
+            </Grid>
           </Grid>
         )}
         <Box my={4} mx={viewMode === 1 ? 0 : 3}>
           <Grid container spacing={2}>
-            <Grid item xs={12} md={viewMode === 1 ? 6 : 12}>
+            <Grid item xs={12} md={viewMode === 1 ? (marketLimit === 'limit' ? 6 : 12) : 12}>
               <Typography variant="body2" sx={{ mb: 1 }}>
                 {viewMode ? 'COLLATERAL' : 'PAY'}
               </Typography>
@@ -449,68 +517,29 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
                 />
               </Box>
             </Grid>
-            {viewMode === 1 && (
+            {marketLimit === 'limit' && (
               <Grid item xs={12} md={6}>
                 <Typography variant="body2" sx={{ mb: 1 }}>
-                  Stop Loss
+                  Entry Price
                 </Typography>
-                <Box
+                <TextField
+                  fullWidth
+                  id="outlined-start-adornment"
+                  value={`${fCurrency(curPrice)}`}
                   sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    px: 1,
                     backgroundColor: '#0E0D14',
-                    borderRadius: '10px'
+                    borderRadius: '10px',
+                    minWidth: 100,
+                    // height: 40,
+                    '& .MuiOutlinedInput-input': {
+                      padding: theme.spacing(1),
+                      fontWeight: 300,
+                      fontSize: '15px',
+                      textAlign: 'center'
+                    },
+                    '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
                   }}
-                >
-                  {showLoseSlideBar ? (
-                    <>
-                      <Typography sx={{ padding: theme.spacing(1), width: '100%', textAlign: 'left' }}>
-                        {fCurrency(loss)}
-                      </Typography>
-                      <Typography sx={{ padding: theme.spacing(1), textAlign: 'center', color: '#FF0000' }}>
-                        {sliderLoseValue}%
-                      </Typography>
-                    </>
-                  ) : (
-                    <Typography sx={{ padding: theme.spacing(1), width: '100%', textAlign: 'center' }}>-</Typography>
-                  )}
-
-                  <img
-                    src={
-                      showLoseSlideBar
-                        ? '/static/icons/trading_ui/trading_arrow_up_button.svg'
-                        : '/static/icons/trading_ui/trading_arrow_down_button.svg'
-                    }
-                    alt="two arrow"
-                    style={{ width: 30, height: 'auto', marginLeft: 5, cursor: 'pointer' }}
-                    onClick={handChangeShowLoseSliderBar}
-                  />
-                </Box>
-                {showLoseSlideBar && (
-                  <Stack spacing={1} sx={{ mt: 1 }}>
-                    <input
-                      type="range"
-                      min={5}
-                      max={95}
-                      onChange={handleSliderLoseValue}
-                      value={sliderLoseValue}
-                      step={5}
-                      className="range purple"
-                    />
-                    <Stack
-                      direction="row"
-                      justifyContent="space-around"
-                      sx={{ marginRight: '9px !important', marginLeft: '9px !important' }}
-                    >
-                      {[...Array(9)].map((_, idx) => (
-                        <span style={{ fontSize: '10px' }} key={idx}>
-                          {(idx + 1) * 10}
-                        </span>
-                      ))}
-                    </Stack>
-                  </Stack>
-                )}
+                />
               </Grid>
             )}
           </Grid>
