@@ -100,8 +100,8 @@ const initialState = {
   themeMode: 'dark',
   themeDirection: 'ltr',
   themeColor: 'default',
-  stopLossMode: 0,
-  takeProfitMode: 0,
+  stopLossMode: 1,
+  takeProfitMode: 1,
   onChangeMode: () => {},
   onChangeDirection: () => {},
   onChangeColor: () => {},
@@ -122,8 +122,8 @@ function SettingsProvider({ children }) {
     themeMode: 'dark',
     themeDirection: 'ltr',
     themeColor: 'default',
-    stopLossMode: 0,
-    takeProfitMode: 0
+    stopLossMode: 1,
+    takeProfitMode: 1
   });
 
   const onChangeMode = (event) => {
