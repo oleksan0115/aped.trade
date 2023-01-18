@@ -80,7 +80,12 @@ function ChartStatus({ socket, currency, chartViewMode, lastPrice, onChartCurren
       <Stack
         direction={{ xs: 'column', md: 'row' }}
         spacing={2}
-        sx={{ width: '100%', mb: 2 }}
+        sx={{
+          width: '100%',
+          py: 1,
+          backgroundColor: '#0D0C17',
+          [theme.breakpoints.down('md')]: { position: 'fixed', top: 56, left: 0, width: '100%', zIndex: 1000 }
+        }}
         justifyContent="space-between"
       >
         <Stack direction={{ xs: 'column', md: 'row' }} spacing={0} alignItems="center">
@@ -161,7 +166,13 @@ function ChartStatus({ socket, currency, chartViewMode, lastPrice, onChartCurren
           spacing={2}
           justifyContent="space-between"
           alignItems="center"
-          sx={{ backgroundColor: '#232133', p: 1, pr: 3, borderRadius: '5px' }}
+          sx={{
+            backgroundColor: '#232133',
+            p: 1,
+            pr: 3,
+            borderRadius: '5px',
+            [theme.breakpoints.down('md')]: { marginTop: '70px' }
+          }}
         >
           <Stack direction="row" spacing={2}>
             <img src="/static/icons/trading_ui/pen.png" alt="two arrow" style={{ height: 28 }} />
