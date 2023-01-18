@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/mouse-events-have-key-events */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
 
 import '../../assets/css/low-dai-notify.css';
@@ -9,15 +9,32 @@ import { Box, AppBar, Toolbar, Container, Button, Stack } from '@material-ui/cor
 // hooks
 // components
 import Logo from '../../components/Logo';
-import Iconify from '../../components/Iconify';
+// import Iconify from '../../components/Iconify';
+import SettingsPopover from './SettingsPopover';
+import SettingsDialog from './SettingsDialog';
 
 // ----------------------------------------------------------------------
 
 export default function MainNavbar() {
   const theme = useTheme();
 
+  const [settingValue, setSettingValue] = useState('');
+
+  const [showSettingDialog, setShowSettingDialog] = useState(false);
+
+  useEffect(() => {
+    if (settingValue === 'settings') setShowSettingDialog(true);
+  }, [settingValue]);
+
   return (
     <AppBar color="default" sx={{ [theme.breakpoints.up('md')]: { position: 'relative', boxShadow: 0 } }}>
+      <SettingsDialog
+        isOpen={showSettingDialog}
+        onClose={() => {
+          setShowSettingDialog(false);
+          setSettingValue('');
+        }}
+      />
       <Toolbar
         disableGutters
         sx={{ bgcolor: 'background.default', boxShadow: 'none', borderBottom: '1px solid rgba(255, 255, 255, 0.22)' }}
@@ -44,12 +61,7 @@ export default function MainNavbar() {
             >
               CONNECT
             </Button>
-
-            <Button className="trading-gradient-button no-padding" variant="contained" color="error">
-              <Box component="img" src="/static/trading/hexagon.png" sx={{ width: 20 }} />
-              <Iconify icon="ci:line-xl" sx={{ height: 30 }} />
-              <Iconify icon="bi:three-dots-vertical" sx={{ width: 20 }} />
-            </Button>
+            <SettingsPopover settingValue={settingValue} onChangeSettingValue={(value) => setSettingValue(value)} />
           </Stack>
         </Container>
       </Toolbar>
