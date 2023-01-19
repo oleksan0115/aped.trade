@@ -19,11 +19,22 @@ ChartStatus.propTypes = {
   lastPrice: PropTypes.object,
   onChartCurrency: PropTypes.func,
   onChartInterval: PropTypes.func,
+  onCurrencyDetail: PropTypes.func,
   onCType: PropTypes.func,
   other: PropTypes.object
 };
 
-function ChartStatus({ socket, currency, chartViewMode, lastPrice, onChartCurrency, onChartInterval, onCType, other }) {
+function ChartStatus({
+  socket,
+  currency,
+  chartViewMode,
+  lastPrice,
+  onChartCurrency,
+  onChartInterval,
+  onCurrencyDetail,
+  onCType,
+  other
+}) {
   const { close, high, low } = lastPrice;
   const theme = useTheme();
   const [interval, setInterval] = useState(1);
@@ -119,7 +130,10 @@ function ChartStatus({ socket, currency, chartViewMode, lastPrice, onChartCurren
 
             <CryptoPopover
               currency={currency}
-              onChnageCurrencyDetail={(detail) => setCurrencyDetail(detail)}
+              onChnageCurrencyDetail={(detail) => {
+                setCurrencyDetail(detail);
+                onCurrencyDetail(detail);
+              }}
               onChangeCurrency={(cur) => onChartCurrency(cur)}
               onChangeType={(type) => setType(type)}
             />
@@ -129,24 +143,6 @@ function ChartStatus({ socket, currency, chartViewMode, lastPrice, onChartCurren
             24h Volume: 234M &nbsp;&nbsp;&nbsp; H: <span style={{ color: '#05FF00' }}>{high}</span> &nbsp;&nbsp;L:&nbsp;
             <span style={{ color: '#FF0000' }}>{low}</span>
           </Typography>
-          {/* <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={2}>
-            <Stack alignItems="center">
-              <Typography variant="caption">24h Volume:</Typography>
-              <Typography variant="caption">234M</Typography>
-            </Stack>
-            <Stack alignItems="center">
-              <Typography variant="caption">High:</Typography>
-              <Typography variant="caption" sx={{ color: '#05FF00' }}>
-                {high}
-              </Typography>
-            </Stack>
-            <Stack alignItems="center">
-              <Typography variant="caption">Low:</Typography>
-              <Typography variant="caption" sx={{ color: '#FF0000' }}>
-                {low}
-              </Typography>
-            </Stack>
-          </Stack> */}
         </Stack>
 
         <Stack

@@ -20,6 +20,7 @@ export default function TradingView() {
   const [cType, setCType] = useState(0);
   const [chartViewMode, setChartViewMode] = useState(1);
   const [lastPrice, setLastPrice] = useState({});
+  const [currencyDetail, setCurrencyDetail] = useState({});
 
   return (
     <Page title="Trading | APED">
@@ -33,6 +34,7 @@ export default function TradingView() {
               currency={currency}
               onChartCurrency={(cur) => setCurrency(cur)}
               onChartInterval={(int) => setInterval(int)}
+              onCurrencyDetail={(detail) => setCurrencyDetail(detail)}
               onCType={(ctype) => setCType(ctype)}
               socket={socket}
             />
@@ -47,7 +49,13 @@ export default function TradingView() {
               />
             </Box>
           </Stack>
-          <LongShort currency={currency} ctype={cType} onChartViewMode={(vm) => setChartViewMode(vm)} socket={socket} />
+          <LongShort
+            currency={currency}
+            ctype={cType}
+            currencyDetail={currencyDetail}
+            onChartViewMode={(vm) => setChartViewMode(vm)}
+            socket={socket}
+          />
         </Stack>
         <Box m={3} />
         <OpenTradeOrders
