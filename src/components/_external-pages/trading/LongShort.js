@@ -65,11 +65,12 @@ const TabStyles = styled(Tab)(() => ({
 
 LongShort.propTypes = {
   currency: PropTypes.string,
+  currencyDetail: PropTypes.object,
   ctype: PropTypes.number,
   onChartViewMode: PropTypes.func,
   socket: PropTypes.object
 };
-export default function LongShort({ currency, ctype, onChartViewMode, socket }) {
+export default function LongShort({ currency, currencyDetail, ctype, onChartViewMode, socket }) {
   const theme = useTheme();
   const { stopLossMode } = useSettings();
 
@@ -337,6 +338,63 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
             </Button>
           </Stack>
         </Stack>
+        <Box my={4} mx={viewMode === 1 ? 0 : 3}>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={viewMode === 1 ? (marketLimit === 'limit' ? 6 : 12) : 12}>
+              <Typography variant="body2" sx={{ mb: 1 }}>
+                {viewMode ? 'COLLATERAL' : 'PAY'}
+              </Typography>
+              <Box
+                sx={{ display: 'flex', alignItems: 'center', px: 1, backgroundColor: '#0E0D14', borderRadius: '10px' }}
+              >
+                <StableCoinPopover onChangeCurrency={(cur) => console.log(cur)} />
+                <TextField
+                  id="outlined-start-adornment"
+                  value={collateralValue}
+                  onChange={(e) => setCollateralValue(e.target.value)}
+                  color="primary"
+                  sx={{
+                    backgroundColor: '#0E0D14',
+                    borderRadius: '10px',
+                    height: 40,
+                    '& .MuiOutlinedInput-input': {
+                      padding: theme.spacing(1),
+                      fontWeight: 300
+                    },
+                    '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
+                  }}
+                />
+              </Box>
+            </Grid>
+            {marketLimit === 'limit' && (
+              <Grid item xs={12} md={6}>
+                <Typography variant="body2" sx={{ mb: 1 }}>
+                  Entry Price
+                </Typography>
+                <TextField
+                  fullWidth
+                  id="outlined-start-adornment"
+                  value={`${fCurrency(curPrice)}`}
+                  sx={{
+                    backgroundColor: '#0E0D14',
+                    borderRadius: '10px',
+                    minWidth: 100,
+                    // height: 40,
+                    '& .MuiOutlinedInput-input': {
+                      padding: theme.spacing(1),
+                      fontWeight: 500,
+                      fontSize: '15px',
+                      textAlign: 'center',
+                      color: '#FF0000',
+                      ...(currencyDetail?.changes > 0 && { color: '#05FF00' })
+                    },
+                    '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
+                  }}
+                />
+              </Grid>
+            )}
+          </Grid>
+        </Box>
         {viewMode === 1 && (
           <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
@@ -490,59 +548,6 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
           </Grid>
         )}
         <Box my={4} mx={viewMode === 1 ? 0 : 3}>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={viewMode === 1 ? (marketLimit === 'limit' ? 6 : 12) : 12}>
-              <Typography variant="body2" sx={{ mb: 1 }}>
-                {viewMode ? 'COLLATERAL' : 'PAY'}
-              </Typography>
-              <Box
-                sx={{ display: 'flex', alignItems: 'center', px: 1, backgroundColor: '#0E0D14', borderRadius: '10px' }}
-              >
-                <StableCoinPopover onChangeCurrency={(cur) => console.log(cur)} />
-                <TextField
-                  id="outlined-start-adornment"
-                  value={collateralValue}
-                  onChange={(e) => setCollateralValue(e.target.value)}
-                  color="primary"
-                  sx={{
-                    backgroundColor: '#0E0D14',
-                    borderRadius: '10px',
-                    height: 40,
-                    '& .MuiOutlinedInput-input': {
-                      padding: theme.spacing(1),
-                      fontWeight: 300
-                    },
-                    '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
-                  }}
-                />
-              </Box>
-            </Grid>
-            {marketLimit === 'limit' && (
-              <Grid item xs={12} md={6}>
-                <Typography variant="body2" sx={{ mb: 1 }}>
-                  Entry Price
-                </Typography>
-                <TextField
-                  fullWidth
-                  id="outlined-start-adornment"
-                  value={`${fCurrency(curPrice)}`}
-                  sx={{
-                    backgroundColor: '#0E0D14',
-                    borderRadius: '10px',
-                    minWidth: 100,
-                    // height: 40,
-                    '& .MuiOutlinedInput-input': {
-                      padding: theme.spacing(1),
-                      fontWeight: 300,
-                      fontSize: '15px',
-                      textAlign: 'center'
-                    },
-                    '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
-                  }}
-                />
-              </Grid>
-            )}
-          </Grid>
           <Box my={4} />
           <Typography variant="body2" sx={{ mb: 1 }}>
             LEVERAGE MULTIPLER
@@ -622,7 +627,17 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
           {profitsList.map((item, index) => (
             <ListItem key={index} sx={{ justifyContent: 'space-between !important' }}>
               <Typography variant="body2">{item.name}</Typography>
-              <Typography variant="body2">{item.name === 'Entry Price' ? entryPrice : item.value}</Typography>
+              <Typography
+                variant="body2"
+                sx={{
+                  ...(item.name === 'Entry Price' && {
+                    color: '#FF0000',
+                    ...(currencyDetail?.changes > 0 && { color: '#05FF00' })
+                  })
+                }}
+              >
+                {item.name === 'Entry Price' ? fCurrency(entryPrice) : item.value}
+              </Typography>
             </ListItem>
           ))}
         </List>
