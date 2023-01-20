@@ -11,10 +11,11 @@ Chart.propTypes = {
   ctype: PropTypes.number,
   chartViewMode: PropTypes.number,
   onSetLastPrice: PropTypes.func,
+  onSetLastOHLCData: PropTypes.func,
   socket: PropTypes.object
 };
 
-export default function Chart({ currency, interval, ctype, chartViewMode, onSetLastPrice, socket }) {
+export default function Chart({ currency, interval, ctype, chartViewMode, onSetLastPrice, onSetLastOHLCData, socket }) {
   const chartContainerRef = useRef(null);
   const chart = useRef(null);
   const resizeObserver = useRef();
@@ -152,6 +153,8 @@ export default function Chart({ currency, interval, ctype, chartViewMode, onSetL
             open: t.o,
             time
           };
+          // console.log('LAST:', lastOHLCData);
+          onSetLastOHLCData({ ...lastOHLCData });
         }
       } catch (e) {
         /* Error hanlding codes */

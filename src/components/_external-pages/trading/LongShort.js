@@ -65,12 +65,11 @@ const TabStyles = styled(Tab)(() => ({
 
 LongShort.propTypes = {
   currency: PropTypes.string,
-  currencyDetail: PropTypes.object,
   ctype: PropTypes.number,
   onChartViewMode: PropTypes.func,
   socket: PropTypes.object
 };
-export default function LongShort({ currency, currencyDetail, ctype, onChartViewMode, socket }) {
+export default function LongShort({ currency, ctype, onChartViewMode, socket }) {
   const theme = useTheme();
   const { stopLossMode } = useSettings();
 
@@ -384,9 +383,7 @@ export default function LongShort({ currency, currencyDetail, ctype, onChartView
                       padding: theme.spacing(1),
                       fontWeight: 500,
                       fontSize: '15px',
-                      textAlign: 'center',
-                      color: '#FF0000',
-                      ...(currencyDetail?.changes > 0 && { color: '#05FF00' })
+                      textAlign: 'center'
                     },
                     '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
                   }}
@@ -627,15 +624,7 @@ export default function LongShort({ currency, currencyDetail, ctype, onChartView
           {profitsList.map((item, index) => (
             <ListItem key={index} sx={{ justifyContent: 'space-between !important' }}>
               <Typography variant="body2">{item.name}</Typography>
-              <Typography
-                variant="body2"
-                sx={{
-                  ...(item.name === 'Entry Price' && {
-                    color: '#FF0000',
-                    ...(currencyDetail?.changes > 0 && { color: '#05FF00' })
-                  })
-                }}
-              >
+              <Typography variant="body2">
                 {item.name === 'Entry Price' ? fCurrency(entryPrice) : item.value}
               </Typography>
             </ListItem>
