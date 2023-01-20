@@ -17,9 +17,9 @@ ChartStatus.propTypes = {
   currency: PropTypes.string,
   chartViewMode: PropTypes.number,
   lastPrice: PropTypes.object,
+  lastOHLCData: PropTypes.object,
   onChartCurrency: PropTypes.func,
   onChartInterval: PropTypes.func,
-  onCurrencyDetail: PropTypes.func,
   onCType: PropTypes.func,
   other: PropTypes.object
 };
@@ -29,25 +29,34 @@ function ChartStatus({
   currency,
   chartViewMode,
   lastPrice,
+  lastOHLCData,
   onChartCurrency,
   onChartInterval,
-  onCurrencyDetail,
   onCType,
   other
 }) {
-  const { close, high, low } = lastPrice;
+  const { close, open, high, low } = lastPrice;
   const theme = useTheme();
   const [interval, setInterval] = useState(1);
   const [type, setType] = useState(0);
 
   const [price, setPrice] = useState(0);
+  const [openPrice, setOpenPrice] = useState(0);
   const [currencyDetail, setCurrencyDetail] = useState(null);
 
   useEffect(() => {
     if (close) {
+      setOpenPrice(open);
       setPrice(close.toFixed(3));
     }
-  }, [close]);
+  }, [close, open]);
+
+  useEffect(() => {
+    if (lastOHLCData) {
+      const { open } = lastOHLCData;
+      setOpenPrice(open);
+    }
+  }, [lastOHLCData]);
 
   useEffect(() => {
     // onChartCurrency(currency);
@@ -74,7 +83,9 @@ function ChartStatus({
         pair = t.sym;
       }
       try {
-        if (pair === pairString) setPrice(closePrice.toFixed(3));
+        if (pair === pairString) {
+          setPrice(closePrice.toFixed(3));
+        }
       } catch (e) {
         /* Error hanlding codes */
       }
@@ -113,27 +124,21 @@ function ChartStatus({
               <Typography variant="h4">{currency ? upperCase(currency) : 'BTC'}</Typography>
               <img
                 src={
-                  currencyDetail?.changes > 0
+                  price > openPrice
                     ? '/static/icons/trading_ui/two_up_arrow.svg'
                     : '/static/icons/trading_ui/two_down_arrow.svg'
                 }
                 alt="two arrow"
                 style={{ width: 18, margin: '0 5px' }}
               />
-              <Typography
-                variant="h6"
-                sx={{ color: currencyDetail?.changes > 0 ? '#05FF00' : '#FF0000', minWidth: 100 }}
-              >
+              <Typography variant="h6" sx={{ color: price > openPrice ? '#05FF00' : '#FF0000', minWidth: 100 }}>
                 {fCurrency(price)}
               </Typography>
             </Stack>
 
             <CryptoPopover
               currency={currency}
-              onChnageCurrencyDetail={(detail) => {
-                setCurrencyDetail(detail);
-                onCurrencyDetail(detail);
-              }}
+              onChangeCurrencyDetail={(detail) => setCurrencyDetail(detail)}
               onChangeCurrency={(cur) => onChartCurrency(cur)}
               onChangeType={(type) => setType(type)}
             />

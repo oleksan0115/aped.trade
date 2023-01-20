@@ -14,12 +14,12 @@ import Iconify from '../../Iconify';
 
 CryptoPopover.propTypes = {
   currency: PropTypes.string,
-  onChnageCurrencyDetail: PropTypes.func,
+  onChangeCurrencyDetail: PropTypes.func,
   onChangeCurrency: PropTypes.func,
   onChangeType: PropTypes.func
 };
 
-export default function CryptoPopover({ currency, onChnageCurrencyDetail, onChangeCurrency, onChangeType }) {
+export default function CryptoPopover({ currency, onChangeCurrencyDetail, onChangeCurrency, onChangeType }) {
   const theme = useTheme();
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
@@ -82,7 +82,7 @@ export default function CryptoPopover({ currency, onChnageCurrencyDetail, onChan
         break;
     }
     const cur = tmpPrices.find((curObj) => curObj.value === currency);
-    onChnageCurrencyDetail(cur);
+    onChangeCurrencyDetail(cur);
     setNewPrices([...tmpPrices]);
   }, [currency, cryptoPrices, forexPrices, stocksPrices, value]);
 
