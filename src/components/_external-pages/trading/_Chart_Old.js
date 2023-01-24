@@ -7,7 +7,7 @@ import { getPreviousChartData } from './api';
 
 Chart.propTypes = {
   currency: PropTypes.string,
-  interval: PropTypes.number,
+  interval: PropTypes.string,
   ctype: PropTypes.number,
   chartViewMode: PropTypes.number,
   onSetLastPrice: PropTypes.func,
@@ -82,8 +82,25 @@ export default function Chart({ currency, interval, ctype, chartViewMode, onSetL
     processingData();
     let formattedData = [];
     let lastOHLCData = {};
+    let timeRange = 3;
+
+    const timeValue = Number(interval.split(' ')[0]);
+    const timeUnit = interval.split(' ')[1];
+
+    switch (timeUnit) {
+      case 'hour':
+        timeRange = 3 * 60;
+        break;
+      case 'day':
+        timeRange = 3 * 24 * 60;
+        break;
+      default:
+        timeRange = 3;
+        break;
+    }
+
     const lastTime = Date.now();
-    const startTime = lastTime - 3 * 24 * 60 * 60 * 1000;
+    const startTime = lastTime - timeRange * 24 * 60 * 60 * 1000;
     let pairString = '';
 
     if (PriceTypes[ctype] === 'crypto') pairString = `${currency.toUpperCase()}-USD`;

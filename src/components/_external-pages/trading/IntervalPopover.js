@@ -11,7 +11,7 @@ import Iconify from '../../Iconify';
 // ----------------------------------------------------------------------
 
 IntervalPopover.propTypes = {
-  interval: PropTypes.number,
+  interval: PropTypes.string,
   onChangeInterval: PropTypes.func
 };
 
@@ -28,7 +28,7 @@ export default function IntervalPopover({ interval, onChangeInterval }) {
   };
 
   const handleChangeInterval = (item) => {
-    onChangeInterval(item.value);
+    onChangeInterval(item);
     handleClose();
   };
 
@@ -53,7 +53,7 @@ export default function IntervalPopover({ interval, onChangeInterval }) {
           spacing={1}
           sx={{ backgroundColor: '#232133', py: 1, px: 2, borderRadius: '10px', fontWeight: 500 }}
         >
-          {interval}min
+          {interval}
           <img src="/static/icons/trading_ui/trangle_icon.svg" alt="two arrow" />
         </Stack>
       </Box>
@@ -61,7 +61,7 @@ export default function IntervalPopover({ interval, onChangeInterval }) {
       <MenuPopover open={open} onClose={handleClose} anchorEl={anchorRef.current} sx={{ py: 1, width: 160 }}>
         {intervals.map((option) => (
           <MenuItem
-            key={option.value}
+            key={option}
             // selected={option.value === currentCurrency.value}
             onClick={() => handleChangeInterval(option)}
             sx={{ py: 1, px: 2.5 }}
@@ -69,7 +69,7 @@ export default function IntervalPopover({ interval, onChangeInterval }) {
             <ListItemIcon>
               <Iconify icon="mdi:timer-sync-outline" sx={{ width: 20, height: 20 }} />
             </ListItemIcon>
-            <ListItemText primaryTypographyProps={{ variant: 'body2' }}>{option.label}</ListItemText>
+            <ListItemText primaryTypographyProps={{ variant: 'body2' }}>{option}</ListItemText>
           </MenuItem>
         ))}
       </MenuPopover>
@@ -77,25 +77,4 @@ export default function IntervalPopover({ interval, onChangeInterval }) {
   );
 }
 
-const intervals = [
-  {
-    label: '1min',
-    value: 1
-  },
-  {
-    label: '5min',
-    value: 5
-  },
-  {
-    label: '15min',
-    value: 15
-  },
-  {
-    label: '30min',
-    value: 30
-  },
-  {
-    label: '60min',
-    value: 60
-  }
-];
+const intervals = ['1 min', '5 min', '15 min', '30 min', '1 hour', '4 hour', '1 day'];

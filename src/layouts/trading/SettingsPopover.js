@@ -42,7 +42,11 @@ export default function SettingsPopover({ settingValue, onChangeSettingValue }) 
           pl: 1
         }}
       >
-        <Button className="trading-gradient-button no-padding" variant="contained" color="error">
+        <Button
+          className="trading-gradient-button reverse-gradient-button no-padding"
+          variant="contained"
+          color="error"
+        >
           <Box component="img" src="/static/trading/hexagon.png" sx={{ width: 20 }} />
           <Iconify icon="ci:line-xl" sx={{ height: 30 }} />
           <Iconify icon="bi:three-dots-vertical" sx={{ width: 20 }} />
@@ -60,7 +64,7 @@ export default function SettingsPopover({ settingValue, onChangeSettingValue }) 
           sx={{ py: 1, px: 2.5 }}
         >
           <ListItemIcon>
-            <Iconify icon="mdi:shape-polygon-plus" sx={{ width: 20, height: 20 }} />
+            <Box component="img" src="/static/trading/polygon_logo.svg" sx={{ width: 20 }} />
           </ListItemIcon>
           <ListItemText primaryTypographyProps={{ variant: 'body2' }}>Polygon</ListItemText>
         </MenuItem>
@@ -70,7 +74,7 @@ export default function SettingsPopover({ settingValue, onChangeSettingValue }) 
           sx={{ py: 1, px: 2.5 }}
         >
           <ListItemIcon>
-            <Iconify icon="mdi:avalanche" sx={{ width: 20, height: 20 }} />
+            <Box component="img" src="/static/trading/arbitrum_logo.svg" sx={{ width: 20 }} />
           </ListItemIcon>
           <ListItemText primaryTypographyProps={{ variant: 'body2' }}>Avalanche</ListItemText>
         </MenuItem>

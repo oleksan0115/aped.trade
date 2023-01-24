@@ -1,5 +1,4 @@
 /* eslint-disable */
-import { upperCase } from 'change-case-all';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import { useTheme } from '@material-ui/core/styles';
@@ -8,9 +7,6 @@ import { Box, Stack, Typography } from '@material-ui/core';
 // components
 import CryptoPopover from './CryptoPopover';
 import IntervalPopover from './IntervalPopover';
-
-// utils
-import { fCurrency, fNumber, fData } from '../../../utils/formatNumber';
 
 ChartStatus.propTypes = {
   socket: PropTypes.object,
@@ -37,17 +33,16 @@ function ChartStatus({
 }) {
   const { close, open, high, low } = lastPrice;
   const theme = useTheme();
-  const [interval, setInterval] = useState(1);
+  const [interval, setInterval] = useState('1 min');
   const [type, setType] = useState(0);
 
   const [price, setPrice] = useState(0);
   const [openPrice, setOpenPrice] = useState(0);
-  const [currencyDetail, setCurrencyDetail] = useState(null);
 
   useEffect(() => {
     if (close) {
       setOpenPrice(open);
-      setPrice(close.toFixed(3));
+      setPrice(Number(close.toFixed(3)));
     }
   }, [close, open]);
 
@@ -59,7 +54,6 @@ function ChartStatus({
   }, [lastOHLCData]);
 
   useEffect(() => {
-    // onChartCurrency(currency);
     onChartInterval(interval);
     onCType(type);
 
@@ -84,7 +78,7 @@ function ChartStatus({
       }
       try {
         if (pair === pairString) {
-          setPrice(closePrice.toFixed(3));
+          setPrice(Number(closePrice.toFixed(3)));
         }
       } catch (e) {
         /* Error hanlding codes */
@@ -112,33 +106,10 @@ function ChartStatus({
       >
         <Stack direction={{ xs: 'column', md: 'row' }} spacing={0} alignItems="center">
           <Stack direction="row" spacing={0} alignItems="center" sx={{ [theme.breakpoints.down('md')]: { mb: 1 } }}>
-            <Stack
-              direction="row"
-              spacing={0}
-              alignItems="center"
-              sx={{
-                pl: 1,
-                borderRadius: 1
-              }}
-            >
-              <Typography variant="h4">{currency ? upperCase(currency) : 'BTC'}</Typography>
-              <img
-                src={
-                  price > openPrice
-                    ? '/static/icons/trading_ui/two_up_arrow.svg'
-                    : '/static/icons/trading_ui/two_down_arrow.svg'
-                }
-                alt="two arrow"
-                style={{ width: 18, margin: '0 5px' }}
-              />
-              <Typography variant="h6" sx={{ color: price > openPrice ? '#05FF00' : '#FF0000', minWidth: 100 }}>
-                {fCurrency(price)}
-              </Typography>
-            </Stack>
-
             <CryptoPopover
+              price={price}
+              openPrice={openPrice}
               currency={currency}
-              onChangeCurrencyDetail={(detail) => setCurrencyDetail(detail)}
               onChangeCurrency={(cur) => onChartCurrency(cur)}
               onChangeType={(type) => setType(type)}
             />

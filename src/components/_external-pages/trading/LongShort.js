@@ -147,7 +147,7 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
     else if (PriceTypes[ctype] === 'forex') pairString = `${currency.toUpperCase()}/USD`;
     else pairString = `${currency.toUpperCase()}`;
 
-    getPreviousChartData(currency, 1, PriceTypes[ctype], startTime, lastTime).then((pastData) => {
+    getPreviousChartData(currency, '1 min', PriceTypes[ctype], startTime, lastTime).then((pastData) => {
       if (pastData) {
         pastData.map((d) => {
           const currentDate = new Date();
@@ -261,8 +261,10 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
             sx={{
               position: 'relative',
               cursor: 'pointer',
-              pl: 4,
-              borderRadius: 1
+              borderRadius: 1,
+              [theme.breakpoints.up('md')]: {
+                marginLeft: '63px !important'
+              }
             }}
           >
             <Typography variant="body2">{sentenceCase(marketLimit)}</Typography>
@@ -340,7 +342,7 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
         <Box my={4} mx={viewMode === 1 ? 0 : 3}>
           <Grid container spacing={2}>
             <Grid item xs={12} md={viewMode === 1 ? (marketLimit === 'limit' ? 6 : 12) : 12}>
-              <Typography variant="body2" sx={{ mb: 1 }}>
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 'bold' }}>
                 {viewMode ? 'COLLATERAL' : 'PAY'}
               </Typography>
               <Box
@@ -367,7 +369,7 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
             </Grid>
             {marketLimit === 'limit' && (
               <Grid item xs={12} md={6}>
-                <Typography variant="body2" sx={{ mb: 1 }}>
+                <Typography variant="body2" sx={{ mb: 1, fontWeight: 'bold' }}>
                   Entry Price
                 </Typography>
                 <TextField
@@ -395,7 +397,7 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
         {viewMode === 1 && (
           <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
-              <Typography variant="body2" sx={{ mb: 1 }}>
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 'bold' }}>
                 Take Profit
               </Typography>
               <Box
@@ -435,7 +437,7 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
                 <Stack spacing={1} sx={{ mt: 1 }}>
                   <input
                     type="range"
-                    min={25}
+                    min={5}
                     max={999}
                     onChange={handleSliderProfitValue}
                     value={sliderProfitValue}
@@ -457,7 +459,7 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
               )}
             </Grid>
             <Grid item xs={12} md={6}>
-              <Typography variant="body2" sx={{ mb: 1 }}>
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 'bold' }}>
                 Stop Loss
               </Typography>
               {!stopLossMode ? (
@@ -546,7 +548,7 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
         )}
         <Box my={4} mx={viewMode === 1 ? 0 : 3}>
           <Box my={4} />
-          <Typography variant="body2" sx={{ mb: 1 }}>
+          <Typography variant="body2" sx={{ mb: 1, fontWeight: 'bold' }}>
             LEVERAGE MULTIPLER
           </Typography>
           <Stack direction="row" spacing={2}>
@@ -587,13 +589,18 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
           step={0.01}
           className="range purple"
         />
-        {/* <Stack direction="row" justifyContent="space-between">
-          {minMax.values && minMax.values.map((value, idx) => <span key={idx}>{value}</span>)}
-        </Stack> */}
-        <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-between">
+        <Stack direction="row" justifyContent="space-between" sx={{ mt: 1 }}>
+          {minMax.values &&
+            minMax.values.map((value, idx) => (
+              <span style={{ fontSize: '10px' }} key={idx}>
+                {value}x
+              </span>
+            ))}
+        </Stack>
+        {/* <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-between">
           <Typography variant="body2">{minMax.min}x</Typography>
           <Typography variant="body2">{minMax.max}x</Typography>
-        </Stack>
+        </Stack> */}
         <Box my={4} sx={{ textAlign: 'center' }}>
           <Button
             variant="contained"

@@ -1,25 +1,28 @@
 /* eslint-disable */
+import { upperCase } from 'change-case-all';
 import PropTypes from 'prop-types';
 
 import { useRef, useState, useEffect } from 'react';
 // material
 import { useTheme } from '@material-ui/core/styles';
-import { Box, MenuItem, ListItemIcon, ListItemText, Stack, Tabs, Tab } from '@material-ui/core';
+import { Box, MenuItem, ListItemIcon, ListItemText, Stack, Tabs, Tab, Typography } from '@material-ui/core';
 
 // components
 import MenuPopover from '../../MenuPopover';
 import Iconify from '../../Iconify';
+import { fCurrency } from '../../../utils/formatNumber';
 
 // ----------------------------------------------------------------------
 
 CryptoPopover.propTypes = {
+  price: PropTypes.number,
+  openPrice: PropTypes.number,
   currency: PropTypes.string,
-  onChangeCurrencyDetail: PropTypes.func,
   onChangeCurrency: PropTypes.func,
   onChangeType: PropTypes.func
 };
 
-export default function CryptoPopover({ currency, onChangeCurrencyDetail, onChangeCurrency, onChangeType }) {
+export default function CryptoPopover({ price, openPrice, currency, onChangeCurrency, onChangeType }) {
   const theme = useTheme();
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
@@ -81,8 +84,7 @@ export default function CryptoPopover({ currency, onChangeCurrencyDetail, onChan
         selectedPrice = CRYPTOS;
         break;
     }
-    const cur = tmpPrices.find((curObj) => curObj.value === currency);
-    onChangeCurrencyDetail(cur);
+    // const cur = tmpPrices.find((curObj) => curObj.value === currency);
     setNewPrices([...tmpPrices]);
   }, [currency, cryptoPrices, forexPrices, stocksPrices, value]);
 
@@ -131,6 +133,19 @@ export default function CryptoPopover({ currency, onChangeCurrencyDetail, onChan
           borderRadius: 1
         }}
       >
+        <Typography variant="h4">{currency ? upperCase(currency) : 'BTC'}</Typography>
+        <img
+          src={
+            price > openPrice
+              ? '/static/icons/trading_ui/two_up_arrow.svg'
+              : '/static/icons/trading_ui/two_down_arrow.svg'
+          }
+          alt="two arrow"
+          style={{ width: 18, margin: '0 5px' }}
+        />
+        <Typography variant="h6" sx={{ color: price > openPrice ? '#05FF00' : '#FF0000', minWidth: 100 }}>
+          {fCurrency(price)}
+        </Typography>
         <img
           src="/static/icons/trading_ui/trading_arrow_button.png"
           alt="two arrow"
