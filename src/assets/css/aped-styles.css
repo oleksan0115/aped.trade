@@ -153,6 +153,11 @@ html {
   font-weight: 300;
 }
 
+.reverse-gradient-button {
+  background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)),
+    linear-gradient(101deg, #5600c3, #fd02bd);
+}
+
 .trading-gradient-button:hover {
   box-shadow: none;
   box-shadow: 2px 1000px 1px #262544 inset;

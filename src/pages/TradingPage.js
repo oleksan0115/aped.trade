@@ -16,7 +16,7 @@ const socket = io(`${ENDPOINT}`);
 export default function TradingView() {
   const theme = useTheme();
   const [currency, setCurrency] = useState('btc');
-  const [interval, setInterval] = useState(1);
+  const [interval, setInterval] = useState('1 min');
   const [cType, setCType] = useState(0);
   const [chartViewMode, setChartViewMode] = useState(1);
   const [lastPrice, setLastPrice] = useState({});
