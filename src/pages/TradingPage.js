@@ -7,7 +7,7 @@ import { Container, Box, Stack } from '@material-ui/core';
 // components
 import Page from '../components/Page';
 
-import { Chart, ChartStatus, LongShort, OpenTradeOrders } from '../components/_external-pages/trading';
+import { Chart, ChartStatus, LongShort, TradesBoard } from '../components/_external-pages/trading';
 
 const ENDPOINT = process.env.REACT_APP_WS_API_URL;
 const socket = io(`${ENDPOINT}`);
@@ -53,10 +53,7 @@ export default function TradingView() {
           <LongShort currency={currency} ctype={cType} onChartViewMode={(vm) => setChartViewMode(vm)} socket={socket} />
         </Stack>
         <Box m={3} />
-        <OpenTradeOrders
-          title="Active Trades, Closed Trades, Public Trades, Learderboard"
-          content="Collaterals, profits, losses, are in DAI"
-        />
+        <TradesBoard />
       </Container>
     </Page>
   );
