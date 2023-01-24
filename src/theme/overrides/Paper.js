@@ -9,6 +9,7 @@ export default function Paper() {
 
       styleOverrides: {
         root: {
+          background: '#232133',
           backgroundImage: 'none'
         }
       }
