@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { experimentalStyled as styled, makeStyles, useTheme } from '@material-ui/core/styles';
 
 import {
@@ -63,6 +63,27 @@ export default function TradesBoard() {
   const upMd = useMediaQuery(theme.breakpoints.up('md'));
 
   const [selectedTab, setSelectedTab] = useState(3);
+  const [tradeList, setTradeList] = useState([]);
+
+  useEffect(() => {
+    let trades = LEADERBOARD;
+    switch (selectedTab) {
+      case 0:
+        trades = LEADERBOARD.slice(0, 2).map((item) => ({ ...item, exitPrice: '-', roi: '-' }));
+        break;
+      case 1:
+        trades = LEADERBOARD.slice(0, 2);
+        break;
+      case 2:
+        trades = LEADERBOARD.slice(0, 5);
+        break;
+      default:
+        trades = LEADERBOARD;
+        break;
+    }
+
+    setTradeList([...trades]);
+  }, [selectedTab]);
 
   const TabStyles = styled(Typography)(({ selected, theme }) => ({
     cursor: 'pointer',
@@ -118,7 +139,7 @@ export default function TradesBoard() {
           </thead>
 
           <TableBody>
-            {LEADERBOARD.map((item, idx) => [
+            {tradeList.map((item, idx) => [
               <TableRow key={idx}>
                 <TableBodyCell align="center">{item.trader}</TableBodyCell>
                 <TableBodyCell align="left">
@@ -139,7 +160,8 @@ export default function TradesBoard() {
 
                 <TableBodyCell align="left">{item.exitPrice}</TableBodyCell>
                 <TableBodyCell align="left" sx={{ color: '#72F238' }}>
-                  {item.roi}%
+                  {item.roi}
+                  {item.roi === '-' ? '' : '%'}
                 </TableBodyCell>
               </TableRow>,
               <TableRow key={`id-${idx}`}>
@@ -218,5 +240,70 @@ const LEADERBOARD = [
     leverage: 100,
     exitPrice: 142.16,
     roi: 19.54
+  },
+  {
+    trader: 'aped.eth',
+    pair: {
+      icon: '/static/icons/leaderboard/bitcoin.svg',
+      direction: 'down'
+    },
+    entryPrice: 17450.51,
+    collateral: 26554.26,
+    liquidationPrice: 17450.51,
+    leverage: 100,
+    exitPrice: 17430.51,
+    roi: 16.25
+  },
+  {
+    trader: '0x...x420',
+    pair: {
+      icon: '/static/icons/leaderboard/amd.svg',
+      direction: 'up'
+    },
+    entryPrice: 76.4,
+    collateral: 456.56,
+    liquidationPrice: 79.65,
+    leverage: 69,
+    exitPrice: 142.16,
+    roi: 11.54
+  },
+  {
+    trader: 'leverage.eth',
+    pair: {
+      icon: '/static/icons/leaderboard/dogecoin.svg',
+      direction: 'up'
+    },
+    entryPrice: 0.0721,
+    collateral: 25.26,
+    liquidationPrice: 36.54,
+    leverage: 100,
+    exitPrice: 0.082,
+    roi: 10.13
+  },
+  {
+    trader: '0x...6969',
+    pair: {
+      icon: '/static/icons/leaderboard/eth.svg',
+      direction: 'down'
+    },
+    entryPrice: 1148.21,
+    collateral: 1125.25,
+    liquidationPrice: 155.11,
+    leverage: 68,
+    exitPrice: 142.16,
+    roi: 5.29
+  },
+  {
+    trader: 'apedceo.eth',
+    pair: {
+      icon: '/static/icons/leaderboard/goldbar.svg',
+      direction: 'down'
+    },
+    entryPrice: 16.3,
+    collateral: 25.36,
+    liquidationPrice: 25.6,
+    leverage: 64,
+    exitPrice: 36.25,
+    roi: 2.14
   }
 ];
