@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { experimentalStyled as styled } from '@material-ui/core/styles';
 // material
-import { Container, Button, Stack, Typography } from '@material-ui/core';
+import { Container, Stack, Typography } from '@material-ui/core';
 
 // components
 import Page from '../components/Page';
@@ -13,11 +13,14 @@ import { InvestorContactForm, ContributorContactForm } from '../components/_exte
 const RootStyle = styled(Container)(({ theme }) => ({
   position: 'relative',
   backgroundColor: theme.palette.background.default,
-  padding: theme.spacing(2)
+  padding: theme.spacing(2),
+  [theme.breakpoints.down('md')]: {
+    marginTop: theme.spacing(10)
+  }
 }));
 
 export default function ContactUs() {
-  const [contactType, setContactType] = useState('contributor');
+  const [contactType, setContactType] = useState('');
 
   return (
     <Page title="Contact Us | APED">
@@ -26,14 +29,23 @@ export default function ContactUs() {
           CONTACT US
         </Typography>
         {contactType === '' && (
-          <Stack direction={{ sm: 'column', md: 'row' }} justifyContent="center" alignItems="center">
-            <Button onClick={() => setContactType('investor')}>INVESTOR</Button>
-            <Button onClick={() => setContactType('contributor')}>CONTRIBUTOR</Button>
+          <Stack
+            className="contact-buttons"
+            direction={{ xs: 'column', md: 'row' }}
+            justifyContent="space-around"
+            alignItems="center"
+          >
+            <a className="blue-btn" href="#" onClick={() => setContactType('investor')}>
+              INVESTOR
+            </a>
+            <a className="pink-btn" href="#" onClick={() => setContactType('contributor')}>
+              CONTRIBUTOR
+            </a>
           </Stack>
         )}
 
-        {contactType === 'investor' && <InvestorContactForm />}
-        {contactType === 'contributor' && <ContributorContactForm />}
+        {contactType === 'investor' && <InvestorContactForm onBackToMain={() => setContactType('')} />}
+        {contactType === 'contributor' && <ContributorContactForm onBackToMain={() => setContactType('')} />}
       </RootStyle>
     </Page>
   );

@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types';
+
 import * as Yup from 'yup';
 import axios from 'axios';
 import { useSnackbar } from 'notistack';
@@ -5,7 +7,10 @@ import { Form, FormikProvider, useFormik } from 'formik';
 // material
 import { experimentalStyled as styled } from '@material-ui/core/styles';
 import { LoadingButton } from '@material-ui/lab';
-import { Box, Card, Grid, Container, TextField, Typography } from '@material-ui/core';
+import { Box, Card, Grid, Container, TextField, Typography, Button } from '@material-ui/core';
+
+// components
+import Iconify from '../../Iconify';
 //
 
 const TextContainer = styled(TextField)(({ theme }) => ({
@@ -28,7 +33,11 @@ const LabelStyle = styled(Typography)(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-export default function ContributorContactForm() {
+ContributorContactForm.propTypes = {
+  onBackToMain: PropTypes.func
+};
+
+export default function ContributorContactForm({ onBackToMain }) {
   const { enqueueSnackbar } = useSnackbar();
 
   const NewContactSchema = Yup.object().shape({
@@ -179,7 +188,15 @@ export default function ContributorContactForm() {
               </Grid>
             </Grid>
 
-            <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
+            <Box sx={{ mt: 3, display: 'flex', justifyContent: 'space-between' }}>
+              <Button
+                variant="contained"
+                color="secondary"
+                startIcon={<Iconify icon="akar-icons:arrow-back-thick" sx={{ width: 20, height: 20 }} />}
+                onClick={onBackToMain}
+              >
+                Back
+              </Button>
               <LoadingButton
                 type="submit"
                 size="large"

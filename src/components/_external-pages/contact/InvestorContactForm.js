@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import * as Yup from 'yup';
 import axios from 'axios';
 import { useState } from 'react';
@@ -6,8 +7,10 @@ import { Form, FormikProvider, useFormik } from 'formik';
 // material
 import { experimentalStyled as styled } from '@material-ui/core/styles';
 import { LoadingButton } from '@material-ui/lab';
-import { Box, Card, Grid, Tabs, Container, TextField, Typography, Tab } from '@material-ui/core';
+import { Box, Card, Grid, Tabs, Container, TextField, Typography, Tab, Button } from '@material-ui/core';
 //
+// components
+import Iconify from '../../Iconify';
 
 const TabContainer = styled(Tabs)(({ theme }) => ({
   minHeight: 35,
@@ -58,7 +61,11 @@ const LabelStyle = styled(Typography)(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-export default function InvestorContactForm() {
+InvestorContactForm.propTypes = {
+  onBackToMain: PropTypes.func
+};
+
+export default function InvestorContactForm({ onBackToMain }) {
   const { enqueueSnackbar } = useSnackbar();
 
   const [handsStatus, setHandsStatus] = useState(2);
@@ -214,7 +221,15 @@ export default function InvestorContactForm() {
               </Grid>
             </Grid>
 
-            <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
+            <Box sx={{ mt: 3, display: 'flex', justifyContent: 'space-between' }}>
+              <Button
+                variant="contained"
+                color="secondary"
+                startIcon={<Iconify icon="akar-icons:arrow-back-thick" sx={{ width: 20, height: 20 }} />}
+                onClick={onBackToMain}
+              >
+                Back
+              </Button>
               <LoadingButton
                 type="submit"
                 size="large"
