@@ -46,21 +46,29 @@ export default function Router() {
         { path: '*', element: <Navigate to="/404" replace /> }
       ]
     },
+    // main layouts
     {
-      path: '/trading-view',
+      path: '/',
       element: <MainLayout />,
       children: [{ path: '/', element: <LandingPage /> }]
     },
 
+    // marketing layouts
     {
       path: '/marketing-funnel',
       element: <MarketingFunnel />
     },
     // trading layouts
     {
-      path: '/',
+      path: '/trading-view',
       element: <TradingLayout />,
       children: [{ path: '/', element: <TradingPage /> }]
+    },
+
+    {
+      path: '/contact-us',
+      element: <TradingLayout />,
+      children: [{ path: '/', element: <ContactPage /> }]
     },
 
     { path: '*', element: <Navigate to="/404" replace /> }
@@ -72,6 +80,9 @@ export default function Router() {
 const NotFound = Loadable(lazy(() => import('../pages/Page404')));
 // Main
 const LandingPage = Loadable(lazy(() => import('../pages/LandingPage')));
+// Trading
 const TradingPage = Loadable(lazy(() => import('../pages/TradingPage')));
+// Contact
+const ContactPage = Loadable(lazy(() => import('../pages/ContactPage')));
 
 const MarketingFunnel = Loadable(lazy(() => import('../pages/MarketingFunnel')));

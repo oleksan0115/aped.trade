@@ -173,19 +173,7 @@ export default function SyntheticArchitecture() {
                   [theme.breakpoints.down('md')]: { fontSize: '28px', textAlign: 'center' }
                 }}
               >
-                JOIN <span className="gradient-text">DISCORD</span>
-              </Typography>
-              <Typography
-                variant="body1"
-                sx={{
-                  fontFamily: 'monospace',
-                  [theme.breakpoints.down('md')]: {
-                    fontSize: '12px',
-                    textAlign: 'left'
-                  }
-                }}
-              >
-                Join Discord to become an early ape.
+                <span className="gradient-text">CONTACT US</span>
               </Typography>
             </Box>
 
@@ -197,7 +185,7 @@ export default function SyntheticArchitecture() {
                 href="https://discord.com/invite/FbFjCz4PAR"
                 sx={{ zIndex: 3 }}
               >
-                Join Discord
+                CONTACT US
               </Button>
             </motion.div>
           </Stack>
