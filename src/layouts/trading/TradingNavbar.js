@@ -1,12 +1,13 @@
 /* eslint-disable jsx-a11y/mouse-events-have-key-events */
 import React, { useEffect, useState } from 'react';
-import { NavLink as RouterLink } from 'react-router-dom';
+import { NavLink as RouterLink, useLocation } from 'react-router-dom';
 
 import '../../assets/css/low-dai-notify.css';
 // material
 import { useTheme } from '@material-ui/core/styles';
 import { Box, AppBar, Toolbar, Container, Button, Stack } from '@material-ui/core';
-// hooks
+// paths
+import { PATH_PAGE } from '../../routes/paths';
 // components
 import Logo from '../../components/Logo';
 // import Iconify from '../../components/Iconify';
@@ -17,6 +18,7 @@ import SettingsDialog from './SettingsDialog';
 
 export default function MainNavbar() {
   const theme = useTheme();
+  const { pathname } = useLocation();
 
   const [settingValue, setSettingValue] = useState('');
 
@@ -25,6 +27,8 @@ export default function MainNavbar() {
   useEffect(() => {
     if (settingValue === 'settings') setShowSettingDialog(true);
   }, [settingValue]);
+
+  const isMatched = (path) => pathname === path;
 
   return (
     <AppBar color="default" sx={{ [theme.breakpoints.up('md')]: { position: 'relative', boxShadow: 0 } }}>
@@ -50,19 +54,22 @@ export default function MainNavbar() {
           <RouterLink to="#">
             <Logo />
           </RouterLink>
-          <Stack direction="row" spacing={1} sx={{ position: 'relative' }}>
-            <Button
-              fullWidth
-              className="trading-gradient-button"
-              variant="contained"
-              color="error"
-              sx={{ px: 1, [theme.breakpoints.up('md')]: { px: 4 } }}
-              startIcon={<Box component="img" src="/static/trading/connect-wallet-icon.png" sx={{ width: 20 }} />}
-            >
-              CONNECT
-            </Button>
-            <SettingsPopover settingValue={settingValue} onChangeSettingValue={(value) => setSettingValue(value)} />
-          </Stack>
+
+          {!isMatched(PATH_PAGE.contactUs) && (
+            <Stack direction="row" spacing={1} sx={{ position: 'relative' }}>
+              <Button
+                fullWidth
+                className="trading-gradient-button"
+                variant="contained"
+                color="error"
+                sx={{ px: 1, [theme.breakpoints.up('md')]: { px: 4 } }}
+                startIcon={<Box component="img" src="/static/trading/connect-wallet-icon.png" sx={{ width: 20 }} />}
+              >
+                CONNECT
+              </Button>
+              <SettingsPopover settingValue={settingValue} onChangeSettingValue={(value) => setSettingValue(value)} />
+            </Stack>
+          )}
         </Container>
       </Toolbar>
     </AppBar>

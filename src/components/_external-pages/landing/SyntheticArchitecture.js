@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 // material
 import { experimentalStyled as styled, withStyles, useTheme } from '@material-ui/core/styles';
 import { Container, Stack, Typography, Box, Grid, Button } from '@material-ui/core';
@@ -12,6 +13,8 @@ import { varWrapEnter, varFadeInRight } from '../../animate';
 import Image from '../../Image';
 import JoinWaitlistDialog from '../../JoinWaitlistDialog';
 
+// paths
+import { PATH_PAGE } from '../../../routes/paths';
 // ----------------------------------------------------------------------
 
 const RootStyle = styled(motion.div)(({ theme }) => ({
@@ -63,6 +66,7 @@ const AccordionStyle = withStyles(() => ({
 
 export default function SyntheticArchitecture() {
   const theme = useTheme();
+  const navigage = useNavigate();
   const [expanded, setExpanded] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -173,19 +177,7 @@ export default function SyntheticArchitecture() {
                   [theme.breakpoints.down('md')]: { fontSize: '28px', textAlign: 'center' }
                 }}
               >
-                JOIN <span className="gradient-text">DISCORD</span>
-              </Typography>
-              <Typography
-                variant="body1"
-                sx={{
-                  fontFamily: 'monospace',
-                  [theme.breakpoints.down('md')]: {
-                    fontSize: '12px',
-                    textAlign: 'left'
-                  }
-                }}
-              >
-                Join Discord to become an early ape.
+                <span className="gradient-text">CONTACT US</span>
               </Typography>
             </Box>
 
@@ -193,11 +185,11 @@ export default function SyntheticArchitecture() {
               <Button
                 className="aped-button"
                 variant="contained"
-                // onClick={() => setDialogOpen(true)}
-                href="https://discord.com/invite/FbFjCz4PAR"
+                onClick={() => navigage(PATH_PAGE.contactUs)}
+                // href="https://discord.com/invite/FbFjCz4PAR"
                 sx={{ zIndex: 3 }}
               >
-                Join Discord
+                CONTACT US
               </Button>
             </motion.div>
           </Stack>

@@ -520,7 +520,7 @@ const discovers = [
     prices: []
   },
   {
-    name: 'COMMODITIES',
+    name: 'DEFI',
     value: 4,
     prices: []
   }

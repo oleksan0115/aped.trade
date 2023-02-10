@@ -63,7 +63,7 @@ html {
   position: absolute;
   top: 0;
   left: 0;
-  background-color: #212B36;
+  background-color: #212b36;
   color: white;
   transform: rotateY(180deg);
   overflow-y: hidden;
@@ -71,7 +71,6 @@ html {
   border-radius: 10px;
   border: 2px solid #ffffff44;
 }
-
 
 /* Card Animations End */
 
@@ -410,6 +409,47 @@ input[type='range']::-moz-range-thumb:active {
   cursor: -moz-grabbing;
 }
 
+/* contact us glow button */
+.contact-buttons a {
+  position: relative;
+  display: inline-block;
+  /* padding: 100px; */
+  width: 200px;
+  height: 200px;
+  font-size: 20px;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: 0.5s;
+  border-radius: 50%;
+  text-align: center;
+  padding-top: 90px;
+}
+
+.contact-buttons {
+  min-height: 70vh;
+}
+.blue-btn {
+  color: #03e9f4;
+  border: 1.5px solid #03e9f4;
+  box-shadow: 0px 0px 5px #03e9f4, 0px 0px 25px #03e9f4, 0px 0px 150px #03e9f4, 0px 0px 1100px #03e9f4;
+}
+.blue-btn:hover {
+  background-color: #03e9f4;
+  color: #050801;
+  /* -webkit-box-reflect: below 1px linear-gradient(transparent, #0005); */
+}
+.pink-btn {
+  color: #e100ff;
+  border: 1.5px solid #e100ff;
+  box-shadow: 0px 0px 5px #e100ff, 0px 0px 25px #e100ff, 0px 0px 150px #e100ff, 0px 0px 1100px #e100ff;
+}
+.pink-btn:hover {
+  background-color: #e100ff;
+  color: #050801;
+  /* -webkit-box-reflect: below 1px linear-gradient(transparent, #0005); */
+}
+
 @media screen and (max-width: 580px) {
   .gradient-background {
     background: #161616;
@@ -417,45 +457,3 @@ input[type='range']::-moz-range-thumb:active {
     -webkit-box-shadow: inset 0 0 30px 7px #000000;
   }
 }
-
-/* .gradient-button {
-  font-family: system-ui;
-  padding: 5px 30px;
-  font-weight: 100;
-  position: relative;
-  z-index: 2;
-  display: inline-block;
-  text-decoration: none;
-  color: rgba(#fff, 0.7);
-  box-sizing: border-box;
-  text-align: center;
-  background-color: transparent;
-  font-size: 1.1em;
-  transition: 0.3s;
-  border: 4px solid rgb(28, 43, 28);
-  border-image-source: linear-gradient(to bottom, #69ddff 0%, #4a5e8c 44%, #4a5e8c 49%, #4a5e8c 57%, #da22ff 100%);
-  border-image-slice: 4;
-  overflow: hidden;
-}
-
-.gradient-button:hover {
-  color: #fff;
-}
-
-.gradient-button:hover:after {
-  width: 120%;
-}
-.gradient-button:after {
-  content: '';
-  position: absolute;
-  transition: 0.3s;
-  content: '';
-  width: 0;
-  bottom: -1px;
-  height: 3px;
-  background: linear-gradient(to bottom, #69ddff 0%, #4a5e8c 44%, #4a5e8c 49%, #4a5e8c 57%, #da22ff 100%);
-  height: 120%;
-  left: -10%;
-  transform: skewX(15deg);
-  z-index: -1;
-} */
