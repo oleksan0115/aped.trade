@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useSnackbar } from 'notistack';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 
 import { Typography, IconButton, Stack, Box } from '@material-ui/core';
 
@@ -24,6 +24,7 @@ export default function Snackbar({ notiType, notiDuration, isOpen, onClose }) {
     if (isOpen) {
       onSnackbar(notiType);
     }
+    // eslint-disable-next-line
   }, [isOpen]);
 
   const onSnackbar = (notiType) => {
