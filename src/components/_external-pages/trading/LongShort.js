@@ -1,4 +1,5 @@
 /* eslint-disable */
+import { useSnackbar } from 'notistack';
 import { sentenceCase, upperCase } from 'change-case-all';
 import PropTypes from 'prop-types';
 
@@ -19,12 +20,15 @@ import {
   InputAdornment,
   Grid,
   ListItemText,
-  MenuItem
+  MenuItem,
+  IconButton
 } from '@material-ui/core';
 
 // components
 import MenuPopover from '../../MenuPopover';
 import StableCoinPopover from './StableCoinPopover';
+import Iconify from '../../Iconify';
+import Snackbar from '../../Snackbar';
 
 // hooks
 import useSettings from '../../../hooks/useSettings';
@@ -70,6 +74,7 @@ LongShort.propTypes = {
   socket: PropTypes.object
 };
 export default function LongShort({ currency, ctype, onChartViewMode, socket }) {
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const theme = useTheme();
   const { stopLossMode } = useSettings();
 
@@ -89,6 +94,8 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
 
   const [editedLosePrice, setEditedLosePrice] = useState(0);
 
+  const [isShowAlert, setIsShowAlert] = useState(false);
+
   const [minMax, setMinMax] = useState({});
 
   const [cPrice, setCPrice] = useState(0);
@@ -105,6 +112,12 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
     setMinMax(MIN_MAX[ctype]);
     onChartViewMode(viewMode);
   }, [viewMode, ctype]);
+
+  useEffect(() => {
+    if (isShowAlert) {
+      setTimeout(() => setIsShowAlert(false), NOTIFICATION_DURATION);
+    }
+  }, [isShowAlert]);
 
   useEffect(() => {
     setEntryPrice(cPrice);
@@ -195,6 +208,32 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
     };
   }, [currency, ctype]);
 
+  // const onSnackbarClose = (color) => {
+  //   enqueueSnackbar(
+  //     <div>
+  //       <Typography variant="subtitle2" sx={{ textTransform: 'capitalize' }}>
+  //         {color}
+  //       </Typography>
+  //       <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+  //         This is an {color}
+  //       </Typography>
+  //     </div>,
+  //     {
+  //       variant: color,
+  //       autoHideDuration: 15000,
+  //       anchorOrigin: {
+  //         vertical: 'top',
+  //         horizontal: 'left'
+  //       },
+  //       action: (key) => (
+  //         <IconButton size="small" color="inherit" onClick={() => closeSnackbar(key)}>
+  //           <Iconify icon={'material-symbols:close'} width={24} height={24} />
+  //         </IconButton>
+  //       )
+  //     }
+  //   );
+  // };
+
   const handleChangeLS = (value) => {
     setLongShort(value);
   };
@@ -245,6 +284,12 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
         [theme.breakpoints.down('md')]: { minWidth: '100%' }
       }}
     >
+      <Snackbar
+        isOpen={isShowAlert}
+        notiType="liquidated"
+        notiDuration={NOTIFICATION_DURATION}
+        onClose={() => setIsShowAlert(false)}
+      />
       <CardContent>
         <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 1 }}>
           <TabContainer value={viewMode} onChange={handleChangeViewMode} aria-label="basic tabs example">
@@ -612,6 +657,7 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
                 backgroundColor: '#420391d6'
               }
             }}
+            onClick={() => setIsShowAlert(true)}
           >
             {upperCase(marketLimit)} {upperCase(longShort)}
           </Button>
@@ -641,6 +687,8 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
     </Card>
   );
 }
+
+const NOTIFICATION_DURATION = 5000;
 const detailList = [
   {
     name: 'Buying Power',
