@@ -450,6 +450,12 @@ input[type='range']::-moz-range-thumb:active {
   /* -webkit-box-reflect: below 1px linear-gradient(transparent, #0005); */
 }
 
+.makeStyles-contentRoot-2 {
+  background-color: #3e3a59 !important;
+  padding: 0 10px 0 0 !important;
+  border-radius: 15px !important;
+}
+
 @media screen and (max-width: 580px) {
   .gradient-background {
     background: #161616;

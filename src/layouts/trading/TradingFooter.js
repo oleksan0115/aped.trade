@@ -4,12 +4,14 @@ import { experimentalStyled as styled } from '@material-ui/core/styles';
 import { Link, Container, Stack } from '@material-ui/core';
 //
 import Image from '../../components/Image';
+// paths
+import { PATH_PAGE } from '../../routes/paths';
 
 // ----------------------------------------------------------------------
 
 const LINKS = [
   { name: 'DOCS', href: 'https://aped-xyz.gitbook.io/litepaper' },
-  { name: 'CONTACT US', href: '#' }
+  { name: 'CONTACT US', href: PATH_PAGE.contactUs }
 ];
 
 const SOCIALS = [
