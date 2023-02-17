@@ -12,8 +12,12 @@ import {
   Stack,
   Box,
   Typography,
+  Button,
   useMediaQuery
 } from '@material-ui/core';
+
+// components
+import TradesDetailDialog from './TradesDetailDialog';
 
 const useStyles = makeStyles({
   table: {
@@ -56,6 +60,19 @@ const TableHeaderCell = styled(TableCell)(({ theme }) => ({
   }
 }));
 
+const CloseTradeButton = styled(Button)(({ theme }) => ({
+  backgroundColor: '#5600C3',
+  boxShadow: 'none',
+  fontSize: '12px',
+  padding: theme.spacing(0.2, 1),
+  borderRadius: '5px',
+  fontWeight: 300,
+  border: '0.5px solid rgba(255, 255, 255, 0.5)',
+  '&:hover': {
+    backgroundColor: '#420391d6'
+  }
+}));
+
 export default function TradesBoard() {
   const theme = useTheme();
   const classes = useStyles();
@@ -64,6 +81,9 @@ export default function TradesBoard() {
 
   const [selectedTab, setSelectedTab] = useState(3);
   const [tradeList, setTradeList] = useState([]);
+
+  const [showDetailDialog, setShowDetailDialog] = useState(false);
+  const [dialogContent, setDialogContent] = useState({});
 
   useEffect(() => {
     let trades = LEADERBOARD;
@@ -104,6 +124,11 @@ export default function TradesBoard() {
 
   return (
     <Card sx={{ p: 1, [theme.breakpoints.up('md')]: { p: 3 } }}>
+      <TradesDetailDialog
+        dialogContent={dialogContent}
+        showDialog={showDetailDialog}
+        onShowDialog={(isShow) => setShowDetailDialog(isShow)}
+      />
       <Stack
         direction="row"
         justifyContent={{ xs: 'space-between', md: 'flex-start' }}
@@ -135,6 +160,7 @@ export default function TradesBoard() {
               {upMd && <TableHeaderCell align="left">Leverage</TableHeaderCell>}
               <TableHeaderCell align="left">Exit Price</TableHeaderCell>
               <TableHeaderCell align="left">ROI</TableHeaderCell>
+              {upMd && selectedTab !== 3 && <TableHeaderCell sx={{ maxWidth: 65 }} />}
             </TableRow>
           </thead>
 
@@ -163,6 +189,21 @@ export default function TradesBoard() {
                   {item.roi}
                   {item.roi === '-' ? '' : '%'}
                 </TableBodyCell>
+                {upMd && selectedTab !== 3 && (
+                  <TableBodyCell align="right" sx={{ maxWidth: 65 }}>
+                    <CloseTradeButton
+                      variant="contained"
+                      onClick={() => {
+                        if (selectedTab !== 0) {
+                          setShowDetailDialog(true);
+                          setDialogContent({ ...item });
+                        }
+                      }}
+                    >
+                      {selectedTab !== 0 ? 'Details' : 'Close Trade'}
+                    </CloseTradeButton>
+                  </TableBodyCell>
+                )}
               </TableRow>,
               <TableRow key={`id-${idx}`}>
                 <TableCell colSpan={5} />

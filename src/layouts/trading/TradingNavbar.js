@@ -1,10 +1,9 @@
-/* eslint-disable jsx-a11y/mouse-events-have-key-events */
 import React, { useEffect, useState } from 'react';
 import { NavLink as RouterLink, useLocation } from 'react-router-dom';
 
 import '../../assets/css/low-dai-notify.css';
 // material
-import { useTheme } from '@material-ui/core/styles';
+import { experimentalStyled as styled, useTheme } from '@material-ui/core/styles';
 import { Box, AppBar, Toolbar, Container, Button, Stack } from '@material-ui/core';
 // paths
 import { PATH_PAGE } from '../../routes/paths';
@@ -15,6 +14,18 @@ import SettingsPopover from './SettingsPopover';
 import SettingsDialog from './SettingsDialog';
 
 // ----------------------------------------------------------------------
+
+const WrongNetwork = styled('div')(({ theme }) => ({
+  width: 'fit-content',
+  margin: 'auto',
+  borderRadius: theme.spacing(1),
+  backgroundColor: '#FF0000BF',
+  padding: theme.spacing(0.5, 2),
+  [theme.breakpoints.down('md')]: {
+    padding: theme.spacing(0.5),
+    fontSize: '12px'
+  }
+}));
 
 export default function MainNavbar() {
   const theme = useTheme();
@@ -57,16 +68,21 @@ export default function MainNavbar() {
 
           {!isMatched(PATH_PAGE.contactUs) && (
             <Stack direction="row" spacing={1} sx={{ position: 'relative' }}>
-              <Button
-                fullWidth
-                className="trading-gradient-button"
-                variant="contained"
-                color="error"
-                sx={{ px: 1, [theme.breakpoints.up('md')]: { px: 4 } }}
-                startIcon={<Box component="img" src="/static/trading/connect-wallet-icon.png" sx={{ width: 20 }} />}
-              >
-                CONNECT
-              </Button>
+              {!WRONG_NETWORK ? (
+                <Button
+                  fullWidth
+                  className="trading-gradient-button"
+                  variant="contained"
+                  color="error"
+                  sx={{ px: 1, [theme.breakpoints.up('md')]: { px: 4 } }}
+                  startIcon={<Box component="img" src="/static/trading/connect-wallet-icon.png" sx={{ width: 20 }} />}
+                >
+                  CONNECT
+                </Button>
+              ) : (
+                <WrongNetwork className="wrong-network-alert">WRONG NETWORK</WrongNetwork>
+              )}
+
               <SettingsPopover settingValue={settingValue} onChangeSettingValue={(value) => setSettingValue(value)} />
             </Stack>
           )}
@@ -75,3 +91,5 @@ export default function MainNavbar() {
     </AppBar>
   );
 }
+
+const WRONG_NETWORK = false;

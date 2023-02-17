@@ -1,5 +1,4 @@
 /* eslint-disable */
-import { useSnackbar } from 'notistack';
 import { sentenceCase, upperCase } from 'change-case-all';
 import PropTypes from 'prop-types';
 
@@ -20,14 +19,12 @@ import {
   InputAdornment,
   Grid,
   ListItemText,
-  MenuItem,
-  IconButton
+  MenuItem
 } from '@material-ui/core';
 
 // components
 import MenuPopover from '../../MenuPopover';
 import StableCoinPopover from './StableCoinPopover';
-import Iconify from '../../Iconify';
 import Snackbar from '../../Snackbar';
 
 // hooks
@@ -67,14 +64,22 @@ const TabStyles = styled(Tab)(() => ({
   }
 }));
 
+const NotEnoughBalance = styled('div')(({ theme }) => ({
+  width: 'fit-content',
+  margin: 'auto',
+  borderRadius: theme.spacing(1),
+  backgroundColor: '#5600C3',
+  padding: theme.spacing(0.5, 2)
+}));
+
 LongShort.propTypes = {
   currency: PropTypes.string,
   ctype: PropTypes.number,
   onChartViewMode: PropTypes.func,
   socket: PropTypes.object
 };
+
 export default function LongShort({ currency, ctype, onChartViewMode, socket }) {
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const theme = useTheme();
   const { stopLossMode } = useSettings();
 
@@ -207,32 +212,6 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
       socket.off(`${PriceTypes[ctype]}_trade_data`, handler);
     };
   }, [currency, ctype]);
-
-  // const onSnackbarClose = (color) => {
-  //   enqueueSnackbar(
-  //     <div>
-  //       <Typography variant="subtitle2" sx={{ textTransform: 'capitalize' }}>
-  //         {color}
-  //       </Typography>
-  //       <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-  //         This is an {color}
-  //       </Typography>
-  //     </div>,
-  //     {
-  //       variant: color,
-  //       autoHideDuration: 15000,
-  //       anchorOrigin: {
-  //         vertical: 'top',
-  //         horizontal: 'left'
-  //       },
-  //       action: (key) => (
-  //         <IconButton size="small" color="inherit" onClick={() => closeSnackbar(key)}>
-  //           <Iconify icon={'material-symbols:close'} width={24} height={24} />
-  //         </IconButton>
-  //       )
-  //     }
-  //   );
-  // };
 
   const handleChangeLS = (value) => {
     setLongShort(value);
@@ -647,20 +626,24 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
           <Typography variant="body2">{minMax.max}x</Typography>
         </Stack> */}
         <Box my={4} sx={{ textAlign: 'center' }}>
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor: '#5600C3',
-              boxShadow: 'none',
-              fontSize: '20px',
-              '&:hover': {
-                backgroundColor: '#420391d6'
-              }
-            }}
-            onClick={() => setIsShowAlert(true)}
-          >
-            {upperCase(marketLimit)} {upperCase(longShort)}
-          </Button>
+          {!NOT_ENOUGH_BALANCE ? (
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: '#5600C3',
+                boxShadow: 'none',
+                fontSize: '20px',
+                '&:hover': {
+                  backgroundColor: '#420391d6'
+                }
+              }}
+              onClick={() => setIsShowAlert(true)}
+            >
+              {upperCase(marketLimit)} {upperCase(longShort)}
+            </Button>
+          ) : (
+            <NotEnoughBalance>Not Enough Balance</NotEnoughBalance>
+          )}
         </Box>
 
         <Box m={2} />
@@ -689,6 +672,8 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
 }
 
 const NOTIFICATION_DURATION = 5000;
+const NOT_ENOUGH_BALANCE = false;
+
 const detailList = [
   {
     name: 'Buying Power',
@@ -697,6 +682,10 @@ const detailList = [
   {
     name: 'Wallet Balance',
     value: '0 DAI'
+  },
+  {
+    name: 'Position Size',
+    value: '100 DAI'
   }
 ];
 
