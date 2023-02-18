@@ -62,7 +62,7 @@ export default function MainNavbar() {
             justifyContent: 'space-between'
           }}
         >
-          <RouterLink to="#">
+          <RouterLink to={PATH_PAGE.root}>
             <Logo />
           </RouterLink>
 

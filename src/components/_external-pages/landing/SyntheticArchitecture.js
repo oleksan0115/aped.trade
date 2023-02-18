@@ -177,7 +177,7 @@ export default function SyntheticArchitecture() {
                   [theme.breakpoints.down('md')]: { fontSize: '28px', textAlign: 'center' }
                 }}
               >
-                <span className="gradient-text">CONTACT US</span>
+                <span className="gradient-text">CONTACT </span>US
               </Typography>
             </Box>
 

@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import * as Yup from 'yup';
 import axios from 'axios';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import { Form, FormikProvider, useFormik } from 'formik';
 // material
@@ -11,6 +12,8 @@ import { Box, Card, Grid, Tabs, Container, TextField, Typography, Tab, Button } 
 //
 // components
 import Iconify from '../../Iconify';
+// paths
+import { PATH_PAGE } from '../../../routes/paths';
 
 const TabContainer = styled(Tabs)(({ theme }) => ({
   minHeight: 35,
@@ -67,6 +70,7 @@ InvestorContactForm.propTypes = {
 
 export default function InvestorContactForm({ onBackToMain }) {
   const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
 
   const [handsStatus, setHandsStatus] = useState(2);
 
@@ -100,6 +104,7 @@ export default function InvestorContactForm({ onBackToMain }) {
             resetForm();
             setSubmitting(false);
             enqueueSnackbar('Submitted Successfully', { variant: 'success' });
+            navigate(PATH_PAGE.root);
           }
         });
       } catch (error) {
