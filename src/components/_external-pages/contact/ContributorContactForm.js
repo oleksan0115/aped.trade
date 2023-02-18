@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import * as Yup from 'yup';
 import axios from 'axios';
 import { useSnackbar } from 'notistack';
+import { useNavigate } from 'react-router-dom';
 import { Form, FormikProvider, useFormik } from 'formik';
 // material
 import { experimentalStyled as styled } from '@material-ui/core/styles';
@@ -11,7 +12,8 @@ import { Box, Card, Grid, Container, TextField, Typography, Button } from '@mate
 
 // components
 import Iconify from '../../Iconify';
-//
+// paths
+import { PATH_PAGE } from '../../../routes/paths';
 
 const TextContainer = styled(TextField)(({ theme }) => ({
   borderRadius: '10px',
@@ -39,6 +41,7 @@ ContributorContactForm.propTypes = {
 
 export default function ContributorContactForm({ onBackToMain }) {
   const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
 
   const NewContactSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
@@ -70,6 +73,7 @@ export default function ContributorContactForm({ onBackToMain }) {
             resetForm();
             setSubmitting(false);
             enqueueSnackbar('Submitted Successfully', { variant: 'success' });
+            navigate(PATH_PAGE.root);
           }
         });
       } catch (error) {
