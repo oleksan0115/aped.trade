@@ -3,13 +3,37 @@ import { capitalCase } from 'change-case';
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles, experimentalStyled as styled } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import MuiDialogContent from '@material-ui/core/DialogContent';
 import MuiDialogActions from '@material-ui/core/DialogActions';
 
-import { Paper, List, ListItem, Typography, Box, Stack } from '@material-ui/core';
+import {
+  Paper,
+  List,
+  ListItem,
+  Typography,
+  Box,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableRow
+} from '@material-ui/core';
+
+const CloseTradeButton = styled(Button)(({ theme }) => ({
+  backgroundColor: '#5600C3',
+  boxShadow: 'none',
+  fontSize: '12px',
+  padding: theme.spacing(0.2, 1),
+  borderRadius: '5px',
+  fontWeight: 300,
+  border: '0.5px solid rgba(255, 255, 255, 0.5)',
+  '&:hover': {
+    backgroundColor: '#420391d6'
+  }
+}));
 
 const DialogContent = withStyles((theme) => ({
   root: {
@@ -54,40 +78,45 @@ export default function TradesDetailDialog({ dialogContent, showDialog, onShowDi
         <DialogContent dividers>
           <Box m={2} />
           <Paper sx={{ p: 1 }}>
-            <List>
-              {Object.keys(dialogContent).map((key, index) => (
-                <ListItem
-                  key={index}
-                  sx={{ justifyContent: 'space-between !important', borderBottom: '1px solid #ffffff1a' }}
-                >
-                  <Typography variant="body2">{capitalCase(key)}</Typography>
-                  {key === 'pair' ? (
-                    <Stack direction="row" spacing={1} alignItems="center">
-                      <Box
-                        component="img"
-                        src={dialogContent[key].icon}
-                        sx={{ width: 25, height: 25, borderRadius: '50%' }}
-                      />
-                      <Box
-                        component="img"
-                        src={`/static/icons/trading_ui/two_${dialogContent[key].direction}_arrow.svg`}
-                        sx={{ width: 12, margin: '0 5px' }}
-                      />
-                    </Stack>
-                  ) : (
-                    <Typography variant="body2" sx={{ ...(key === 'roi' && { color: '#72F238' }) }}>
-                      {key === 'leverage' ? `x${dialogContent[key]}` : dialogContent[key]}
-                    </Typography>
-                  )}
-                </ListItem>
-              ))}
-            </List>
+            <Table size="small" aria-label="a dense table">
+              <TableBody>
+                {Object.keys(dialogContent).map((key, index) => (
+                  <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                    <TableCell sx={{ width: '50%', borderRight: '1px solid #bbbbbb !important' }}>
+                      <Typography variant="body2">{capitalCase(key)}</Typography>
+                    </TableCell>
+                    <TableCell align="left">
+                      {key === 'pair' ? (
+                        <Stack direction="row" spacing={1} alignItems="center" sx={{ width: '50%' }}>
+                          <Box
+                            component="img"
+                            src={dialogContent[key].icon}
+                            sx={{ width: 25, height: 25, borderRadius: '50%' }}
+                          />
+                          <Box
+                            component="img"
+                            src={`/static/icons/trading_ui/two_${dialogContent[key].direction}_arrow.svg`}
+                            sx={{ width: 12, margin: '0 5px' }}
+                          />
+                        </Stack>
+                      ) : (
+                        <Typography variant="body2" sx={{ ...(key === 'roi' && { color: '#72F238' }) }}>
+                          {key === 'leverage' ? `x${dialogContent[key]}` : dialogContent[key]}
+                        </Typography>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </Paper>
         </DialogContent>
         <DialogActions>
-          <Button variant="contained" onClick={handleClose} color="primary">
-            Close
-          </Button>
+          <Stack direction="row" spacing={1} alignItems="center" justifyContent="center" sx={{ width: '100%' }}>
+            <CloseTradeButton variant="contained" onClick={handleClose}>
+              {dialogContent.selectedTab === 0 ? 'Close Trade' : 'Close'}
+            </CloseTradeButton>
+          </Stack>
         </DialogActions>
       </Dialog>
     </div>
