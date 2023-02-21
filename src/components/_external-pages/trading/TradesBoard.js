@@ -13,8 +13,16 @@ import {
   Box,
   Typography,
   Button,
-  useMediaQuery
+  useMediaQuery,
+  Select,
+  MenuItem,
+  Grid,
+  List,
+  ListItem
 } from '@material-ui/core';
+
+import { capitalCase } from 'change-case';
+import { fNumberThousands } from '../../../utils/formatNumber';
 
 // components
 import TradesDetailDialog from './TradesDetailDialog';
@@ -86,19 +94,19 @@ export default function TradesBoard() {
   const [dialogContent, setDialogContent] = useState({});
 
   useEffect(() => {
-    let trades = LEADERBOARD;
+    let trades = TRADES;
     switch (selectedTab) {
       case 0:
-        trades = LEADERBOARD.slice(0, 2).map((item) => ({ ...item, exitPrice: '-', roi: '-' }));
+        trades = TRADES.slice(0, 2).map((item) => ({ ...item, exitPrice: '-', roi: '-' }));
         break;
       case 1:
-        trades = LEADERBOARD.slice(0, 2);
+        trades = TRADES.slice(0, 2);
         break;
       case 2:
-        trades = LEADERBOARD.slice(0, 5);
+        trades = TRADES.slice(0, 5);
         break;
       default:
-        trades = LEADERBOARD;
+        trades = TRADES;
         break;
     }
 
@@ -121,6 +129,134 @@ export default function TradesBoard() {
       fontSize: '16px'
     }
   }));
+  if (selectedTab !== 3)
+    return (
+      <Card sx={{ p: 1, [theme.breakpoints.up('md')]: { p: 3 } }}>
+        <TradesDetailDialog
+          dialogContent={dialogContent}
+          showDialog={showDetailDialog}
+          onShowDialog={(isShow) => setShowDetailDialog(isShow)}
+        />
+        <Stack
+          direction="row"
+          justifyContent={{ xs: 'space-between', md: 'flex-start' }}
+          spacing={{ sm: 1, md: 3 }}
+          sx={{ mb: 2 }}
+        >
+          <TabStyles variant="body2" onClick={() => setSelectedTab(0)} selected={0}>
+            Active Trades
+          </TabStyles>
+          <TabStyles variant="body2" onClick={() => setSelectedTab(1)} selected={1}>
+            Closed Trades
+          </TabStyles>
+          <TabStyles variant="body2" onClick={() => setSelectedTab(2)} selected={2}>
+            Public Trades
+          </TabStyles>
+          <TabStyles variant="body2" onClick={() => setSelectedTab(3)} selected={3}>
+            Leaderboard
+          </TabStyles>
+        </Stack>
+        <TableContainer component={Paper}>
+          <Table className={classes.table} size="small" aria-label="a dense table">
+            <thead>
+              <TableRow>
+                <TableHeaderCell align="center">Trader</TableHeaderCell>
+                <TableHeaderCell align="left">Pair</TableHeaderCell>
+                <TableHeaderCell align="left">Entry Price</TableHeaderCell>
+                {upMd && <TableHeaderCell align="left">Collateral</TableHeaderCell>}
+                {upMd && <TableHeaderCell align="left">Liquidation Price</TableHeaderCell>}
+                {upMd && <TableHeaderCell align="left">Leverage</TableHeaderCell>}
+                <TableHeaderCell align="left">Exit Price</TableHeaderCell>
+                <TableHeaderCell align="left">ROI</TableHeaderCell>
+                {upMd && selectedTab !== 3 && <TableHeaderCell sx={{ maxWidth: 65 }} />}
+              </TableRow>
+            </thead>
+
+            <TableBody>
+              {upMd &&
+                tradeList.map((item, idx) => [
+                  <TableRow key={idx}>
+                    <TableBodyCell align="center">{item.trader}</TableBodyCell>
+                    <TableBodyCell align="left">
+                      <Stack direction="row" spacing={1} alignItems="center">
+                        <Box component="img" src={item.pair.icon} sx={{ width: 25, height: 25, borderRadius: '50%' }} />
+                        <Box
+                          component="img"
+                          src={`/static/icons/trading_ui/two_${item.pair.direction}_arrow.svg`}
+                          sx={{ width: 12, margin: '0 5px' }}
+                        />
+                      </Stack>
+                    </TableBodyCell>
+                    <TableBodyCell align="left">{item.entryPrice}</TableBodyCell>
+
+                    {upMd && <TableBodyCell align="left">{item.collateral}</TableBodyCell>}
+                    {upMd && <TableBodyCell align="left">{item.liquidationPrice}</TableBodyCell>}
+                    {upMd && <TableBodyCell align="left">x{item.leverage}</TableBodyCell>}
+
+                    <TableBodyCell align="left">{item.exitPrice}</TableBodyCell>
+                    <TableBodyCell align="left" sx={{ color: '#72F238' }}>
+                      {item.roi}
+                      {item.roi === '-' ? '' : '%'}
+                    </TableBodyCell>
+                    {upMd && (
+                      <TableBodyCell align="right" sx={{ maxWidth: 85 }}>
+                        <CloseTradeButton
+                          variant="contained"
+                          onClick={() => {
+                            // if (selectedTab !== 0) {
+                            setShowDetailDialog(true);
+                            setDialogContent({ ...item, selectedTab });
+                            // }
+                          }}
+                        >
+                          {selectedTab !== 0 ? 'Details' : 'Close Trade'}
+                        </CloseTradeButton>
+                      </TableBodyCell>
+                    )}
+                  </TableRow>,
+                  <TableRow key={`id-${idx}`}>
+                    <TableCell colSpan={5} />
+                  </TableRow>
+                ])}
+              {!upMd &&
+                tradeList.map((item, idx) => [
+                  <TableRow
+                    key={idx}
+                    onClick={() => {
+                      // if (selectedTab !== 0) {
+                      setShowDetailDialog(true);
+                      setDialogContent({ ...item, selectedTab });
+                      // }
+                    }}
+                  >
+                    <TableBodyCell align="center">{item.trader}</TableBodyCell>
+                    <TableBodyCell align="left">
+                      <Stack direction="row" spacing={1} alignItems="center">
+                        <Box component="img" src={item.pair.icon} sx={{ width: 25, height: 25, borderRadius: '50%' }} />
+                        <Box
+                          component="img"
+                          src={`/static/icons/trading_ui/two_${item.pair.direction}_arrow.svg`}
+                          sx={{ width: 12, margin: '0 5px' }}
+                        />
+                      </Stack>
+                    </TableBodyCell>
+                    <TableBodyCell align="left">{item.entryPrice}</TableBodyCell>
+
+                    <TableBodyCell align="left">{item.exitPrice}</TableBodyCell>
+                    <TableBodyCell align="left" sx={{ color: '#72F238' }}>
+                      {item.roi}
+                      {item.roi === '-' ? '' : '%'}
+                    </TableBodyCell>
+                  </TableRow>,
+                  <TableRow key={`id-${idx}`}>
+                    <TableCell colSpan={5} />
+                  </TableRow>
+                ])}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Card>
+    );
 
   return (
     <Card sx={{ p: 1, [theme.breakpoints.up('md')]: { p: 3 } }}>
@@ -129,94 +265,135 @@ export default function TradesBoard() {
         showDialog={showDetailDialog}
         onShowDialog={(isShow) => setShowDetailDialog(isShow)}
       />
-      <Stack
-        direction="row"
-        justifyContent={{ xs: 'space-between', md: 'flex-start' }}
-        spacing={{ sm: 1, md: 3 }}
-        sx={{ mb: 2 }}
-      >
-        <TabStyles variant="body2" onClick={() => setSelectedTab(0)} selected={0}>
-          Active Trades
-        </TabStyles>
-        <TabStyles variant="body2" onClick={() => setSelectedTab(1)} selected={1}>
-          Closed Trades
-        </TabStyles>
-        <TabStyles variant="body2" onClick={() => setSelectedTab(2)} selected={2}>
-          Public Trades
-        </TabStyles>
-        <TabStyles variant="body2" onClick={() => setSelectedTab(3)} selected={3}>
-          Leaderboard
-        </TabStyles>
-      </Stack>
-      <TableContainer component={Paper}>
-        <Table className={classes.table} size="small" aria-label="a dense table">
-          <thead>
-            <TableRow>
-              <TableHeaderCell align="center">Trader</TableHeaderCell>
-              <TableHeaderCell align="left">Pair</TableHeaderCell>
-              <TableHeaderCell align="left">Entry Price</TableHeaderCell>
-              {upMd && <TableHeaderCell align="left">Collateral</TableHeaderCell>}
-              {upMd && <TableHeaderCell align="left">Liquidation Price</TableHeaderCell>}
-              {upMd && <TableHeaderCell align="left">Leverage</TableHeaderCell>}
-              <TableHeaderCell align="left">Exit Price</TableHeaderCell>
-              <TableHeaderCell align="left">ROI</TableHeaderCell>
-              {upMd && selectedTab !== 3 && <TableHeaderCell sx={{ maxWidth: 65 }} />}
-            </TableRow>
-          </thead>
+      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+        <Grid item xs={12} sm={12} md={8}>
+          <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+            <Grid item xs={12} sm={12} md={10}>
+              <Stack
+                direction="row"
+                justifyContent={{ xs: 'space-between', md: 'flex-start' }}
+                spacing={{ sm: 1, md: 3 }}
+                sx={{ mb: 2 }}
+              >
+                <TabStyles variant="body2" onClick={() => setSelectedTab(0)} selected={0}>
+                  Active Trades
+                </TabStyles>
+                <TabStyles variant="body2" onClick={() => setSelectedTab(1)} selected={1}>
+                  Closed Trades
+                </TabStyles>
+                <TabStyles variant="body2" onClick={() => setSelectedTab(2)} selected={2}>
+                  Public Trades
+                </TabStyles>
+                <TabStyles variant="body2" onClick={() => setSelectedTab(3)} selected={3}>
+                  Leaderboard
+                </TabStyles>
+              </Stack>
+            </Grid>
+            <Grid item xs={12} sm={12} md={2}>
+              <Stack
+                direction="row"
+                justifyContent={{ xs: 'center', md: 'flex-end' }}
+                spacing={{ sm: 1, md: 3 }}
+                sx={{ mb: 2 }}
+              >
+                <Select
+                  defaultValue="day"
+                  sx={{
+                    '&>div': {
+                      paddingTop: '0 !important',
+                      paddingBottom: '0 !important',
+                      fontSize: { xs: 12, md: 14, lg: 16 }
+                    }
+                  }}
+                >
+                  <MenuItem value="day">day</MenuItem>
+                  <MenuItem value="week">week</MenuItem>
+                  <MenuItem value="month">month</MenuItem>
+                </Select>
+              </Stack>
+            </Grid>
+          </Grid>
+        </Grid>
+      </Grid>
+      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+        <Grid item xs={12} sm={12} md={8}>
+          <TableContainer component={Paper}>
+            <Table className={classes.table} size="small" aria-label="a dense table">
+              <thead>
+                <TableRow>
+                  <TableHeaderCell align="left">#</TableHeaderCell>
+                  <TableHeaderCell align="left">Trader</TableHeaderCell>
+                  <TableHeaderCell align="left">Trades</TableHeaderCell>
+                  <TableHeaderCell align="left">Win Rate</TableHeaderCell>
+                  <TableHeaderCell align="left">PNL</TableHeaderCell>
+                </TableRow>
+              </thead>
 
-          <TableBody>
-            {tradeList.map((item, idx) => [
-              <TableRow key={idx}>
-                <TableBodyCell align="center">{item.trader}</TableBodyCell>
-                <TableBodyCell align="left">
-                  <Stack direction="row" spacing={1} alignItems="center">
-                    <Box component="img" src={item.pair.icon} sx={{ width: 25, height: 25, borderRadius: '50%' }} />
-                    <Box
-                      component="img"
-                      src={`/static/icons/trading_ui/two_${item.pair.direction}_arrow.svg`}
-                      sx={{ width: 12, margin: '0 5px' }}
-                    />
-                  </Stack>
-                </TableBodyCell>
-                <TableBodyCell align="left">{item.entryPrice}</TableBodyCell>
-
-                {upMd && <TableBodyCell align="left">{item.collateral}</TableBodyCell>}
-                {upMd && <TableBodyCell align="left">{item.liquidationPrice}</TableBodyCell>}
-                {upMd && <TableBodyCell align="left">x{item.leverage}</TableBodyCell>}
-
-                <TableBodyCell align="left">{item.exitPrice}</TableBodyCell>
-                <TableBodyCell align="left" sx={{ color: '#72F238' }}>
-                  {item.roi}
-                  {item.roi === '-' ? '' : '%'}
-                </TableBodyCell>
-                {upMd && selectedTab !== 3 && (
-                  <TableBodyCell align="right" sx={{ maxWidth: 65 }}>
-                    <CloseTradeButton
-                      variant="contained"
-                      onClick={() => {
-                        if (selectedTab !== 0) {
-                          setShowDetailDialog(true);
-                          setDialogContent({ ...item });
-                        }
-                      }}
-                    >
-                      {selectedTab !== 0 ? 'Details' : 'Close Trade'}
-                    </CloseTradeButton>
-                  </TableBodyCell>
-                )}
-              </TableRow>,
-              <TableRow key={`id-${idx}`}>
-                <TableCell colSpan={5} />
-              </TableRow>
-            ])}
-          </TableBody>
-        </Table>
-      </TableContainer>
+              <TableBody>
+                {LEADERBOARD.map((item, idx) => [
+                  <TableRow key={idx}>
+                    <TableBodyCell align="left">{idx + 1}</TableBodyCell>
+                    <TableBodyCell align="left">{item.trader}</TableBodyCell>
+                    <TableBodyCell align="left">{item.trades}</TableBodyCell>
+                    <TableBodyCell align="left" sx={{ color: '#05FF00' }}>
+                      {item.winRate}%
+                    </TableBodyCell>
+                    <TableBodyCell align="left">{fNumberThousands(item.pnl)}</TableBodyCell>
+                  </TableRow>,
+                  <TableRow key={`id-${idx}`}>
+                    <TableCell colSpan={5} />
+                  </TableRow>
+                ])}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Grid>
+        <Grid item xs={12} sm={12} md={4}>
+          <Paper sx={{ margin: 'auto', width: '70%', mb: 2 }}>
+            <Typography variant="body1" textAlign="center" sx={{ mb: 1 }}>
+              Your State
+            </Typography>
+            <Table size="small" aria-label="a dense table" sx={{ backgroundColor: '#3E3A59', borderRadius: '10px' }}>
+              <TableBody>
+                {Object.keys(LEADERBOARD[0]).map((key, index) => (
+                  <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                    <TableBodyCell sx={{ width: '50%' }}>
+                      {key === 'pnl' && (
+                        <Typography variant="body2" sx={{ p: 1 }}>
+                          {key.toUpperCase()}
+                        </Typography>
+                      )}
+                      {key !== 'pnl' && (
+                        <Typography variant="body2" sx={{ p: 1 }}>
+                          {capitalCase(key)}
+                        </Typography>
+                      )}
+                    </TableBodyCell>
+                    <TableBodyCell sx={{ width: '50%' }}>
+                      {key === 'winRate' && (
+                        <Typography variant="body2" sx={{ color: '#05FF00' }}>
+                          {LEADERBOARD[0][key]}%
+                        </Typography>
+                      )}
+                      {key === 'pnl' && (
+                        <Typography variant="body2">{fNumberThousands(LEADERBOARD[0][key])}</Typography>
+                      )}
+                      {key !== 'winRate' && key !== 'pnl' && (
+                        <Typography variant="body2">{LEADERBOARD[0][key]}</Typography>
+                      )}
+                    </TableBodyCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Paper>
+        </Grid>
+      </Grid>
     </Card>
   );
 }
 
-const LEADERBOARD = [
+const TRADES = [
   {
     trader: '0x...6969',
     pair: {
@@ -346,5 +523,37 @@ const LEADERBOARD = [
     leverage: 64,
     exitPrice: 36.25,
     roi: 2.14
+  }
+];
+const LEADERBOARD = [
+  {
+    trader: '0x...6969',
+    trades: 3,
+    winRate: 66.6,
+    pnl: 27690.12
+  },
+  {
+    trader: '0x...x420',
+    trades: 12,
+    winRate: 75,
+    pnl: 23650.15
+  },
+  {
+    trader: '0x...0666',
+    trades: 6,
+    winRate: 50,
+    pnl: 20580.22
+  },
+  {
+    trader: '0x...6969',
+    trades: 9,
+    winRate: 33.3,
+    pnl: 17690.12
+  },
+  {
+    trader: '!.eth',
+    trades: 4,
+    winRate: 50,
+    pnl: 13230.55
   }
 ];
