@@ -2,7 +2,7 @@
 import { sentenceCase, upperCase } from 'change-case-all';
 import PropTypes from 'prop-types';
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useContext } from 'react';
 import { experimentalStyled as styled, useTheme } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -34,6 +34,10 @@ import useSettings from '../../../hooks/useSettings';
 import { fCurrency } from '../../../utils/formatNumber';
 
 import { getPreviousChartData } from './api';
+
+// web3
+import { ContractContext } from 'src/contexts/ContractContext';
+
 
 const TabContainer = styled(Tabs)(({ theme }) => ({
   minHeight: 24,
@@ -80,6 +84,8 @@ LongShort.propTypes = {
 };
 
 export default function LongShort({ currency, ctype, onChartViewMode, socket }) {
+
+
   const theme = useTheme();
   const { stopLossMode } = useSettings();
 
@@ -105,6 +111,7 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
 
   const [cPrice, setCPrice] = useState(0);
   const [curPrice, setCurPrice] = useState(0);
+  const [pair, setPair] = useState("");
 
   const [entryPrice, setEntryPrice] = useState(0);
 
@@ -112,6 +119,11 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
   const [profit, setProfit] = useState(0);
   const [loss, setLoss] = useState(0);
   const [liqPrice, LiqPrice] = useState(0);
+
+  const [accBalance, setAccBalance] = useState();
+
+  //contract object
+  const {vault, user, dai} = useContext(ContractContext);
 
   useEffect(() => {
     setMinMax(MIN_MAX[ctype]);
@@ -165,6 +177,8 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
     else if (PriceTypes[ctype] === 'forex') pairString = `${currency.toUpperCase()}/USD`;
     else pairString = `${currency.toUpperCase()}`;
 
+    setPair(pairString);
+
     getPreviousChartData(currency, '1 min', PriceTypes[ctype], startTime, lastTime).then((pastData) => {
       if (pastData) {
         pastData.map((d) => {
@@ -213,6 +227,14 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
     };
   }, [currency, ctype]);
 
+  useEffect(() => {
+    if (user != "") {
+      getAccountBalance();
+      console.log('currency: ',currency)
+      console.log('type: ', PriceTypes[ctype]);
+    }
+  }, [user]);
+
   const handleChangeLS = (value) => {
     setLongShort(value);
   };
@@ -256,6 +278,80 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
   const handChangeShowProfitSliderBar = () => {
     setShowProfitSildeBar(!showProfitSlideBar);
   };
+
+  const removeDecimal = (balance) => {
+    const balanceAfter = balance / 10**18;
+    return balanceAfter;
+  };
+
+  const checkOrderType = (marketLimit, longShort) => {
+     if (marketLimit == "market" && longShort == "long") {
+         return 2;
+     } else if (marketLimit == "market" && longShort =="short") {
+         return 3;
+     } else if (marketLimit == "limit" && longShort =="long") {
+         return 0;
+     } else {
+        return 1;
+     }
+
+  }
+
+  const getAccountBalance = async () => {
+     let acc = await dai.methods.balanceOf(user).call();
+     let accountBalance = removeDecimal(acc);
+     setAccBalance(accountBalance);
+  };
+
+  const checkTPnSLInput = (price) => {
+      if (price == 0) {
+        return price;
+      } else {
+        const round = Math.round(price);
+        return round * 10**8;
+      }
+  }
+
+  const openMarketOrder = async (pair, orderType, leverageAmount, collateral, TP, SL) => {
+    await dai.methods.approve(vault._address, collateral).send({ from: user}).on('transactionHash', (hash) => {
+       vault.methods.openMarketPriceOrder(pair, 
+        orderType, 
+        leverageAmount, 
+        collateral, 
+        TP, 
+        SL).send({ from: user})
+        .on('transactionHash', (hash) => {
+           console.log(hash);
+           setIsShowAlert(true);  // show notification
+        });
+    })
+    
+  };
+
+  const getAssetID = (currency, PriceType, CryptoList, ForexList, StockList) => {
+     if(PriceType[ctype] === 'crypto') {
+       for (let i = 0; i < CryptoList.length; i++ ) {
+          if(CryptoList[i].name == currency) {
+            return CryptoList[i].currencyID;
+          }
+       }
+     } else if (PriceType[ctype] === 'forex') {
+        for (let i=0; i < ForexList.length; i++) {
+          if(ForexList[i].name == currency) {
+            return ForexList[i].currencyID;
+          }
+      }
+     } else {
+        for (let i=0; i < StockList.length; i++) {
+          if(StockList[i].name == currency) {
+            return StockList[i].currencyID;
+         }
+        } 
+     }
+
+  }
+
+
   return (
     <Card
       sx={{
@@ -265,9 +361,12 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
     >
       <Snackbar
         isOpen={isShowAlert}
-        notiType="liquidated"
+        notiType="opened"
         notiDuration={NOTIFICATION_DURATION}
         onClose={() => setIsShowAlert(false)}
+        marketLimit={marketLimit}
+        longShort={longShort}
+        currency={pair}
       />
       <CardContent>
         <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 1 }}>
@@ -637,7 +736,15 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
                   backgroundColor: '#420391d6'
                 }
               }}
-              onClick={() => setIsShowAlert(true)}
+              onClick={() => {
+                 openMarketOrder(getAssetID(currency, PriceTypes, CryptoList, ForexList, StockList),                   // need to change according to pair selected
+                                 checkOrderType(marketLimit, longShort),  // 0 - Limit Long 1 - Limit Short - 2 - Market Long 3 - Market Short
+                                 Math.round(sliderValue),
+                                 BigInt(collateralValue * 10**18),
+                                 checkTPnSLInput(profit),
+                                 checkTPnSLInput(loss)
+                                )
+              }}
             >
               {upperCase(marketLimit)} {upperCase(longShort)}
             </Button>
@@ -648,12 +755,10 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
 
         <Box m={2} />
         <List>
-          {detailList.map((item, index) => (
-            <ListItem key={index} sx={{ justifyContent: 'space-between !important' }}>
-              <Typography variant="body2">{item.name}</Typography>
-              <Typography variant="body2">{item.value}</Typography>
+            <ListItem sx={{ justifyContent: 'space-between !important' }}>
+              <Typography variant="body2">Wallet Balance</Typography>
+              <Typography variant="body2">{accBalance}{" "}DAI</Typography>
             </ListItem>
-          ))}
         </List>
         <Box m={1} />
         <List>
@@ -725,3 +830,157 @@ const MIN_MAX = [
 ];
 
 const PriceTypes = ['crypto', 'forex', 'stocks'];
+
+
+const CryptoList = [
+  {
+    name: 'btc',
+    currencyID: 0
+  },
+  {
+    name: 'eth',
+    currencyID: 1
+  },
+  {
+    name: 'ltc',
+    currencyID: 2
+  },
+  {
+    name: 'xlm',
+    currencyID: 3
+  },
+  {
+    name: 'ada',
+    currencyID: 4
+  },
+  {
+    name: 'neo',
+    currencyID: 5
+  },
+  {
+    name: 'eos',
+    currencyID: 6
+  },
+  {
+    name: 'iot',
+    currencyID: 7
+  },
+  {
+    name: 'sol',
+    currencyID: 8
+  },
+  {
+    name: 'vet',
+    currencyID: 9
+  },
+  {
+    name: 'matic',
+    currencyID: 10
+  },
+  {
+    name: 'dot',
+    currencyID: 11
+  },
+  {
+    name: 'axs',
+    currencyID: 12
+  },
+  {
+    name: 'uni',
+    currencyID: 13
+  },
+  {
+    name: 'link',
+    currencyID: 14
+  },
+  {
+    name: 'fil',
+    currencyID: 15
+  },
+]
+
+
+const ForexList = [
+  {
+    name: 'eur',
+    currencyID: 16
+  },
+  {
+    name: 'aud',
+    currencyID: 17
+  },
+  {
+    name: 'gbp',
+    currencyID: 18
+  },
+  {
+    name: 'cnh',
+    currencyID: 19
+  },
+  {
+    name: 'jpy',
+    currencyID: 20
+  },
+  {
+    name: 'mxn',
+    currencyID: 21
+  },
+]
+
+const StockList = [
+  {
+    name: 'tsla',
+    currencyID: 22
+  },
+  {
+    name: 'aapl',
+    currencyID: 23
+  },
+  {
+    name: 'amzn',
+    currencyID: 24
+  },
+  {
+    name: 'msft',
+    currencyID: 25
+  },
+  {
+    name: 'snap',
+    currencyID: 26
+  },
+  {
+    name: 'axp',
+    currencyID: 27
+  },
+  {
+    name: 'csco',
+    currencyID: 28
+  },
+  {
+    name: 't',
+    currencyID: 29
+  },
+  {
+    name: 'dis',
+    currencyID: 30
+  },
+  {
+    name: 'abbv',
+    currencyID: 31
+  },
+  {
+    name: 'mmm',
+    currencyID: 32
+  },
+  {
+    name: 'jpm',
+    currencyID: 33
+  },
+  {
+    name: 'jnj',
+    currencyID: 34
+  },
+
+]
+
+

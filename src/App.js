@@ -1,3 +1,4 @@
+/* eslint-disable */
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
@@ -13,11 +14,13 @@ import NotistackProvider from './components/NotistackProvider';
 import ThemePrimaryColor from './components/ThemePrimaryColor';
 
 import ThemeContextProvider from './contexts/ThemeContext';
+import ContractContextProvider from './contexts/ContractContext';
 
 // ----------------------------------------------------------------------
 
 export default function App() {
   return (
+    <ContractContextProvider>
     <ThemeContextProvider>
       <ThemeConfig>
         <ThemePrimaryColor>
@@ -31,5 +34,6 @@ export default function App() {
         </ThemePrimaryColor>
       </ThemeConfig>
     </ThemeContextProvider>
+    </ContractContextProvider>
   );
 }

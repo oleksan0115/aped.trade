@@ -1,5 +1,9 @@
-import React, { useState, useEffect } from 'react';
+/* eslint-disable */
+import React, { useState, useEffect, useContext } from 'react';
 import { experimentalStyled as styled, makeStyles, useTheme } from '@material-ui/core/styles';
+
+import { ContractContext } from 'src/contexts/ContractContext';
+import Snackbar from '../../Snackbar';
 
 import {
   Card,
@@ -84,15 +88,22 @@ export default function TradesBoard() {
 
   const [showDetailDialog, setShowDetailDialog] = useState(false);
   const [dialogContent, setDialogContent] = useState({});
+  const [isShowAlert, setIsShowAlert] = useState(false);
+
+  const [userTradeList, setUserTradeList] = useState([]);
+
+  const { tradingStorage, user, vault } = useContext(ContractContext);
 
   useEffect(() => {
     let trades = LEADERBOARD;
     switch (selectedTab) {
       case 0:
-        trades = LEADERBOARD.slice(0, 2).map((item) => ({ ...item, exitPrice: '-', roi: '-' }));
+        getUserOpenTrades();
+        trades = userTradeList;
         break;
       case 1:
-        trades = LEADERBOARD.slice(0, 2);
+        getUserCloseTrades();
+        trades = userTradeList;
         break;
       case 2:
         trades = LEADERBOARD.slice(0, 5);
@@ -104,6 +115,38 @@ export default function TradesBoard() {
 
     setTradeList([...trades]);
   }, [selectedTab]);
+
+  useEffect(async () => {
+    if (user != "") {
+       getUserOpenTrades();
+    }
+     
+  }, [user])
+
+  const getUserOpenTrades = async () => {
+    const trades = await tradingStorage.methods.getAllOpenTrades(user).call().then((trade) => {
+         setTradeList(trade);
+         console.log(trade);
+    })
+ }
+
+ const closeMarketOrder = async (tradeId) => {
+     await vault.methods.closeOrder(tradeId).send({ from: user }).on('transactionHash', (hash) => {
+       console.log(hash);
+       setIsShowAlert(true);
+     })
+
+ }
+
+ const getUserCloseTrades = async () => {
+     const trades = await tradingStorage.methods.getAllClosedTrades(user).call().then((trade) => {
+           setTradeList(trade);
+     })
+ }
+
+ const removeDecimal = (num ,numDecimal) => {
+     return num / 10**numDecimal;
+ };
 
   const TabStyles = styled(Typography)(({ selected, theme }) => ({
     cursor: 'pointer',
@@ -128,6 +171,13 @@ export default function TradesBoard() {
         dialogContent={dialogContent}
         showDialog={showDetailDialog}
         onShowDialog={(isShow) => setShowDetailDialog(isShow)}
+      />
+      <Snackbar
+        isOpen={isShowAlert}
+        notiType="closed"
+        notiDuration={NOTIFICATION_DURATION}
+        onClose={() => setIsShowAlert(false)}
+        longShort="Trade"
       />
       <Stack
         direction="row"
@@ -156,9 +206,11 @@ export default function TradesBoard() {
               <TableHeaderCell align="left">Pair</TableHeaderCell>
               <TableHeaderCell align="left">Entry Price</TableHeaderCell>
               {upMd && <TableHeaderCell align="left">Collateral</TableHeaderCell>}
-              {upMd && <TableHeaderCell align="left">Liquidation Price</TableHeaderCell>}
+              {upMd && (selectedTab !== 1) && <TableHeaderCell align="left">Liquidation Price</TableHeaderCell>}
               {upMd && <TableHeaderCell align="left">Leverage</TableHeaderCell>}
-              <TableHeaderCell align="left">Exit Price</TableHeaderCell>
+              {selectedTab == 0 && <TableHeaderCell align="left">Take Profit</TableHeaderCell>}
+              {selectedTab == 0 && <TableHeaderCell align="left">Stop Loss</TableHeaderCell>}
+              {selectedTab !== 0 && <TableHeaderCell align="left">Exit Price</TableHeaderCell>}
               <TableHeaderCell align="left">ROI</TableHeaderCell>
               {upMd && selectedTab !== 3 && <TableHeaderCell sx={{ maxWidth: 65 }} />}
             </TableRow>
@@ -167,7 +219,7 @@ export default function TradesBoard() {
           <TableBody>
             {tradeList.map((item, idx) => [
               <TableRow key={idx}>
-                <TableBodyCell align="center">{item.trader}</TableBodyCell>
+                <TableBodyCell align="center">{item.trader.slice(0, 4)}{"..."}{item.trader.slice(39, 42)}</TableBodyCell>
                 <TableBodyCell align="left">
                   <Stack direction="row" spacing={1} alignItems="center">
                     <Box component="img" src={item.pair.icon} sx={{ width: 25, height: 25, borderRadius: '50%' }} />
@@ -178,13 +230,15 @@ export default function TradesBoard() {
                     />
                   </Stack>
                 </TableBodyCell>
-                <TableBodyCell align="left">{item.entryPrice}</TableBodyCell>
+                <TableBodyCell align="left">{removeDecimal(item.entryPrice, 8)}</TableBodyCell>
 
-                {upMd && <TableBodyCell align="left">{item.collateral}</TableBodyCell>}
-                {upMd && <TableBodyCell align="left">{item.liquidationPrice}</TableBodyCell>}
-                {upMd && <TableBodyCell align="left">x{item.leverage}</TableBodyCell>}
+                {upMd && <TableBodyCell align="left">{removeDecimal(item.collateral, 18)}</TableBodyCell>}
+                {upMd && (selectedTab !== 1) && <TableBodyCell align="left">{removeDecimal(item.liquidationPrice, 8)}</TableBodyCell>}
+                {upMd && <TableBodyCell align="left">x{item.leverageAmount}</TableBodyCell>}
+                {selectedTab == 0 && <TableBodyCell align="left">{removeDecimal(item.takeProfit, 8)}</TableBodyCell>}
+                {selectedTab == 0 && <TableBodyCell align="left">{removeDecimal(item.stopLoss, 8)}</TableBodyCell>}
 
-                <TableBodyCell align="left">{item.exitPrice}</TableBodyCell>
+                {selectedTab !== 0 && <TableBodyCell align="left">{removeDecimal(item.exitPrice, 8)}</TableBodyCell>}
                 <TableBodyCell align="left" sx={{ color: '#72F238' }}>
                   {item.roi}
                   {item.roi === '-' ? '' : '%'}
@@ -197,6 +251,9 @@ export default function TradesBoard() {
                         if (selectedTab !== 0) {
                           setShowDetailDialog(true);
                           setDialogContent({ ...item });
+                        } else {
+                           closeMarketOrder(idx); console.log(`trade id to close: ${idx}`)
+                           setDialogContent({ ...item})
                         }
                       }}
                     >
@@ -215,6 +272,8 @@ export default function TradesBoard() {
     </Card>
   );
 }
+
+const NOTIFICATION_DURATION = 5000;
 
 const LEADERBOARD = [
   {
