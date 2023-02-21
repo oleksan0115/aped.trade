@@ -1,3 +1,4 @@
+/* eslint-disable */
 import PropTypes from 'prop-types';
 import { useSnackbar } from 'notistack';
 import React, { useEffect } from 'react';
@@ -17,7 +18,7 @@ Snackbar.propTypes = {
   onClose: PropTypes.func
 };
 
-export default function Snackbar({ notiType, notiDuration, isOpen, onClose }) {
+export default function Snackbar({ notiType, notiDuration, isOpen, onClose, marketLimit, longShort, currency }) {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   useEffect(() => {
@@ -37,10 +38,10 @@ export default function Snackbar({ notiType, notiDuration, isOpen, onClose }) {
         </Box>
         <Stack spacing={1} sx={{ px: 2 }}>
           <Typography variant="h6" sx={{ textTransform: 'capitalize', color: 'text.primary' }}>
-            Limit Order {notiType}
+            {marketLimit} {longShort} {notiType}   
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.primary' }}>
-            BTC/DAI
+             {currency}
           </Typography>
         </Stack>
       </Stack>,

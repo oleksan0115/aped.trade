@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { experimentalStyled as styled, makeStyles, useTheme } from '@material-ui/core/styles';
 
+import { ContractContext } from 'src/contexts/ContractContext';
+import Snackbar from '../../Snackbar';
+
 import {
   Card,
   Table,
@@ -17,8 +20,6 @@ import {
   Select,
   MenuItem,
   Grid,
-  List,
-  ListItem
 } from '@material-ui/core';
 
 import { capitalCase } from 'change-case';
@@ -92,15 +93,22 @@ export default function TradesBoard() {
 
   const [showDetailDialog, setShowDetailDialog] = useState(false);
   const [dialogContent, setDialogContent] = useState({});
+  const [isShowAlert, setIsShowAlert] = useState(false);
+
+  const [userTradeList, setUserTradeList] = useState([]);
+
+  const { tradingStorage, user, vault } = useContext(ContractContext);
 
   useEffect(() => {
     let trades = TRADES;
     switch (selectedTab) {
       case 0:
-        trades = TRADES.slice(0, 2).map((item) => ({ ...item, exitPrice: '-', roi: '-' }));
+        getUserOpenTrades();
+        trades = userTradeList;
         break;
       case 1:
-        trades = TRADES.slice(0, 2);
+        getUserCloseTrades();
+        trades = userTradeList;
         break;
       case 2:
         trades = TRADES.slice(0, 5);
@@ -112,7 +120,30 @@ export default function TradesBoard() {
 
     setTradeList([...trades]);
   }, [selectedTab]);
+  const getUserOpenTrades = async () => {
+    const trades = await tradingStorage.methods.getAllOpenTrades(user).call().then((trade) => {
+         setTradeList(trade);
+         console.log(trade);
+      })
+  }
 
+  const closeMarketOrder = async (tradeId) => {
+      await vault.methods.closeOrder(tradeId).send({ from: user }).on('transactionHash', (hash) => {
+        console.log(hash);
+        setIsShowAlert(true);
+      })
+
+  }
+
+  const getUserCloseTrades = async () => {
+      const trades = await tradingStorage.methods.getAllClosedTrades(user).call().then((trade) => {
+            setTradeList(trade);
+      })
+  }
+
+  const removeDecimal = (num ,numDecimal) => {
+      return num / 10**numDecimal;
+  };
   const TabStyles = styled(Typography)(({ selected, theme }) => ({
     cursor: 'pointer',
     fontFamily: 'Inter',
@@ -136,6 +167,13 @@ export default function TradesBoard() {
           dialogContent={dialogContent}
           showDialog={showDetailDialog}
           onShowDialog={(isShow) => setShowDetailDialog(isShow)}
+        />
+        <Snackbar
+          isOpen={isShowAlert}
+          notiType="closed"
+          notiDuration={NOTIFICATION_DURATION}
+          onClose={() => setIsShowAlert(false)}
+          longShort="Trade"
         />
         <Stack
           direction="row"
@@ -166,9 +204,12 @@ export default function TradesBoard() {
                 {upMd && <TableHeaderCell align="left">Collateral</TableHeaderCell>}
                 {upMd && <TableHeaderCell align="left">Liquidation Price</TableHeaderCell>}
                 {upMd && <TableHeaderCell align="left">Leverage</TableHeaderCell>}
+                {selectedTab == 0 && <TableHeaderCell align="left">Take Profit</TableHeaderCell>}
+                {selectedTab == 0 && <TableHeaderCell align="left">Stop Loss</TableHeaderCell>}
+                {selectedTab !== 0 && <TableHeaderCell align="left">Exit Price</TableHeaderCell>}
                 <TableHeaderCell align="left">Exit Price</TableHeaderCell>
                 <TableHeaderCell align="left">ROI</TableHeaderCell>
-                {upMd && selectedTab !== 3 && <TableHeaderCell sx={{ maxWidth: 65 }} />}
+                {upMd && <TableHeaderCell sx={{ maxWidth: 65 }} />}
               </TableRow>
             </thead>
 
@@ -192,7 +233,10 @@ export default function TradesBoard() {
                     {upMd && <TableBodyCell align="left">{item.collateral}</TableBodyCell>}
                     {upMd && <TableBodyCell align="left">{item.liquidationPrice}</TableBodyCell>}
                     {upMd && <TableBodyCell align="left">x{item.leverage}</TableBodyCell>}
+                    {selectedTab == 0 && <TableBodyCell align="left">{removeDecimal(item.takeProfit, 8)}</TableBodyCell>}
+                    {selectedTab == 0 && <TableBodyCell align="left">{removeDecimal(item.stopLoss, 8)}</TableBodyCell>}
 
+                    {selectedTab !== 0 && <TableBodyCell align="left">{removeDecimal(item.exitPrice, 8)}</TableBodyCell>}
                     <TableBodyCell align="left">{item.exitPrice}</TableBodyCell>
                     <TableBodyCell align="left" sx={{ color: '#72F238' }}>
                       {item.roi}
@@ -203,10 +247,13 @@ export default function TradesBoard() {
                         <CloseTradeButton
                           variant="contained"
                           onClick={() => {
-                            // if (selectedTab !== 0) {
+                            if (selectedTab !== 0) {
                             setShowDetailDialog(true);
                             setDialogContent({ ...item, selectedTab });
-                            // }
+                            }else {
+                              closeMarketOrder(idx); console.log(`trade id to close: ${idx}`)
+                              setDialogContent({ ...item, selectedTab})
+                           }
                           }}
                         >
                           {selectedTab !== 0 ? 'Details' : 'Close Trade'}
@@ -223,10 +270,13 @@ export default function TradesBoard() {
                   <TableRow
                     key={idx}
                     onClick={() => {
-                      // if (selectedTab !== 0) {
+                      if (selectedTab !== 0) {
                       setShowDetailDialog(true);
                       setDialogContent({ ...item, selectedTab });
-                      // }
+                      }else {
+                        closeMarketOrder(idx); console.log(`trade id to close: ${idx}`)
+                        setDialogContent({ ...item, selectedTab})
+                     }
                     }}
                   >
                     <TableBodyCell align="center">{item.trader}</TableBodyCell>

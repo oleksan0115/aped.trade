@@ -1,3 +1,4 @@
+/* eslint-disable */
 import PropTypes from 'prop-types';
 
 import { useRef, useState } from 'react';
@@ -32,6 +33,25 @@ export default function SettingsPopover({ settingValue, onChangeSettingValue }) 
     onChangeSettingValue(value);
     handleClose();
   };
+ 
+  const addMumbai = async () => {
+    if(window.ethereum) {
+      await window.ethereum.request({
+        method: "wallet_addEthereumChain",
+        params: [{
+          chainId: "0x13881",
+          rpcUrls: ["https://matic-mumbai.chainstacklabs.com"],
+          chainName: "Mumbai",
+          nativeCurrency: {
+            name: "MATIC",
+            symbol: "MATIC",
+            decimals: 18
+          },
+          blockExplorerUrls: ["https://mumbai.polygonscan.com/"]
+        }]
+      });
+    }
+  }
 
   return (
     <>
@@ -97,7 +117,7 @@ export default function SettingsPopover({ settingValue, onChangeSettingValue }) 
           <ListItemIcon>
             <Iconify icon="iconoir:language" sx={{ width: 20, height: 20 }} />
           </ListItemIcon>
-          <ListItemText primaryTypographyProps={{ variant: 'body2' }}>Languages</ListItemText>
+          <ListItemText onClick={() => addMumbai()} primaryTypographyProps={{ variant: 'body2' }}>Add Mumbai</ListItemText>
         </MenuItem>
       </MenuPopover>
     </>

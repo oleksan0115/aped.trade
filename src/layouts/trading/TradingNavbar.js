@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+/* eslint-disable */
+import React, { useEffect, useState, useContext } from 'react';
 import { NavLink as RouterLink, useLocation } from 'react-router-dom';
 
 import '../../assets/css/low-dai-notify.css';
@@ -13,6 +14,8 @@ import Logo from '../../components/Logo';
 import SettingsPopover from './SettingsPopover';
 import SettingsDialog from './SettingsDialog';
 
+import Web3 from 'web3';
+import { ContractContext } from 'src/contexts/ContractContext';
 // ----------------------------------------------------------------------
 
 const WrongNetwork = styled('div')(({ theme }) => ({
@@ -34,6 +37,25 @@ export default function MainNavbar() {
   const [settingValue, setSettingValue] = useState('');
 
   const [showSettingDialog, setShowSettingDialog] = useState(false);
+
+  const {user, setUser} = useContext(ContractContext);
+
+  const connectWallet = async (e) => {
+    e.preventDefault();
+    if(window.ethereum) {
+       await window.ethereum.request({ method: "eth_requestAccounts"});
+       window.web3 = new Web3(window.ethereum);
+
+       const account = web3.eth.accounts;
+
+       const walletAddress = account.givenProvider.selectedAddress;
+       setUser(walletAddress);
+
+       console.log(`Wallet: ${walletAddress}`);
+    } else {
+     console.log("No wallet");
+    }
+};
 
   useEffect(() => {
     if (settingValue === 'settings') setShowSettingDialog(true);
@@ -76,8 +98,12 @@ export default function MainNavbar() {
                   color="error"
                   sx={{ px: 1, [theme.breakpoints.up('md')]: { px: 4 } }}
                   startIcon={<Box component="img" src="/static/trading/connect-wallet-icon.png" sx={{ width: 20 }} />}
+                  onClick={(e) => connectWallet(e)}
                 >
-                  CONNECT
+                  {user
+                     ? <h4>{user}</h4>
+                     : <h4>CONNECT</h4>
+                   }
                 </Button>
               ) : (
                 <WrongNetwork className="wrong-network-alert">WRONG NETWORK</WrongNetwork>
