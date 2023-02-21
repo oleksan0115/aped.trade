@@ -165,7 +165,7 @@ export default function Discover() {
                 </>
               ) : (
                 <Box sx={{ py: 1, px: 2.5 }}>
-                  {index === 3 ? <Typography variant="body2">Comming Soon...</Typography> : <SkeletonPriceLists />}
+                  {index === 3 ? <Typography variant="body2">Coming Soon...</Typography> : <SkeletonPriceLists />}
                 </Box>
               )}
             </div>

@@ -22,3 +22,6 @@ export function fShortenNumber(number) {
 export function fData(number) {
   return numeral(number).format('0.0 b');
 }
+export function fNumberThousands(number) {
+  return numeral(number).format(Number.isInteger(number) ? '0,000' : '0,000.00');
+}
