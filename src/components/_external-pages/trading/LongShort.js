@@ -832,153 +832,188 @@ const MIN_MAX = [
 const PriceTypes = ['crypto', 'forex', 'stocks'];
 
 
-const CryptoList = [
+export const CryptoList = [
   {
     name: 'btc',
-    currencyID: 0
+    currencyID: 0,
+    icon: "/static/icons/crypto/btc.webp"
   },
   {
     name: 'eth',
-    currencyID: 1
+    currencyID: 1,
+    icon: "/static/icons/crypto/eth.webp"
   },
   {
     name: 'ltc',
-    currencyID: 2
+    currencyID: 2,
+    icon: '/static/icons/crypto/ltc.png'
   },
   {
     name: 'xlm',
-    currencyID: 3
+    currencyID: 3,
+    icon: '/static/icons/crypto/xlm.png'
   },
   {
     name: 'ada',
-    currencyID: 4
+    currencyID: 4,
+    icon: '/static/icons/crypto/ada.webp'
   },
   {
     name: 'neo',
-    currencyID: 5
+    currencyID: 5,
+    icon: '/static/icons/crypto/neo.png'
   },
   {
     name: 'eos',
-    currencyID: 6
+    currencyID: 6,
+    icon: '/static/icons/crypto/eos.png'
   },
   {
     name: 'iot',
-    currencyID: 7
+    currencyID: 7,
+    icon: '/static/icons/crypto/iota.png'
   },
   {
     name: 'sol',
-    currencyID: 8
+    currencyID: 8,
+    icon: '/static/icons/crypto/sol.png'
   },
   {
     name: 'vet',
-    currencyID: 9
+    currencyID: 9,
+    icon: '/static/icons/crypto/vet.png'
   },
   {
     name: 'matic',
-    currencyID: 10
+    currencyID: 10,
+    icon: '/static/icons/crypto/matic.webp'
   },
   {
     name: 'dot',
-    currencyID: 11
+    currencyID: 11,
+    icon: '/static/icons/crypto/dot.png'
   },
   {
     name: 'axs',
-    currencyID: 12
+    currencyID: 12,
+    icon: '/static/icons/crypto/axs.png'
   },
   {
     name: 'uni',
-    currencyID: 13
+    currencyID: 13,
+    icon: '/static/icons/crypto/uni.png'
   },
   {
     name: 'link',
-    currencyID: 14
+    currencyID: 14,
+    icon: '/static/icons/crypto/link.png'
   },
   {
     name: 'fil',
-    currencyID: 15
+    currencyID: 15,
+    icon: '/static/icons/crypto/fil.png'
   },
 ]
 
 
-const ForexList = [
+export const ForexList = [
   {
     name: 'eur',
-    currencyID: 16
+    currencyID: 16,
+    icon: '/static/icons/forex/EU.svg'
   },
   {
     name: 'aud',
-    currencyID: 17
+    currencyID: 17,
+    icon: '/static/icons/forex/AU.svg'
   },
   {
     name: 'gbp',
-    currencyID: 18
+    currencyID: 18,
+    icon: '/static/icons/forex/GB.svg'
   },
   {
     name: 'cnh',
-    currencyID: 19
+    currencyID: 19,
+    icon: '/static/icons/forex/CN.svg'
   },
   {
     name: 'jpy',
-    currencyID: 20
+    currencyID: 20,
+    icon: '/static/icons/forex/JP.svg'
   },
   {
     name: 'mxn',
-    currencyID: 21
+    currencyID: 21,
+    icon: '/static/icons/forex/MX.svg'
   },
 ]
 
-const StockList = [
+export const StockList = [
   {
     name: 'tsla',
-    currencyID: 22
+    currencyID: 22,
+    icon: '/static/icons/stocks/tesla.svg'
   },
   {
     name: 'aapl',
-    currencyID: 23
+    currencyID: 23,
+    icon: '/static/icons/stocks/apple.svg'
   },
   {
     name: 'amzn',
-    currencyID: 24
+    currencyID: 24,
+    icon: '/static/icons/stocks/amazon.svg'
   },
   {
     name: 'msft',
-    currencyID: 25
+    currencyID: 25,
+    icon: '/static/icons/stocks/microsoft.svg'
   },
   {
     name: 'snap',
-    currencyID: 26
+    currencyID: 26,
+    icon: '/static/icons/stocks/snap.svg'
   },
   {
-    name: 'axp',
-    currencyID: 27
+    name: 'axp',   //need to add icons
+    currencyID: 27,
+    icon: ''
   },
   {
     name: 'csco',
-    currencyID: 28
+    currencyID: 28,
+    icon: '/static/icons/stocks/cisco.svg'
   },
   {
     name: 't',
-    currencyID: 29
+    currencyID: 29,
+    icon: '/static/icons/stocks/at-and-t.svg'
   },
   {
     name: 'dis',
-    currencyID: 30
+    currencyID: 30,
+    icon: '/static/icons/stocks/walt-disney.svg'
   },
   {
     name: 'abbv',
-    currencyID: 31
+    currencyID: 31,
+    icon: '/static/icons/stocks/abbvie.svg'
   },
   {
     name: 'mmm',
-    currencyID: 32
+    currencyID: 32,
+    icon: ''
   },
   {
     name: 'jpm',
-    currencyID: 33
+    currencyID: 33,
+    icon: '/static/icons/stocks/jpmorgan-chase.svg'
   },
   {
     name: 'jnj',
-    currencyID: 34
+    currencyID: 34,
+    icon: '/static/icons/stocks/johnson-and-johnson.svg'
   },
 
 ]

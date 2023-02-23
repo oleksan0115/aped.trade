@@ -1,8 +1,10 @@
+/* eslint-disable */
 import React, { useState, useEffect, useContext } from 'react';
 import { experimentalStyled as styled, makeStyles, useTheme } from '@material-ui/core/styles';
 
 import { ContractContext } from 'src/contexts/ContractContext';
 import Snackbar from '../../Snackbar';
+import { ForexList, CryptoList, StockList } from './LongShort';
 
 import {
   Card,
@@ -27,6 +29,7 @@ import { fNumberThousands } from '../../../utils/formatNumber';
 
 // components
 import TradesDetailDialog from './TradesDetailDialog';
+import { isArray } from 'lodash';
 
 const useStyles = makeStyles({
   table: {
@@ -104,11 +107,9 @@ export default function TradesBoard() {
     switch (selectedTab) {
       case 0:
         getUserOpenTrades();
-        trades = userTradeList;
         break;
       case 1:
         getUserCloseTrades();
-        trades = userTradeList;
         break;
       case 2:
         trades = TRADES.slice(0, 5);
@@ -120,10 +121,17 @@ export default function TradesBoard() {
 
     setTradeList([...trades]);
   }, [selectedTab]);
+  
   const getUserOpenTrades = async () => {
-    const trades = await tradingStorage.methods.getAllOpenTrades(user).call().then((trade) => {
-         setTradeList(trade);
-         console.log(trade);
+    const trades = await tradingStorage.methods.getAllOpenTrades(user).call().then( (trades) => {
+          let arr = [];
+          for(let i=0; i < trades.length; i++) {
+              const tradeIcon = getPairIcon(trades[i]) 
+              const tradeDir = getOrderDirection(trades[i]);
+              const newTrade = {...trades[i], icon: tradeIcon, orderDirection: tradeDir};
+              arr.push(newTrade);
+          }
+          setTradeList(arr)
       })
   }
 
@@ -136,14 +144,45 @@ export default function TradesBoard() {
   }
 
   const getUserCloseTrades = async () => {
-      const trades = await tradingStorage.methods.getAllClosedTrades(user).call().then((trade) => {
-            setTradeList(trade);
+      const trades = await tradingStorage.methods.getAllClosedTrades(user).call().then((trades) => {
+        let arr = [];
+        for(let i=0; i < trades.length; i++) {
+            const tradeIcon = getPairIcon(trades[i]) 
+            const tradeDir = getOrderDirection(trades[i]);
+            const newTrade = {...trades[i], icon: tradeIcon, orderDirection: tradeDir};
+            arr.push(newTrade);
+        }
+        setTradeList(arr)
+        console.log(arr)
       })
   }
 
   const removeDecimal = (num ,numDecimal) => {
       return num / 10**numDecimal;
   };
+
+  const getPairIcon = (item) => {
+     const assetList = CryptoList.concat(ForexList, StockList);
+     for(let i=0; i < assetList.length; i++) {
+         if(Number(item.pair) === assetList[i].currencyID) {
+            return assetList[i].icon;
+         }
+     }
+  }
+
+  const getOrderDirection = (item) => {
+     const assetList = CryptoList.concat(ForexList, StockList);
+     for(let i=0; i < assetList.length; i++) {
+        if(Number(item.orderType) === 2) {
+           return "up";
+        } else if (Number(item.orderType) === 3) {
+           return "down";
+        }
+    }
+  }
+
+ 
+
   const TabStyles = styled(Typography)(({ selected, theme }) => ({
     cursor: 'pointer',
     fontFamily: 'Inter',
@@ -202,12 +241,11 @@ export default function TradesBoard() {
                 <TableHeaderCell align="left">Pair</TableHeaderCell>
                 <TableHeaderCell align="left">Entry Price</TableHeaderCell>
                 {upMd && <TableHeaderCell align="left">Collateral</TableHeaderCell>}
-                {upMd && <TableHeaderCell align="left">Liquidation Price</TableHeaderCell>}
+                {upMd && selectedTab == 0 && <TableHeaderCell align="left">Liquidation Price</TableHeaderCell>}
                 {upMd && <TableHeaderCell align="left">Leverage</TableHeaderCell>}
                 {selectedTab == 0 && <TableHeaderCell align="left">Take Profit</TableHeaderCell>}
                 {selectedTab == 0 && <TableHeaderCell align="left">Stop Loss</TableHeaderCell>}
                 {selectedTab !== 0 && <TableHeaderCell align="left">Exit Price</TableHeaderCell>}
-                <TableHeaderCell align="left">Exit Price</TableHeaderCell>
                 <TableHeaderCell align="left">ROI</TableHeaderCell>
                 {upMd && <TableHeaderCell sx={{ maxWidth: 65 }} />}
               </TableRow>
@@ -217,27 +255,26 @@ export default function TradesBoard() {
               {upMd &&
                 tradeList.map((item, idx) => [
                   <TableRow key={idx}>
-                    <TableBodyCell align="center">{item.trader}</TableBodyCell>
+                    <TableBodyCell align="center">{item.trader.slice(0, 4)}{"..."}{item.trader.slice(39, 42)}</TableBodyCell>
                     <TableBodyCell align="left">
                       <Stack direction="row" spacing={1} alignItems="center">
-                        <Box component="img" src={item.pair.icon} sx={{ width: 25, height: 25, borderRadius: '50%' }} />
+                        <Box component="img" src={item.icon}  sx={{ width: 25, height: 25, borderRadius: '50%' }} />
                         <Box
                           component="img"
-                          src={`/static/icons/trading_ui/two_${item.pair.direction}_arrow.svg`}
+                          src={`/static/icons/trading_ui/two_${item.orderDirection}_arrow.svg`}
                           sx={{ width: 12, margin: '0 5px' }}
                         />
                       </Stack>
                     </TableBodyCell>
-                    <TableBodyCell align="left">{item.entryPrice}</TableBodyCell>
+                    <TableBodyCell align="left">{removeDecimal(item.entryPrice, 8)}</TableBodyCell>
 
-                    {upMd && <TableBodyCell align="left">{item.collateral}</TableBodyCell>}
-                    {upMd && <TableBodyCell align="left">{item.liquidationPrice}</TableBodyCell>}
-                    {upMd && <TableBodyCell align="left">x{item.leverage}</TableBodyCell>}
+                    {upMd && <TableBodyCell align="left">{removeDecimal(item.collateral, 18)}</TableBodyCell>}
+                    {upMd && selectedTab == 0 && <TableBodyCell align="left">{removeDecimal(item.liquidationPrice, 8)}</TableBodyCell>}
+                    {upMd && <TableBodyCell align="left">x{item.leverageAmount}</TableBodyCell>}
                     {selectedTab == 0 && <TableBodyCell align="left">{removeDecimal(item.takeProfit, 8)}</TableBodyCell>}
                     {selectedTab == 0 && <TableBodyCell align="left">{removeDecimal(item.stopLoss, 8)}</TableBodyCell>}
 
                     {selectedTab !== 0 && <TableBodyCell align="left">{removeDecimal(item.exitPrice, 8)}</TableBodyCell>}
-                    <TableBodyCell align="left">{item.exitPrice}</TableBodyCell>
                     <TableBodyCell align="left" sx={{ color: '#72F238' }}>
                       {item.roi}
                       {item.roi === '-' ? '' : '%'}
@@ -442,6 +479,8 @@ export default function TradesBoard() {
     </Card>
   );
 }
+
+const NOTIFICATION_DURATION = 5000;
 
 const TRADES = [
   {
