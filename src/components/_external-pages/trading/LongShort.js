@@ -33,7 +33,8 @@ import useSettings from '../../../hooks/useSettings';
 // utils
 import { fCurrency } from '../../../utils/formatNumber';
 
-import { getPreviousChartData } from './api';
+import { getPreviousChartData1 as getPreviousChartData } from './api';
+//import { getPreviousChartData} from './api';
 
 // web3
 import { ContractContext } from 'src/contexts/ContractContext';

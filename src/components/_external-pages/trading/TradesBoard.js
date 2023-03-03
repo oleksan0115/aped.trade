@@ -352,9 +352,9 @@ export default function TradesBoard() {
         showDialog={showDetailDialog}
         onShowDialog={(isShow) => setShowDetailDialog(isShow)}
       />
-      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+      <Grid container rowspacing={1} columnspacing={{ xs: 1, sm: 2, md: 3 }}>
         <Grid item xs={12} sm={12} md={8}>
-          <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+          <Grid container rowspacing={1} columnspacing={{ xs: 1, sm: 2, md: 3 }}>
             <Grid item xs={12} sm={12} md={10}>
               <Stack
                 direction="row"
@@ -402,7 +402,7 @@ export default function TradesBoard() {
           </Grid>
         </Grid>
       </Grid>
-      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+      <Grid container rowspacing={1} columnspacing={{ xs: 1, sm: 2, md: 3 }}>
         <Grid item xs={12} sm={12} md={8}>
           <TableContainer component={Paper}>
             <Table className={classes.table} size="small" aria-label="a dense table">

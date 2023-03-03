@@ -1,0 +1,460 @@
+import { parseFullSymbol } from './helpers';
+import { subscribeOnStream, unsubscribeFromStream } from './streaming';
+import { getPreviousChartData, getPreviousStocksData } from '../api';
+
+const lastBarsCache = new Map();
+
+const CRYPTOS = [
+  {
+    value: 'btc',
+    label: 'BTC/USD',
+    icon: '/static/icons/crypto/btc.webp'
+  },
+  {
+    value: 'eth',
+    label: 'ETH/USD',
+    icon: '/static/icons/crypto/eth.webp'
+  },
+  {
+    value: 'ltc',
+    label: 'LTC/USD',
+    icon: '/static/icons/crypto/ltc.png'
+  },
+  {
+    value: 'xlm',
+    label: 'XLM/USD',
+    icon: '/static/icons/crypto/xlm.png'
+  },
+  {
+    value: 'ada',
+    label: 'ADA/USD',
+    icon: '/static/icons/crypto/ada.webp'
+  },
+  {
+    value: 'neo',
+    label: 'NEO/USD',
+    icon: '/static/icons/crypto/neo.png'
+  },
+  {
+    value: 'eos',
+    label: 'EOS/USD',
+    icon: '/static/icons/crypto/eos.png'
+  },
+  {
+    value: 'iota',
+    label: 'IOT/USD',
+    icon: '/static/icons/crypto/iota.png'
+  },
+  {
+    value: 'sol',
+    label: 'SOL/USD',
+    icon: '/static/icons/crypto/sol.png'
+  },
+  {
+    value: 'vet',
+    label: 'VET/USD',
+    icon: '/static/icons/crypto/vet.png'
+  },
+  {
+    value: 'matic',
+    label: 'MATIC/USD',
+    icon: '/static/icons/crypto/matic.webp'
+  },
+  {
+    value: 'dot',
+    label: 'DOT/USD',
+    icon: '/static/icons/crypto/dot.png'
+  },
+  {
+    value: 'axs',
+    label: 'AXS/USD',
+    icon: '/static/icons/crypto/axs.png'
+  },
+  {
+    value: 'uni',
+    label: 'UNI/USD',
+    icon: '/static/icons/crypto/uni.png'
+  },
+  {
+    value: 'link',
+    label: 'LINK/USD',
+    icon: '/static/icons/crypto/link.png'
+  },
+  {
+    value: 'fil',
+    label: 'FIL/USD',
+    icon: '/static/icons/crypto/fil.png'
+  }
+];
+
+const FOREX = [
+  {
+    label: 'EUR/USD',
+    value: 'eur',
+    icon: '/static/icons/forex/EU.svg'
+  },
+  {
+    label: 'AUD/USD',
+    value: 'aud',
+    icon: '/static/icons/forex/AU.svg'
+  },
+  {
+    label: 'GBP/USD',
+    value: 'gbp',
+    icon: '/static/icons/forex/GB.svg'
+  },
+  {
+    label: 'CNH/USD',
+    value: 'cnh',
+    icon: '/static/icons/forex/CN.svg'
+  },
+  {
+    label: 'JPY/USD',
+    value: 'jpy',
+    icon: '/static/icons/forex/JP.svg'
+  },
+  {
+    label: 'MXN/USD',
+    value: 'mxn',
+    icon: '/static/icons/forex/MX.svg'
+  }
+];
+
+const STOCKS = [
+  {
+    label: 'TSLA',
+    value: 'tsla',
+    icon: '/static/icons/stocks/tesla.svg'
+  },
+  {
+    label: 'AAPL',
+    value: 'aapl',
+    icon: '/static/icons/stocks/apple.svg'
+  },
+  {
+    label: 'AMZN',
+    value: 'amzn',
+    icon: '/static/icons/stocks/amazon.svg'
+  },
+  {
+    label: 'MSFT',
+    value: 'msft',
+    icon: '/static/icons/stocks/microsoft.svg'
+  },
+  {
+    label: 'SNAP',
+    value: 'snap',
+    icon: '/static/icons/stocks/snap.svg'
+  },
+  {
+    label: 'AXP',
+    value: 'axp',
+    icon: '/static/icons/stocks/american-express.svg'
+  },
+  {
+    label: 'CSCO',
+    value: 'csco',
+    icon: '/static/icons/stocks/cisco.svg'
+  },
+  {
+    label: 'T',
+    value: 't',
+    icon: '/static/icons/stocks/at-and-t.svg'
+  },
+  {
+    label: 'DIS',
+    value: 'dis',
+    icon: '/static/icons/stocks/walt-disney.svg'
+  },
+  {
+    label: 'ABBV',
+    value: 'abbv',
+    icon: '/static/icons/stocks/abbvie.svg'
+  },
+  {
+    label: 'MMM',
+    value: 'mmm',
+    icon: '/static/icons/stocks/3m.svg'
+  },
+  {
+    label: 'JPM',
+    value: 'jpm',
+    icon: '/static/icons/stocks/jpmorgan-chase.svg'
+  },
+  {
+    label: 'JNJ',
+    value: 'jnj',
+    icon: '/static/icons/stocks/johnson-and-johnson.svg'
+  }
+];
+
+const PriceTypes = ['crypto', 'forex', 'stocks'];
+
+let allSymbols = [];
+const configurationData = {
+  supported_resolutions: ['1', '5', '15', '30', '60', '1D', '1W', '1M'],
+  exchanges: [
+    {
+      value: 'crypto',
+      name: 'Crypto',
+      desc: 'crypto'
+    },
+    {
+      // `exchange` argument for the `searchSymbols` method, if a user selects this exchange
+      value: 'forex',
+
+      // filter name
+      name: 'Forex',
+
+      // full exchange name displayed in the filter popup
+      desc: 'forex'
+    },
+    {
+      value: 'stocks',
+      name: 'Stocks',
+      desc: 'stocks'
+    }
+  ],
+  symbols_types: [
+    {
+      name: 'crypto',
+
+      // `symbolType` argument for the `searchSymbols` method, if a user selects this symbol type
+      value: 'crypto'
+    },
+    { name: 'forex', value: 'forex' },
+    { name: 'stocks', value: 'stocks' }
+    // ...
+  ]
+};
+
+// async function getAllSymbols() {
+//   console.log(`${process.env.REACT_APP_CHART_API_URL}/${PriceTypes[0]}`);
+//   const cryptoRes = await fetch(`${process.env.REACT_APP_CHART_API_URL}/${PriceTypes[0]}`).then((res) => res.json());
+//   console.log('cryptoRes: ', cryptoRes);
+//   const forexRes = await fetch(`${process.env.REACT_APP_CHART_API_URL}/${PriceTypes[1]}`).then((res) => res.json());
+//   console.log('forexRes: ', forexRes);
+
+//   const stocksRes = await fetch(`${process.env.REACT_APP_CHART_API_URL}/${PriceTypes[2]}`).then((res) => res.json());
+//   console.log('stocksRes: ', stocksRes);
+//   // const res1 = [];
+//   // const res2 = [];
+
+//   const data = {
+//     crypto: cryptoRes,
+//     forex: forexRes,
+//     stocks: stocksRes
+//   };
+
+//   // const data = {await makeApiRequest('data/v3/all/exchanges')};
+//   const allSymbols = [];
+
+//   configurationData.exchanges.forEach((exchange) => {
+//     const subData = data[exchange.value];
+//     if (subData)
+//       subData.forEach((item) => {
+//         allSymbols.push({
+//           symbol: Object.keys(item)[0],
+//           full_name: `${exchange.name}:${Object.keys(item)[0]}`,
+//           description: Object.keys(item)[0],
+//           // description: <img src="/static/icons/crypto/btc.webp" alt="icon" style={{ width: '2rem' }} />,
+//           exchange: exchange.value,
+//           type: exchange.value
+//         });
+//       });
+//   });
+//   console.log(allSymbols);
+//   return allSymbols;
+// }
+
+async function getAllSymbols() {
+  const data = {
+    crypto: CRYPTOS,
+    forex: FOREX,
+    stocks: STOCKS
+  };
+
+  // const data = {await makeApiRequest('data/v3/all/exchanges')};
+  const allSymbols = [];
+
+  configurationData.exchanges.forEach((exchange) => {
+    const subData = data[exchange.value];
+    if (subData)
+      subData.forEach((item) => {
+        allSymbols.push({
+          symbol: item.label,
+          full_name: `${exchange.name}:${item.label}`,
+          description: item.label,
+          // description: <img src="/static/icons/crypto/btc.webp" alt="icon" style={{ width: '2rem' }} />,
+          exchange: exchange.value,
+          type: exchange.value
+        });
+      });
+  });
+  return allSymbols;
+}
+
+export default {
+  onReady: (callback) => {
+    console.log('[onReady]: Method call');
+    setTimeout(() => callback(configurationData));
+  },
+
+  searchSymbols: async (userInput, exchange, symbolType, onResultReadyCallback) => {
+    const newSymbols = allSymbols.filter((symbol) => {
+      const isExchangeValid = symbolType === '' || symbol.type === symbolType;
+      const isFullSymbolContainsInput = symbol.full_name.toLowerCase().indexOf(userInput.toLowerCase()) !== -1;
+      return isExchangeValid && isFullSymbolContainsInput;
+    });
+    onResultReadyCallback(newSymbols);
+  },
+
+  resolveSymbol: async (symbolName, onSymbolResolvedCallback, onResolveErrorCallback, extension) => {
+    try {
+      const symbols = await getAllSymbols();
+      allSymbols = [...symbols];
+      const symbolItem = symbols.find(({ symbol }) => symbol === symbolName.split(':')[1]);
+      if (!symbolItem) {
+        console.log('[resolveSymbol]: Cannot resolve symbol', symbolName);
+        onResolveErrorCallback('cannot resolve symbol');
+        return;
+      }
+      const symbolInfo = {
+        ticker: symbolItem.full_name,
+        name: symbolItem.symbol,
+        description: symbolItem.description,
+        type: symbolItem.type,
+        session: '24x7',
+        timezone: 'Etc/UTC',
+        exchange: symbolItem.exchange,
+        minmov: 1,
+        interval: 1,
+        pricescale: 100,
+        has_intraday: true,
+        visible_plots_set: true,
+        has_weekly_and_monthly: false,
+        supported_resolutions: configurationData.supported_resolutions,
+        volume_precision: 2,
+        data_status: 'streaming'
+      };
+
+      console.log('[resolveSymbol]: Symbol resolved', symbolInfo);
+      onSymbolResolvedCallback(symbolInfo);
+    } catch (e) {
+      console.log(new Error(e));
+    }
+  },
+
+  getBars: async (symbolInfo, resolution, periodParams, onHistoryCallback, onErrorCallback) => {
+    const { from, to, firstDataRequest } = periodParams;
+    console.log('[getBars]: Method call', symbolInfo, resolution, from, to);
+    if (symbolInfo.type !== 'stocks') {
+      const parsedSymbol = parseFullSymbol(symbolInfo.ticker);
+      console.log(resolution);
+      console.log(parsedSymbol);
+      try {
+        getPreviousChartData(
+          parsedSymbol.fromSymbol,
+          resolution,
+          symbolInfo.type,
+          from * 1000,
+          to * 1000,
+          'charting_library'
+        ).then((data) => {
+          if (!data || data.length === 0) {
+            // "noData" should be set if there is no data in the requested period.
+            onHistoryCallback([], {
+              noData: true
+            });
+            return;
+          }
+          console.log('previousChartData', data);
+          console.log(symbolInfo.type);
+          let bars = [];
+          data.forEach((bar) => {
+            if (bar.t >= from * 1000 && bar.t < to * 1000) {
+              bars = [
+                ...bars,
+                {
+                  time: bar.t,
+                  low: bar.l,
+                  high: bar.h,
+                  open: bar.o,
+                  close: bar.c
+                }
+              ];
+            }
+          });
+          if (firstDataRequest) {
+            lastBarsCache.set(symbolInfo.full_name, {
+              ...bars[bars.length - 1]
+            });
+          }
+          console.log(`[getBars]: returned ${bars.length} bar(s)`);
+          onHistoryCallback(bars, {
+            noData: false
+          });
+        });
+      } catch (e) {
+        console.log(new Error(e));
+      }
+    } else {
+      try {
+        getPreviousStocksData(symbolInfo.name, resolution, from * 1000, to * 1000).then((data) => {
+          if (!data || data.length === 0) {
+            // "noData" should be set if there is no data in the requested period.
+            onHistoryCallback([], {
+              noData: true
+            });
+            return;
+          }
+          let bars = [];
+          console.log('previousChartData', data);
+          console.log(symbolInfo.type);
+          data.forEach((bar) => {
+            if (bar.t >= from * 1000 && bar.t < to * 1000) {
+              bars = [
+                ...bars,
+                {
+                  time: bar.t,
+                  low: bar.l,
+                  high: bar.h,
+                  open: bar.o,
+                  close: bar.c
+                }
+              ];
+            }
+          });
+          if (firstDataRequest) {
+            lastBarsCache.set(symbolInfo.full_name, {
+              ...bars[bars.length - 1]
+            });
+          }
+          console.log(`[getBars]: returned ${bars.length} bar(s)`);
+          onHistoryCallback(bars, {
+            noData: false
+          });
+        });
+      } catch (e) {
+        console.log(new Error(e));
+      }
+    }
+  },
+
+  subscribeBars: (symbolInfo, resolution, onRealtimeCallback, subscriberUID, onResetCacheNeededCallback) => {
+    console.log('[subscribeBars]: Method call with subscriberUID:', subscriberUID);
+    subscribeOnStream(
+      symbolInfo,
+      resolution,
+      onRealtimeCallback,
+      subscriberUID,
+      onResetCacheNeededCallback,
+      lastBarsCache.get(symbolInfo.full_name)
+    );
+  },
+
+  unsubscribeBars: (subscriberUID) => {
+    console.log('[unsubscribeBars]: Method call with subscriberUID:', subscriberUID);
+    unsubscribeFromStream(subscriberUID);
+  }
+};
