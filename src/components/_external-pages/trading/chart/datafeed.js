@@ -1,198 +1,13 @@
 import { parseFullSymbol } from './helpers';
-import { subscribeOnStream, unsubscribeFromStream } from './streaming';
+import { subscribeOnStream, unsubscribeFromStream } from '../ChartStatus';
 import { getPreviousChartData, getPreviousStocksData } from '../api';
+import { CRYPTOS, FOREX, STOCKS, Intervals } from './Consts';
 
 const lastBarsCache = new Map();
 
-const CRYPTOS = [
-  {
-    value: 'btc',
-    label: 'BTC/USD',
-    icon: '/static/icons/crypto/btc.webp'
-  },
-  {
-    value: 'eth',
-    label: 'ETH/USD',
-    icon: '/static/icons/crypto/eth.webp'
-  },
-  {
-    value: 'ltc',
-    label: 'LTC/USD',
-    icon: '/static/icons/crypto/ltc.png'
-  },
-  {
-    value: 'xlm',
-    label: 'XLM/USD',
-    icon: '/static/icons/crypto/xlm.png'
-  },
-  {
-    value: 'ada',
-    label: 'ADA/USD',
-    icon: '/static/icons/crypto/ada.webp'
-  },
-  {
-    value: 'neo',
-    label: 'NEO/USD',
-    icon: '/static/icons/crypto/neo.png'
-  },
-  {
-    value: 'eos',
-    label: 'EOS/USD',
-    icon: '/static/icons/crypto/eos.png'
-  },
-  {
-    value: 'iota',
-    label: 'IOT/USD',
-    icon: '/static/icons/crypto/iota.png'
-  },
-  {
-    value: 'sol',
-    label: 'SOL/USD',
-    icon: '/static/icons/crypto/sol.png'
-  },
-  {
-    value: 'vet',
-    label: 'VET/USD',
-    icon: '/static/icons/crypto/vet.png'
-  },
-  {
-    value: 'matic',
-    label: 'MATIC/USD',
-    icon: '/static/icons/crypto/matic.webp'
-  },
-  {
-    value: 'dot',
-    label: 'DOT/USD',
-    icon: '/static/icons/crypto/dot.png'
-  },
-  {
-    value: 'axs',
-    label: 'AXS/USD',
-    icon: '/static/icons/crypto/axs.png'
-  },
-  {
-    value: 'uni',
-    label: 'UNI/USD',
-    icon: '/static/icons/crypto/uni.png'
-  },
-  {
-    value: 'link',
-    label: 'LINK/USD',
-    icon: '/static/icons/crypto/link.png'
-  },
-  {
-    value: 'fil',
-    label: 'FIL/USD',
-    icon: '/static/icons/crypto/fil.png'
-  }
-];
-
-const FOREX = [
-  {
-    label: 'EUR/USD',
-    value: 'eur',
-    icon: '/static/icons/forex/EU.svg'
-  },
-  {
-    label: 'AUD/USD',
-    value: 'aud',
-    icon: '/static/icons/forex/AU.svg'
-  },
-  {
-    label: 'GBP/USD',
-    value: 'gbp',
-    icon: '/static/icons/forex/GB.svg'
-  },
-  {
-    label: 'CNH/USD',
-    value: 'cnh',
-    icon: '/static/icons/forex/CN.svg'
-  },
-  {
-    label: 'JPY/USD',
-    value: 'jpy',
-    icon: '/static/icons/forex/JP.svg'
-  },
-  {
-    label: 'MXN/USD',
-    value: 'mxn',
-    icon: '/static/icons/forex/MX.svg'
-  }
-];
-
-const STOCKS = [
-  {
-    label: 'TSLA',
-    value: 'tsla',
-    icon: '/static/icons/stocks/tesla.svg'
-  },
-  {
-    label: 'AAPL',
-    value: 'aapl',
-    icon: '/static/icons/stocks/apple.svg'
-  },
-  {
-    label: 'AMZN',
-    value: 'amzn',
-    icon: '/static/icons/stocks/amazon.svg'
-  },
-  {
-    label: 'MSFT',
-    value: 'msft',
-    icon: '/static/icons/stocks/microsoft.svg'
-  },
-  {
-    label: 'SNAP',
-    value: 'snap',
-    icon: '/static/icons/stocks/snap.svg'
-  },
-  {
-    label: 'AXP',
-    value: 'axp',
-    icon: '/static/icons/stocks/american-express.svg'
-  },
-  {
-    label: 'CSCO',
-    value: 'csco',
-    icon: '/static/icons/stocks/cisco.svg'
-  },
-  {
-    label: 'T',
-    value: 't',
-    icon: '/static/icons/stocks/at-and-t.svg'
-  },
-  {
-    label: 'DIS',
-    value: 'dis',
-    icon: '/static/icons/stocks/walt-disney.svg'
-  },
-  {
-    label: 'ABBV',
-    value: 'abbv',
-    icon: '/static/icons/stocks/abbvie.svg'
-  },
-  {
-    label: 'MMM',
-    value: 'mmm',
-    icon: '/static/icons/stocks/3m.svg'
-  },
-  {
-    label: 'JPM',
-    value: 'jpm',
-    icon: '/static/icons/stocks/jpmorgan-chase.svg'
-  },
-  {
-    label: 'JNJ',
-    value: 'jnj',
-    icon: '/static/icons/stocks/johnson-and-johnson.svg'
-  }
-];
-
-const PriceTypes = ['crypto', 'forex', 'stocks'];
-
 let allSymbols = [];
 const configurationData = {
-  supported_resolutions: ['1', '5', '15', '30', '60', '1D', '1W', '1M'],
+  supported_resolutions: Intervals,
   exchanges: [
     {
       value: 'crypto',
@@ -228,45 +43,6 @@ const configurationData = {
   ]
 };
 
-// async function getAllSymbols() {
-//   console.log(`${process.env.REACT_APP_CHART_API_URL}/${PriceTypes[0]}`);
-//   const cryptoRes = await fetch(`${process.env.REACT_APP_CHART_API_URL}/${PriceTypes[0]}`).then((res) => res.json());
-//   console.log('cryptoRes: ', cryptoRes);
-//   const forexRes = await fetch(`${process.env.REACT_APP_CHART_API_URL}/${PriceTypes[1]}`).then((res) => res.json());
-//   console.log('forexRes: ', forexRes);
-
-//   const stocksRes = await fetch(`${process.env.REACT_APP_CHART_API_URL}/${PriceTypes[2]}`).then((res) => res.json());
-//   console.log('stocksRes: ', stocksRes);
-//   // const res1 = [];
-//   // const res2 = [];
-
-//   const data = {
-//     crypto: cryptoRes,
-//     forex: forexRes,
-//     stocks: stocksRes
-//   };
-
-//   // const data = {await makeApiRequest('data/v3/all/exchanges')};
-//   const allSymbols = [];
-
-//   configurationData.exchanges.forEach((exchange) => {
-//     const subData = data[exchange.value];
-//     if (subData)
-//       subData.forEach((item) => {
-//         allSymbols.push({
-//           symbol: Object.keys(item)[0],
-//           full_name: `${exchange.name}:${Object.keys(item)[0]}`,
-//           description: Object.keys(item)[0],
-//           // description: <img src="/static/icons/crypto/btc.webp" alt="icon" style={{ width: '2rem' }} />,
-//           exchange: exchange.value,
-//           type: exchange.value
-//         });
-//       });
-//   });
-//   console.log(allSymbols);
-//   return allSymbols;
-// }
-
 async function getAllSymbols() {
   const data = {
     crypto: CRYPTOS,
@@ -285,7 +61,6 @@ async function getAllSymbols() {
           symbol: item.label,
           full_name: `${exchange.name}:${item.label}`,
           description: item.label,
-          // description: <img src="/static/icons/crypto/btc.webp" alt="icon" style={{ width: '2rem' }} />,
           exchange: exchange.value,
           type: exchange.value
         });

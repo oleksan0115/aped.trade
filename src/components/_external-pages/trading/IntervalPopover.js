@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 // material
 import { MenuItem, ListItemIcon, ListItemText, Stack, Box } from '@material-ui/core';
 
@@ -8,6 +8,8 @@ import { MenuItem, ListItemIcon, ListItemText, Stack, Box } from '@material-ui/c
 import MenuPopover from '../../MenuPopover';
 import Iconify from '../../Iconify';
 
+// consts
+import { Intervals, IntervalLabels } from './chart/Consts';
 // ----------------------------------------------------------------------
 
 IntervalPopover.propTypes = {
@@ -31,6 +33,10 @@ export default function IntervalPopover({ interval, onChangeInterval }) {
     onChangeInterval(item);
     handleClose();
   };
+
+  useEffect(() => {
+    console.log('popover interval:', interval);
+  }, [interval]);
 
   return (
     <>
@@ -59,7 +65,7 @@ export default function IntervalPopover({ interval, onChangeInterval }) {
       </Box>
 
       <MenuPopover open={open} onClose={handleClose} anchorEl={anchorRef.current} sx={{ py: 1, width: 160 }}>
-        {intervals.map((option) => (
+        {Intervals.map((option, index) => (
           <MenuItem
             key={option}
             // selected={option.value === currentCurrency.value}
@@ -69,12 +75,10 @@ export default function IntervalPopover({ interval, onChangeInterval }) {
             <ListItemIcon>
               <Iconify icon="mdi:timer-sync-outline" sx={{ width: 20, height: 20 }} />
             </ListItemIcon>
-            <ListItemText primaryTypographyProps={{ variant: 'body2' }}>{option}</ListItemText>
+            <ListItemText primaryTypographyProps={{ variant: 'body2' }}>{IntervalLabels[index]}</ListItemText>
           </MenuItem>
         ))}
       </MenuPopover>
     </>
   );
 }
-
-const intervals = ['1 min', '5 min', '15 min', '30 min', '1 hour', '4 hour', '1 day'];

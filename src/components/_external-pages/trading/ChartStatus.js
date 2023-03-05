@@ -7,38 +7,194 @@ import { Box, Stack, Typography } from '@material-ui/core';
 // components
 import CryptoPopover from './CryptoPopover';
 import IntervalPopover from './IntervalPopover';
+import { parseFullSymbol } from './chart/helpers';
+import { PriceTypes } from './chart/Consts';
+const channelToSubscription = new Map();
 
 ChartStatus.propTypes = {
   socket: PropTypes.object,
   currency: PropTypes.string,
+  ctype: PropTypes.number,
+  interval: PropTypes.string,
   chartViewMode: PropTypes.number,
   lastPrice: PropTypes.object,
   lastOHLCData: PropTypes.object,
   onChartCurrency: PropTypes.func,
   onChartInterval: PropTypes.func,
-  onCType: PropTypes.func,
   other: PropTypes.object
 };
 
 function ChartStatus({
   socket,
   currency,
+  ctype,
+  interval,
   chartViewMode,
   lastPrice,
   lastOHLCData,
   onChartCurrency,
   onChartInterval,
-  onCType,
   other
 }) {
   const { close, open, high, low } = lastPrice;
   const theme = useTheme();
-  const [interval, setInterval] = useState('1 min');
-  const [type, setType] = useState(0);
 
   const [price, setPrice] = useState(0);
   const [openPrice, setOpenPrice] = useState(0);
+  useEffect(() => {
+    socket.on('connect', () => {
+      console.log('[socket] Connected');
+    });
 
+    socket.on('disconnect', (reason) => {
+      console.log('[socket] Disconnected:', reason);
+    });
+
+    socket.on('error', (error) => {
+      console.log('[socket] Error:', error);
+    });
+
+    socket.on(`${PriceTypes[0]}_trade_data`, (data) => {
+      const exchange = PriceTypes[0];
+      const fromSymbol = data.pair.split('-')[0];
+      const toSymbol = data.pair.split('-')[1];
+      const tradePrice = parseFloat(data.p);
+      const tradeTime = parseInt(data.t, 10);
+      const channelString = `0~${exchange}~${fromSymbol}~${toSymbol}`;
+      const subscriptionItem = channelToSubscription.get(channelString);
+      console.log("crypto_trade_data");
+      console.log(ctype, currency, fromSymbol, toSymbol);
+      // real time show the price in CryptoPopover
+      if (ctype === 0 && fromSymbol === currency.toUpperCase() && toSymbol === 'USD') {
+        setPrice(Number(tradePrice.toFixed(3)));
+      }
+
+      if (subscriptionItem === undefined) {
+        return;
+      }
+      const { lastDailyBar, resolution } = subscriptionItem;
+      const nextDailyBarTime = getNextDailyBarTime(lastDailyBar.time, resolution);
+      let bar;
+      if (tradeTime >= nextDailyBarTime) {
+        bar = {
+          time: nextDailyBarTime,
+          open: tradePrice,
+          high: tradePrice,
+          low: tradePrice,
+          close: tradePrice
+        };
+        console.log('[socket] Generate new bar', bar);
+      } else {
+        bar = {
+          ...lastDailyBar,
+          high: Math.max(lastDailyBar.high, tradePrice),
+          low: Math.min(lastDailyBar.low, tradePrice),
+          close: tradePrice
+        };
+        console.log('[socket] Update the latest bar by price', tradePrice);
+      }
+
+      // assess if the price is increasing or decreasing for CryptoPopover
+      setOpenPrice(subscriptionItem.lastDailyBar.open);
+
+      subscriptionItem.lastDailyBar = bar;
+
+      // send data to every subscriber of that symbol
+      subscriptionItem.handlers.forEach((handler) => handler.callback(bar));
+    });
+    socket.on(`${PriceTypes[1]}_trade_data`, (data) => {
+      const exchange = PriceTypes[1];
+      const fromSymbol = data.p.split('/')[0];
+      const toSymbol = data.p.split('/')[1];
+      const tradeTime = parseInt(data.t, 10);
+      const channelString = `0~${exchange}~${fromSymbol}~${toSymbol}`;
+
+      // real time show the price in CryptoPopover
+      if (ctype === 1 && fromSymbol === currency.toUpperCase() && toSymbol === 'USD') {
+        setPrice(Number(tradePrice.toFixed(3)));
+      }
+      const subscriptionItem = channelToSubscription.get(channelString);
+      if (subscriptionItem === undefined) {
+        return;
+      }
+
+      const { lastDailyBar, resolution } = subscriptionItem;
+      const nextDailyBarTime = getNextDailyBarTime(lastDailyBar.time, resolution);
+      let bar;
+      if (tradeTime >= nextDailyBarTime) {
+        bar = {
+          time: nextDailyBarTime,
+          open: data.a,
+          high: data.a,
+          low: data.b,
+          close: data.b
+        };
+        console.log('[socket] Generate new bar', bar);
+      } else {
+        bar = {
+          ...lastDailyBar,
+          high: Math.max(lastDailyBar.high, data.a),
+          low: Math.min(lastDailyBar.low, data.b),
+          close: data.b
+        };
+        console.log('[socket] Update the latest bar by price', data.b);
+      }
+      // assess if the price is increasing or decreasing for CryptoPopover
+      setOpenPrice(subscriptionItem.lastDailyBar.open);
+
+      subscriptionItem.lastDailyBar = bar;
+
+      // send data to every subscriber of that symbol
+      subscriptionItem.handlers.forEach((handler) => handler.callback(bar));
+    });
+    socket.on(`${PriceTypes[2]}_trade_data`, (data) => {
+      const exchange = PriceTypes[2];
+      const stocksTime = parseInt(data.t, 10);
+      const channelString = `0~${exchange}~${data.sym}`;
+      const subscriptionItem = channelToSubscription.get(channelString);
+      if (ctype === 2 && data.sym === currency.toUpperCase()) {
+        setPrice(Number(tradePrice.toFixed(3)));
+      }
+      if (subscriptionItem === undefined) {
+        return;
+      }
+      const { lastDailyBar, resolution } = subscriptionItem;
+      const nextDailyBarTime = getNextDailyBarTime(lastDailyBar.time, resolution);
+
+      let bar;
+      if (stocksTime >= nextDailyBarTime) {
+        bar = {
+          time: nextDailyBarTime,
+          open: data.ap,
+          high: data.ap,
+          low: data.bp,
+          close: data.bp
+        };
+        console.log('[socket] Generate new bar', bar);
+      } else {
+        bar = {
+          ...lastDailyBar,
+          high: Math.max(lastDailyBar.high, data.ap),
+          low: Math.min(lastDailyBar.low, data.bp),
+          close: data.bp
+        };
+        console.log('[socket] Update the latest bar by price', data.bp);
+      }
+      setOpenPrice(subscriptionItem.lastDailyBar.open);
+      subscriptionItem.lastDailyBar = bar;
+
+      // send data to every subscriber of that symbol
+      subscriptionItem.handlers.forEach((handler) => handler.callback(bar));
+    });
+    return () => {
+      socket.off(`${PriceTypes[0]}_trade_data`);
+      socket.off(`${PriceTypes[1]}_trade_data`);
+      socket.off(`${PriceTypes[2]}_trade_data`);
+      socket.off('connect');
+      socket.off('disconnect');
+      socket.off('error');
+    };
+  }, [currency]);
   useEffect(() => {
     if (close) {
       setOpenPrice(open);
@@ -53,44 +209,10 @@ function ChartStatus({
     }
   }, [lastOHLCData]);
 
-  useEffect(() => {
-    onChartInterval(interval);
-    onCType(type);
+  useEffect(()=>{
+    setPrice(0);
+  },[currency, ctype])
 
-    let pairString = '';
-
-    if (PriceTypes[type] === 'crypto') pairString = `${currency.toUpperCase()}-USD`;
-    else if (PriceTypes[type] === 'forex') pairString = `${currency.toUpperCase()}/USD`;
-    else pairString = `${currency.toUpperCase()}`;
-
-    const handler = (t) => {
-      let closePrice = 0;
-      let pair = '';
-      if (PriceTypes[type] === 'crypto') {
-        closePrice = t.p;
-        pair = t.pair;
-      } else if (PriceTypes[type] === 'forex') {
-        closePrice = t.a;
-        pair = t.p;
-      } else {
-        closePrice = (t.ap + t.bp) / 2;
-        pair = t.sym;
-      }
-      try {
-        if (pair === pairString) {
-          setPrice(Number(closePrice.toFixed(3)));
-        }
-      } catch (e) {
-        /* Error hanlding codes */
-      }
-    };
-
-    socket.on(`${PriceTypes[type]}_trade_data`, handler);
-
-    return () => {
-      socket.off(`${PriceTypes[type]}_trade_data`, handler);
-    };
-  }, [currency, interval, type]);
   return (
     <Box {...other}>
       <Stack
@@ -110,8 +232,10 @@ function ChartStatus({
               price={price}
               openPrice={openPrice}
               currency={currency}
-              onChangeCurrency={(cur) => onChartCurrency(cur)}
-              onChangeType={(type) => setType(type)}
+              onChangeCurrency={(cur, priceType) => {
+                setPrice(0);
+                onChartCurrency(cur, priceType);
+              }}
             />
           </Stack>
 
@@ -127,7 +251,7 @@ function ChartStatus({
           alignItems="center"
           sx={{ [theme.breakpoints.down('md')]: { display: 'none' } }}
         >
-          <IntervalPopover interval={interval} onChangeInterval={(interval) => setInterval(interval)} />
+          <IntervalPopover interval={interval} onChangeInterval={(_interval) => onChartInterval(_interval)} />
           <img src="/static/icons/trading_ui/setting_button.png" alt="two arrow" style={{ height: 40 }} />
         </Stack>
       </Stack>
@@ -163,4 +287,125 @@ function ChartStatus({
 
 export default ChartStatus;
 
-const PriceTypes = ['crypto', 'forex', 'stocks'];
+function getNextDailyBarTime(barTime, resolution) {
+  console.log('getNextDailyBarTime');
+  console.log(resolution);
+  console.log(barTime);
+  const date = new Date(barTime * 1000);
+  console.log(date);
+  console.log(date.getTime());
+  switch (resolution) {
+    case '1D':
+      date.setDate(date.getDate() + 1);
+      break;
+    case '1W':
+      date.setDate(date.getDate() + 7);
+      break;
+    case '1M':
+      date.setDate(date.getMonth() + 1);
+      break;
+    case '1':
+      date.setTime(date.getTime() + 60 * 1000);
+      break;
+    case '5':
+      date.setTime(date.getTime() + 5 * 60 * 1000);
+      break;
+    case '15':
+      date.setTime(date.getTime() + 15 * 60 * 1000);
+      break;
+    case '30':
+      date.setTime(date.getTime() + 30 * 60 * 1000);
+      break;
+    case '1H':
+      date.setTime(date.getTime() + 60 * 60 * 1000);
+      break;
+    default:
+      break;
+  }
+  // console.log(date);
+  // console.log(date.getTime());
+
+  return date.getTime() / 1000;
+}
+
+export function subscribeOnStream(
+  symbolInfo,
+  resolution,
+  onRealtimeCallback,
+  subscriberUID,
+  onResetCacheNeededCallback,
+  lastDailyBar
+) {
+  if (symbolInfo.type !== 'stocks') {
+    console.log(symbolInfo.full_name);
+    const parsedSymbol = parseFullSymbol(symbolInfo.full_name);
+    console.log('streaming parsedSymbol: ', symbolInfo);
+    console.log('streaming parsedSymbol: ', parsedSymbol);
+    const channelString = `0~${symbolInfo.type}~${parsedSymbol.fromSymbol}~${parsedSymbol.toSymbol}`;
+    const handler = {
+      id: subscriberUID,
+      callback: onRealtimeCallback
+    };
+    let subscriptionItem = channelToSubscription.get(channelString);
+    if (subscriptionItem) {
+      // already subscribed to the channel, use the existing subscription
+      subscriptionItem.handlers.push(handler);
+      return;
+    }
+    subscriptionItem = {
+      subscriberUID,
+      resolution,
+      lastDailyBar,
+      handlers: [handler]
+    };
+    channelToSubscription.set(channelString, subscriptionItem);
+    console.log('[subscribeBars]: Subscribe to streaming. Channel:', channelString);
+    //socket.emit('SubAdd', { subs: [channelString] });
+  } else {
+    const channelString = `0~${symbolInfo.type}~${symbolInfo.name}`;
+    console.log('channelString', channelString);
+    const handler = {
+      id: subscriberUID,
+      callback: onRealtimeCallback
+    };
+    let subscriptionItem = channelToSubscription.get(channelString);
+    if (subscriptionItem) {
+      // already subscribed to the channel, use the existing subscription
+      subscriptionItem.handlers.push(handler);
+      return;
+    }
+    subscriptionItem = {
+      subscriberUID,
+      resolution,
+      lastDailyBar,
+      handlers: [handler]
+    };
+    channelToSubscription.set(channelString, subscriptionItem);
+    console.log('[subscribeBars]: Subscribe to streaming. Channel:', channelString);
+    //socket.emit('SubAdd', { subs: [channelString] });
+  }
+}
+
+export function unsubscribeFromStream(subscriberUID) {
+  if (!channelToSubscription) return;
+  const keys = channelToSubscription.keys();
+  console.log('channelToSubscription', keys);
+  console.log([...keys]);
+
+  [...channelToSubscription.keys()].forEach((channelString) => {
+    const subscriptionItem = channelToSubscription.get(channelString);
+    const handlerIndex = subscriptionItem.handlers.findIndex((handler) => handler.id === subscriberUID);
+
+    if (handlerIndex !== -1) {
+      // remove from handlers
+      subscriptionItem.handlers.splice(handlerIndex, 1);
+
+      if (subscriptionItem.handlers.length === 0) {
+        // unsubscribe from the channel, if it was the last handler
+        console.log('[unsubscribeBars]: Unsubscribe from streaming. Channel:', channelString);
+        //socket.emit('SubRemove', { subs: [channelString] });
+        channelToSubscription.delete(channelString);
+      }
+    }
+  });
+}

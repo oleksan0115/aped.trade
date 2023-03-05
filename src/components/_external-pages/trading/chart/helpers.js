@@ -1,5 +1,3 @@
-// Make requests to CryptoCompare API
-
 export function parseFullSymbol(fullSymbol) {
   const match = fullSymbol.match(/^(\w+):(\w+)\/(\w+)$/);
   if (!match) {
