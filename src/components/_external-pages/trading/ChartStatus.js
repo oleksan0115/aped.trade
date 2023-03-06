@@ -231,7 +231,7 @@ function ChartStatus({
           width: '100%',
           py: 1,
           backgroundColor: '#0D0C17',
-          [theme.breakpoints.down('md')]: { position: 'fixed', top: 56, left: 0, width: '100%', zIndex: 1000 }
+          [theme.breakpoints.down('md')]: { top: 56, left: 0, width: '100%', zIndex: 1000 }
         }}
         justifyContent="space-between"
       >

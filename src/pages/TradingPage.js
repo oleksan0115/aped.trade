@@ -102,7 +102,11 @@ export default function TradingPage() {
               socket={socket}
             />
             <Box
-              sx={{ width: '100%', height: '100%', '& iframe': { height: '100% !important' } }}
+              sx={{
+                width: '100%',
+                height: '100%',
+                '& iframe': { height: { xs: '400px !important', md: '100% !important' } }
+              }}
               id="tv_chart_container"
             />
           </Stack>
