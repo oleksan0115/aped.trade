@@ -63,7 +63,7 @@ function ChartStatus({
       const tradeTime = parseInt(data.t, 10);
       const channelString = `0~${exchange}~${fromSymbol}~${toSymbol}`;
       const subscriptionItem = channelToSubscription.get(channelString);
-      console.log("crypto_trade_data");
+      console.log('crypto_trade_data');
 
       // real time show the price in CryptoPopover
       if (ctype === 0 && fromSymbol === currency.toUpperCase() && toSymbol === 'USD') {
@@ -113,7 +113,7 @@ function ChartStatus({
 
       // real time show the price in CryptoPopover
       if (ctype === 1 && fromSymbol === currency.toUpperCase() && toSymbol === 'USD') {
-        console.log("new price set forex", tradePrice);
+        console.log('new price set forex', tradePrice);
         setPrice(tradePrice);
       }
       const subscriptionItem = channelToSubscription.get(channelString);
@@ -213,9 +213,14 @@ function ChartStatus({
     }
   }, [lastOHLCData]);
 
-  useEffect(()=>{
+  useEffect(() => {
     setPrice(0);
-  },[currency, ctype])
+    setTimeout(() => {
+      const channelString = `0~${PriceTypes[ctype]}~${currency.toUpperCase()}`;
+      const subscriptionItem = channelToSubscription.get(channelString);
+      if (subscriptionItem && !subscriptionItem.lastDailyBar) setPrice(-1);
+    }, 3000);
+  }, [currency, ctype]);
 
   return (
     <Box {...other}>
@@ -242,8 +247,6 @@ function ChartStatus({
               }}
             />
           </Stack>
-
-          
         </Stack>
 
         <Stack
@@ -255,8 +258,6 @@ function ChartStatus({
           {/* <IntervalPopover interval={interval} onChangeInterval={(_interval) => onChartInterval(_interval)} /> */}
         </Stack>
       </Stack>
-
-      
     </Box>
   );
 }
@@ -313,11 +314,7 @@ export function subscribeOnStream(
   lastDailyBar
 ) {
   if (symbolInfo.type !== 'stocks') {
-    console.log(symbolInfo.full_name);
     const parsedSymbol = parseFullSymbol(symbolInfo.full_name);
-    console.log('streaming parsedSymbol: ', symbolInfo);
-    console.log('streaming parsedSymbol: ', parsedSymbol);
-    console.log(lastDailyBar);
     const channelString = `0~${symbolInfo.type}~${parsedSymbol.fromSymbol}~${parsedSymbol.toSymbol}`;
     const handler = {
       id: subscriberUID,
@@ -340,7 +337,6 @@ export function subscribeOnStream(
     //socket.emit('SubAdd', { subs: [channelString] });
   } else {
     const channelString = `0~${symbolInfo.type}~${symbolInfo.name}`;
-    console.log('channelString', channelString);
     const handler = {
       id: subscriberUID,
       callback: onRealtimeCallback
@@ -366,8 +362,6 @@ export function subscribeOnStream(
 export function unsubscribeFromStream(subscriberUID) {
   if (!channelToSubscription) return;
   const keys = channelToSubscription.keys();
-  console.log('channelToSubscription', keys);
-  console.log([...keys]);
 
   [...channelToSubscription.keys()].forEach((channelString) => {
     const subscriptionItem = channelToSubscription.get(channelString);
