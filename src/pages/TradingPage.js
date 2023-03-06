@@ -101,7 +101,10 @@ export default function TradingPage() {
               }}
               socket={socket}
             />
-            <Box sx={{ width: '100%', height: '100%' }} id="tv_chart_container" />
+            <Box
+              sx={{ width: '100%', height: '100%', '& iframe': { height: '100% !important' } }}
+              id="tv_chart_container"
+            />
           </Stack>
           <LongShort currency={currency} ctype={cType} onChartViewMode={(vm) => setChartViewMode(vm)} socket={socket} />
         </Stack>

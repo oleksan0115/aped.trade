@@ -148,7 +148,7 @@ export default function CryptoPopover({ price, openPrice, currency, onChangeCurr
           style={{ width: 18, margin: '0 5px' }}
         />
         <Typography variant="h6" sx={{ color: price > openPrice ? '#05FF00' : '#FF0000', minWidth: 100 }}>
-          {fCurrency(price)}
+          {price === 0 ? '' : `$${price}`}
         </Typography>
         <img
           src="/static/icons/trading_ui/trading_arrow_button.png"

@@ -64,10 +64,10 @@ function ChartStatus({
       const channelString = `0~${exchange}~${fromSymbol}~${toSymbol}`;
       const subscriptionItem = channelToSubscription.get(channelString);
       console.log("crypto_trade_data");
-      console.log(ctype, currency, fromSymbol, toSymbol);
+
       // real time show the price in CryptoPopover
       if (ctype === 0 && fromSymbol === currency.toUpperCase() && toSymbol === 'USD') {
-        setPrice(Number(tradePrice.toFixed(3)));
+        setPrice(tradePrice);
       }
 
       if (subscriptionItem === undefined) {
@@ -75,10 +75,6 @@ function ChartStatus({
       }
       const { lastDailyBar, resolution } = subscriptionItem;
       const nextDailyBarTime = getNextDailyBarTime(lastDailyBar.time, resolution);
-      console.log("socekt bar time check: ");
-      console.log(tradeTime);
-      console.log(lastDailyBar.time);
-      console.log(nextDailyBarTime);
       let bar;
       if (tradeTime >= nextDailyBarTime) {
         bar = {
@@ -112,12 +108,13 @@ function ChartStatus({
       const fromSymbol = data.p.split('/')[0];
       const toSymbol = data.p.split('/')[1];
       const tradeTime = parseInt(data.t, 10);
-      const tradePrice = parseFloat(data.p);
+      const tradePrice = parseFloat(data.a);
       const channelString = `0~${exchange}~${fromSymbol}~${toSymbol}`;
 
       // real time show the price in CryptoPopover
       if (ctype === 1 && fromSymbol === currency.toUpperCase() && toSymbol === 'USD') {
-        setPrice(Number(tradePrice.toFixed(3)));
+        console.log("new price set forex", tradePrice);
+        setPrice(tradePrice);
       }
       const subscriptionItem = channelToSubscription.get(channelString);
       if (subscriptionItem === undefined) {
@@ -160,7 +157,7 @@ function ChartStatus({
       const subscriptionItem = channelToSubscription.get(channelString);
       const tradePrice = parseFloat(data.ap);
       if (ctype === 2 && data.sym === currency.toUpperCase()) {
-        setPrice(Number(tradePrice.toFixed(3)));
+        setPrice(tradePrice);
       }
       if (subscriptionItem === undefined) {
         return;
@@ -246,10 +243,7 @@ function ChartStatus({
             />
           </Stack>
 
-          <Typography variant="caption">
-            24h Volume: 234M &nbsp;&nbsp;&nbsp; H: <span style={{ color: '#05FF00' }}>{high}</span> &nbsp;&nbsp;L:&nbsp;
-            <span style={{ color: '#FF0000' }}>{low}</span>
-          </Typography>
+          
         </Stack>
 
         <Stack
@@ -258,36 +252,11 @@ function ChartStatus({
           alignItems="center"
           sx={{ [theme.breakpoints.down('md')]: { display: 'none' } }}
         >
-          <IntervalPopover interval={interval} onChangeInterval={(_interval) => onChartInterval(_interval)} />
-          <img src="/static/icons/trading_ui/setting_button.png" alt="two arrow" style={{ height: 40 }} />
+          {/* <IntervalPopover interval={interval} onChangeInterval={(_interval) => onChartInterval(_interval)} /> */}
         </Stack>
       </Stack>
 
-      {chartViewMode === 1 && (
-        <Stack
-          direction="row"
-          spacing={2}
-          justifyContent="space-between"
-          alignItems="center"
-          sx={{
-            backgroundColor: '#232133',
-            p: 1,
-            pr: 3,
-            borderRadius: '5px',
-            [theme.breakpoints.down('md')]: { marginTop: '70px' }
-          }}
-        >
-          <Stack direction="row" spacing={2}>
-            <img src="/static/icons/trading_ui/pen.png" alt="two arrow" style={{ height: 28 }} />
-            <img src="/static/icons/trading_ui/plus_icon.png" alt="two arrow" style={{ height: 26 }} />
-          </Stack>
-          <Stack direction="row" spacing={2} alignItems="center">
-            <Typography variant="body2">Views</Typography>
-            <Typography variant="body2">Studies</Typography>
-            <img src="/static/icons/trading_ui/setting_icon.png" alt="setting_icon" style={{ height: 18 }} />
-          </Stack>
-        </Stack>
-      )}
+      
     </Box>
   );
 }

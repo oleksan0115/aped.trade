@@ -357,6 +357,7 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
     <Card
       sx={{
         minWidth: 480,
+        height:'fit-content',
         [theme.breakpoints.down('md')]: { minWidth: '100%' }
       }}
     >
