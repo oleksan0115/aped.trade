@@ -110,10 +110,11 @@ export default function CryptoPopover({ price, openPrice, currency, onChangeCurr
 
   const fetchData = async (currencyName) => {
     try {
+      if (currencyName === 'crypto') currencyName += 's';
       const response = await fetch(`${process.env.REACT_APP_CHART_API_URL}/${currencyName}`).then((res) => res.json());
       console.log('fetchData', response);
       if (response.length) {
-        if (currencyName === 'crypto') setCryptoPrices(response);
+        if (currencyName === 'cryptos') setCryptoPrices(response);
         else if (currencyName === 'forex') setForexPrices(response);
         else setStocksPrices(response);
       }

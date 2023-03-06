@@ -9,6 +9,7 @@ import CryptoPopover from './CryptoPopover';
 import IntervalPopover from './IntervalPopover';
 import { parseFullSymbol } from './chart/helpers';
 import { PriceTypes } from './chart/Consts';
+import { ConstructionOutlined } from '@material-ui/icons';
 const channelToSubscription = new Map();
 
 ChartStatus.propTypes = {
@@ -74,6 +75,10 @@ function ChartStatus({
       }
       const { lastDailyBar, resolution } = subscriptionItem;
       const nextDailyBarTime = getNextDailyBarTime(lastDailyBar.time, resolution);
+      console.log("socekt bar time check: ");
+      console.log(tradeTime);
+      console.log(lastDailyBar.time);
+      console.log(nextDailyBarTime);
       let bar;
       if (tradeTime >= nextDailyBarTime) {
         bar = {
@@ -107,6 +112,7 @@ function ChartStatus({
       const fromSymbol = data.p.split('/')[0];
       const toSymbol = data.p.split('/')[1];
       const tradeTime = parseInt(data.t, 10);
+      const tradePrice = parseFloat(data.p);
       const channelString = `0~${exchange}~${fromSymbol}~${toSymbol}`;
 
       // real time show the price in CryptoPopover
@@ -152,6 +158,7 @@ function ChartStatus({
       const stocksTime = parseInt(data.t, 10);
       const channelString = `0~${exchange}~${data.sym}`;
       const subscriptionItem = channelToSubscription.get(channelString);
+      const tradePrice = parseFloat(data.ap);
       if (ctype === 2 && data.sym === currency.toUpperCase()) {
         setPrice(Number(tradePrice.toFixed(3)));
       }
@@ -291,7 +298,7 @@ function getNextDailyBarTime(barTime, resolution) {
   console.log('getNextDailyBarTime');
   console.log(resolution);
   console.log(barTime);
-  const date = new Date(barTime * 1000);
+  const date = new Date(barTime);
   console.log(date);
   console.log(date.getTime());
   switch (resolution) {
@@ -302,7 +309,7 @@ function getNextDailyBarTime(barTime, resolution) {
       date.setDate(date.getDate() + 7);
       break;
     case '1M':
-      date.setDate(date.getMonth() + 1);
+      date.setMonth(date.getMonth() + 1);
       break;
     case '1':
       date.setTime(date.getTime() + 60 * 1000);
@@ -325,7 +332,7 @@ function getNextDailyBarTime(barTime, resolution) {
   // console.log(date);
   // console.log(date.getTime());
 
-  return date.getTime() / 1000;
+  return date.getTime();
 }
 
 export function subscribeOnStream(
@@ -341,6 +348,7 @@ export function subscribeOnStream(
     const parsedSymbol = parseFullSymbol(symbolInfo.full_name);
     console.log('streaming parsedSymbol: ', symbolInfo);
     console.log('streaming parsedSymbol: ', parsedSymbol);
+    console.log(lastDailyBar);
     const channelString = `0~${symbolInfo.type}~${parsedSymbol.fromSymbol}~${parsedSymbol.toSymbol}`;
     const handler = {
       id: subscriberUID,

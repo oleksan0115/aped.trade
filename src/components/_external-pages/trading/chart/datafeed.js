@@ -164,6 +164,8 @@ export default {
             lastBarsCache.set(symbolInfo.full_name, {
               ...bars[bars.length - 1]
             });
+            console.log('bars final data');
+            console.log(bars[bars.length - 1]);
           }
           console.log(`[getBars]: returned ${bars.length} bar(s)`);
           onHistoryCallback(bars, {
