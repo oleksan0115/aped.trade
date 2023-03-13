@@ -22,7 +22,8 @@ import {
   Select,
   MenuItem,
   Grid,
-  Slide
+  Slide,
+  CircularProgress
 } from '@material-ui/core';
 
 import { Icon } from '@iconify/react';
@@ -107,8 +108,10 @@ export default function TradesBoard() {
 
   const { tradingStorage, user, vault } = useContext(ContractContext);
 
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
-    let trades = TRADES;
+    let trades = [];
     switch (selectedTab) {
       case 0:
         getUserOpenTrades();
@@ -128,6 +131,7 @@ export default function TradesBoard() {
   }, [selectedTab]);
 
   const getUserOpenTrades = async () => {
+    setLoading(true);
     const trades = await tradingStorage.methods
       .getAllOpenTrades(user)
       .call()
@@ -136,10 +140,11 @@ export default function TradesBoard() {
         for (let i = 0; i < trades.length; i++) {
           const tradeIcon = getPairIcon(trades[i]);
           const tradeDir = getOrderDirection(trades[i]);
-          const newTrade = { ...trades[i], icon: tradeIcon, orderDirection: tradeDir };
+          const newTrade = { ...trades[i], pair: { icon: tradeIcon, orderDirection: tradeDir } };
           arr.push(newTrade);
         }
         setTradeList(arr);
+        setLoading(false);
       });
   };
 
@@ -154,6 +159,7 @@ export default function TradesBoard() {
   };
 
   const getUserCloseTrades = async () => {
+    setLoading(true);
     const trades = await tradingStorage.methods
       .getAllClosedTrades(user)
       .call()
@@ -162,11 +168,23 @@ export default function TradesBoard() {
         for (let i = 0; i < trades.length; i++) {
           const tradeIcon = getPairIcon(trades[i]);
           const tradeDir = getOrderDirection(trades[i]);
-          const newTrade = { ...trades[i], icon: tradeIcon, orderDirection: tradeDir };
+          let newTrade = { pair: { icon: tradeIcon, orderDirection: tradeDir } };
+          if (trades[i].trader) newTrade.trader = trades[i].trader;
+          if (trades[i].traderId) newTrade.traderId = trades[i].traderId;
+          if (trades[i].openTimestamp) newTrade.openTimestamp = new Date(trades[i].openTimestamp * 1000).toDateString();
+          if (trades[i].closeTimestamp)
+            newTrade.closeTimestamp = new Date(trades[i].closeTimestamp * 1000).toDateString();
+          if (trades[i].orderType) newTrade.orderType = trades[i].trader;
+          if (trades[i].leverageAmount) newTrade.leverageAmount = trades[i].leverageAmount;
+          if (trades[i].collateral) newTrade.collateral = removeDecimal(trades[i].collateral, 18);
+          if (trades[i].entryPrice) newTrade.entryPrice = removeDecimal(trades[i].entryPrice, 8);
+          if (trades[i].exitPrice) newTrade.exitPrice = removeDecimal(trades[i].exitPrice, 8);
+          if (trades[i].pnl) newTrade.pnl = trades[i].pnl;
           arr.push(newTrade);
         }
         setTradeList(arr);
-        console.log(arr);
+        console.log('closed trades list: ', arr);
+        setLoading(false);
       });
   };
 
@@ -215,6 +233,8 @@ export default function TradesBoard() {
       <Card sx={{ p: 1, [theme.breakpoints.up('md')]: { p: 3 } }}>
         <TradesDetailDialog
           dialogContent={dialogContent}
+          tab={selectedTab}
+          loading={loading}
           showDialog={showDetailDialog}
           onShowDialog={(isShow) => setShowDetailDialog(isShow)}
         />
@@ -294,7 +314,13 @@ export default function TradesBoard() {
                 </thead>
 
                 <TableBody>
-                  {upMd &&
+                  {loading && (
+                    <Stack direction="column" justifyContent="center" alignItems="center">
+                      <CircularProgress color="success" />
+                    </Stack>
+                  )}
+                  {!loading &&
+                    upMd &&
                     tradeList.map((item, idx) => [
                       <TableRow key={idx}>
                         <TableBodyCell align="center">
@@ -304,10 +330,14 @@ export default function TradesBoard() {
                         </TableBodyCell>
                         <TableBodyCell align="left">
                           <Stack direction="row" spacing={1} alignItems="center">
-                            <Box component="img" src={item.icon} sx={{ width: 25, height: 25, borderRadius: '50%' }} />
                             <Box
                               component="img"
-                              src={`/static/icons/trading_ui/two_${item.orderDirection}_arrow.svg`}
+                              src={item.pair.icon}
+                              sx={{ width: 25, height: 25, borderRadius: '50%' }}
+                            />
+                            <Box
+                              component="img"
+                              src={`/static/icons/trading_ui/two_${item.pair.orderDirection}_arrow.svg`}
                               sx={{ width: 12, margin: '0 5px' }}
                             />
                           </Stack>
@@ -340,11 +370,11 @@ export default function TradesBoard() {
                               onClick={() => {
                                 if (selectedTab !== 0) {
                                   setShowDetailDialog(true);
-                                  setDialogContent({ ...item, selectedTab });
+                                  setDialogContent({ ...item });
                                 } else {
                                   closeMarketOrder(idx);
                                   console.log(`trade id to close: ${idx}`);
-                                  setDialogContent({ ...item, selectedTab });
+                                  setDialogContent({ ...item });
                                 }
                               }}
                             >
@@ -357,18 +387,19 @@ export default function TradesBoard() {
                         <TableCell colSpan={5} />
                       </TableRow>
                     ])}
-                  {!upMd &&
+                  {!loading &&
+                    !upMd &&
                     tradeList.map((item, idx) => [
                       <TableRow
                         key={idx}
                         onClick={() => {
                           if (selectedTab !== 0) {
                             setShowDetailDialog(true);
-                            setDialogContent({ ...item, selectedTab });
+                            setDialogContent({ ...item });
                           } else {
                             closeMarketOrder(idx);
                             console.log(`trade id to close: ${idx}`);
-                            setDialogContent({ ...item, selectedTab });
+                            setDialogContent({ ...item });
                           }
                         }}
                       >
@@ -422,7 +453,13 @@ export default function TradesBoard() {
               </thead>
 
               <TableBody>
-                {upMd &&
+                {loading && (
+                  <Stack direction="row" justifyContent="center" alignItems="center">
+                    <CircularProgress color="success" />
+                  </Stack>
+                )}
+                {!loading &&
+                  upMd &&
                   tradeList.map((item, idx) => [
                     <TableRow key={idx}>
                       <TableBodyCell align="center">
@@ -432,10 +469,14 @@ export default function TradesBoard() {
                       </TableBodyCell>
                       <TableBodyCell align="left">
                         <Stack direction="row" spacing={1} alignItems="center">
-                          <Box component="img" src={item.icon} sx={{ width: 25, height: 25, borderRadius: '50%' }} />
                           <Box
                             component="img"
-                            src={`/static/icons/trading_ui/two_${item.orderDirection}_arrow.svg`}
+                            src={item.pair.icon}
+                            sx={{ width: 25, height: 25, borderRadius: '50%' }}
+                          />
+                          <Box
+                            component="img"
+                            src={`/static/icons/trading_ui/two_${item.pair.orderDirection}_arrow.svg`}
                             sx={{ width: 12, margin: '0 5px' }}
                           />
                         </Stack>
@@ -468,11 +509,11 @@ export default function TradesBoard() {
                             onClick={() => {
                               if (selectedTab !== 0) {
                                 setShowDetailDialog(true);
-                                setDialogContent({ ...item, selectedTab });
+                                setDialogContent({ ...item });
                               } else {
                                 closeMarketOrder(idx);
                                 console.log(`trade id to close: ${idx}`);
-                                setDialogContent({ ...item, selectedTab });
+                                setDialogContent({ ...item });
                               }
                             }}
                           >
@@ -485,18 +526,19 @@ export default function TradesBoard() {
                       <TableCell colSpan={5} />
                     </TableRow>
                   ])}
-                {!upMd &&
+                {!loading &&
+                  !upMd &&
                   tradeList.map((item, idx) => [
                     <TableRow
                       key={idx}
                       onClick={() => {
                         if (selectedTab !== 0) {
                           setShowDetailDialog(true);
-                          setDialogContent({ ...item, selectedTab });
+                          setDialogContent({ ...item });
                         } else {
                           closeMarketOrder(idx);
                           console.log(`trade id to close: ${idx}`);
-                          setDialogContent({ ...item, selectedTab });
+                          setDialogContent({ ...item });
                         }
                       }}
                     >
@@ -553,6 +595,8 @@ export default function TradesBoard() {
       <Card sx={{ p: 1, [theme.breakpoints.up('md')]: { p: 3 } }}>
         <TradesDetailDialog
           dialogContent={dialogContent}
+          tab={selectedTab}
+          loading={loading}
           showDialog={showDetailDialog}
           onShowDialog={(isShow) => setShowDetailDialog(isShow)}
         />
@@ -683,6 +727,8 @@ export default function TradesBoard() {
       <Card sx={{ p: 1, [theme.breakpoints.up('md')]: { p: 3 } }}>
         <TradesDetailDialog
           dialogContent={dialogContent}
+          tab={selectedTab}
+          loading={loading}
           showDialog={showDetailDialog}
           onShowDialog={(isShow) => setShowDetailDialog(isShow)}
         />
@@ -707,10 +753,7 @@ export default function TradesBoard() {
                     sx={{ ml: 1, position: 'absolute', left: 0, cursor: 'pointer' }}
                   >
                     <Icon icon="material-symbols:arrow-back-ios" />
-                    <Typography
-                      variant="body2"
-                      sx={{ textAlign: 'left' }}
-                    >
+                    <Typography variant="body2" sx={{ textAlign: 'left' }}>
                       Trade
                     </Typography>
                   </Stack>
@@ -836,8 +879,10 @@ const TRADES = [
     trader: '0x...6969',
     pair: {
       icon: '/static/icons/crypto/btc.webp',
-      direction: 'down'
+      orderDirection: 'down'
     },
+    icon: '/static/icons/crypto/btc.webp',
+    orderDirection: 'down',
     entryPrice: 17420.62,
     collateral: 250.21,
     liquidationPrice: 17602.12,
@@ -849,8 +894,10 @@ const TRADES = [
     trader: '0x...d420',
     pair: {
       icon: '/static/icons/crypto/link.png',
-      direction: 'up'
+      orderDirection: 'up'
     },
+    icon: '/static/icons/crypto/link.png',
+    orderDirection: 'up',
     entryPrice: 6.54,
     collateral: 1230.0,
     liquidationPrice: 6.32,
@@ -862,8 +909,10 @@ const TRADES = [
     trader: '0x...0666',
     pair: {
       icon: '/static/icons/crypto/dai.png',
-      direction: 'up'
+      orderDirection: 'up'
     },
+    icon: '/static/icons/crypto/dai.png',
+    orderDirection: 'up',
     entryPrice: 0.0702,
     collateral: 69.69,
     liquidationPrice: 0.06821,
@@ -875,8 +924,10 @@ const TRADES = [
     trader: 'trade.eth',
     pair: {
       icon: '/static/icons/forex/EU.svg',
-      direction: 'down'
+      orderDirection: 'down'
     },
+    icon: '/static/icons/forex/EU.svg',
+    orderDirection: 'down',
     entryPrice: 1.04,
     collateral: 350.0,
     liquidationPrice: 1.06,
@@ -888,8 +939,10 @@ const TRADES = [
     trader: '0x...6969',
     pair: {
       icon: '/static/icons/stocks/apple.svg',
-      direction: 'down'
+      orderDirection: 'down'
     },
+    icon: '/static/icons/stocks/apple.svg',
+    orderDirection: 'down',
     entryPrice: 151.07,
     collateral: 555.55,
     liquidationPrice: 155.11,
@@ -901,8 +954,10 @@ const TRADES = [
     trader: 'aped.eth',
     pair: {
       icon: '/static/icons/leaderboard/bitcoin.svg',
-      direction: 'down'
+      orderDirection: 'down'
     },
+    icon: '/static/icons/leaderboard/bitcoin.svg',
+    orderDirection: 'down',
     entryPrice: 17450.51,
     collateral: 26554.26,
     liquidationPrice: 17450.51,
@@ -914,7 +969,7 @@ const TRADES = [
     trader: '0x...x420',
     pair: {
       icon: '/static/icons/leaderboard/amd.svg',
-      direction: 'up'
+      orderDirection: 'up'
     },
     entryPrice: 76.4,
     collateral: 456.56,
@@ -927,7 +982,7 @@ const TRADES = [
     trader: 'leverage.eth',
     pair: {
       icon: '/static/icons/leaderboard/dogecoin.svg',
-      direction: 'up'
+      orderDirection: 'up'
     },
     entryPrice: 0.0721,
     collateral: 25.26,
@@ -940,7 +995,7 @@ const TRADES = [
     trader: '0x...6969',
     pair: {
       icon: '/static/icons/leaderboard/eth.svg',
-      direction: 'down'
+      orderDirection: 'down'
     },
     entryPrice: 1148.21,
     collateral: 1125.25,
@@ -953,7 +1008,7 @@ const TRADES = [
     trader: 'apedceo.eth',
     pair: {
       icon: '/static/icons/leaderboard/goldbar.svg',
-      direction: 'down'
+      orderDirection: 'down'
     },
     entryPrice: 16.3,
     collateral: 25.36,

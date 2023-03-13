@@ -30,8 +30,12 @@ export default function TradingPage() {
 
   useEffect(() => {
     chartInitailize();
+    socket.on('connect_error', (err) => {
+      console.log(`connect_error due to ${err.message}`);
+    });
   }, []);
   const chartInitailize = async () => {
+    // eslint-disable-next-line import/no-unresolved, no-undef, new-cap
     const chart = new TradingView.widget({
       debug: true,
       symbol: 'Crypto:BTC/USD', // default symbol

@@ -1,6 +1,6 @@
 import { capitalCase } from 'change-case';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import { withStyles, experimentalStyled as styled } from '@material-ui/core/styles';
@@ -9,18 +9,7 @@ import Dialog from '@material-ui/core/Dialog';
 import MuiDialogContent from '@material-ui/core/DialogContent';
 import MuiDialogActions from '@material-ui/core/DialogActions';
 
-import {
-  Paper,
-  List,
-  ListItem,
-  Typography,
-  Box,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableRow
-} from '@material-ui/core';
+import { Paper, Typography, Box, Stack, Table, TableBody, TableCell, TableRow } from '@material-ui/core';
 
 const CloseTradeButton = styled(Button)(({ theme }) => ({
   backgroundColor: '#5600C3',
@@ -51,10 +40,11 @@ const DialogActions = withStyles((theme) => ({
 TradesDetailDialog.propTypes = {
   dialogContent: PropTypes.object,
   onShowDialog: PropTypes.func,
-  showDialog: PropTypes.bool
+  showDialog: PropTypes.bool,
+  tab: PropTypes.number
 };
 
-export default function TradesDetailDialog({ dialogContent, showDialog, onShowDialog }) {
+export default function TradesDetailDialog({ dialogContent, tab, showDialog, onShowDialog }) {
   const [open, setOpen] = React.useState(showDialog);
 
   React.useEffect(() => {
@@ -90,12 +80,12 @@ export default function TradesDetailDialog({ dialogContent, showDialog, onShowDi
                         <Stack direction="row" spacing={1} alignItems="center" sx={{ width: '50%' }}>
                           <Box
                             component="img"
-                            src={dialogContent[key].icon}
+                            src={dialogContent[key]?.icon}
                             sx={{ width: 25, height: 25, borderRadius: '50%' }}
                           />
                           <Box
                             component="img"
-                            src={`/static/icons/trading_ui/two_${dialogContent[key].direction}_arrow.svg`}
+                            src={`/static/icons/trading_ui/two_${dialogContent[key]?.orderDirection}_arrow.svg`}
                             sx={{ width: 12, margin: '0 5px' }}
                           />
                         </Stack>
@@ -114,7 +104,7 @@ export default function TradesDetailDialog({ dialogContent, showDialog, onShowDi
         <DialogActions>
           <Stack direction="row" spacing={1} alignItems="center" justifyContent="center" sx={{ width: '100%' }}>
             <CloseTradeButton variant="contained" onClick={handleClose}>
-              {dialogContent.selectedTab === 0 ? 'Close Trade' : 'Close'}
+              {tab === 0 ? 'Close Trade' : 'Close'}
             </CloseTradeButton>
           </Stack>
         </DialogActions>
