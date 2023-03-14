@@ -31,6 +31,8 @@ import { Icon } from '@iconify/react';
 import { capitalCase } from 'change-case';
 import { fNumberThousands } from '../../../utils/formatNumber';
 
+import PropTypes from 'prop-types';
+
 // components
 import TradesDetailDialog from './TradesDetailDialog';
 import { isArray } from 'lodash';
@@ -89,13 +91,16 @@ const CloseTradeButton = styled(Button)(({ theme }) => ({
   }
 }));
 
-export default function TradesBoard() {
+TradesBoard.propTypes = {
+  handleSelectTab:PropTypes.func,
+  selectedTab:PropTypes.number
+};
+export default function TradesBoard({handleSelectTab, selectedTab}) {
   const theme = useTheme();
   const classes = useStyles();
 
   const upMd = useMediaQuery(theme.breakpoints.up('md'));
 
-  const [selectedTab, setSelectedTab] = useState(2);
   const [tradeList, setTradeList] = useState([]);
 
   const [showDetailDialog, setShowDetailDialog] = useState(false);
@@ -111,6 +116,7 @@ export default function TradesBoard() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    console.log('selectedTab: ', selectedTab);
     let trades = [];
     switch (selectedTab) {
       case 0:
@@ -153,8 +159,14 @@ export default function TradesBoard() {
       .closeOrder(tradeId)
       .send({ from: user })
       .on('transactionHash', (hash) => {
-        console.log(hash);
+        console.log("hash:", hash);
         setIsShowAlert(true);
+        setTimeout(() => {
+          //alert(111);
+          getUserCloseTrades();
+          handleSelectTab(1);
+        }, 7000);
+        
       });
   };
 
@@ -253,17 +265,17 @@ export default function TradesBoard() {
               spacing={{ sm: 1, md: 3 }}
               sx={{ mb: 2 }}
             >
-              <TabStyles variant="body2" onClick={() => setSelectedTab(0)} selected={0}>
+              <TabStyles variant="body2" onClick={() => handleSelectTab(0)} selected={0}>
                 Active Trades
               </TabStyles>
-              <TabStyles variant="body2" onClick={() => setSelectedTab(1)} selected={1}>
+              <TabStyles variant="body2" onClick={() => handleSelectTab(1)} selected={1}>
                 Closed Trades
               </TabStyles>
-              <TabStyles variant="body2" onClick={() => setSelectedTab(2)} selected={2}>
+              <TabStyles variant="body2" onClick={() => handleSelectTab(2)} selected={2}>
                 Public Trades
               </TabStyles>
               {upMd && (
-                <TabStyles variant="body2" onClick={() => setSelectedTab(3)} selected={3}>
+                <TabStyles variant="body2" onClick={() => handleSelectTab(3)} selected={3}>
                   Leaderboard
                 </TabStyles>
               )}
@@ -277,17 +289,17 @@ export default function TradesBoard() {
             spacing={{ sm: 1, md: 3 }}
             sx={{ mb: 2 }}
           >
-            <TabStyles variant="body2" onClick={() => setSelectedTab(0)} selected={0}>
+            <TabStyles variant="body2" onClick={() => handleSelectTab(0)} selected={0}>
               Active Trades
             </TabStyles>
-            <TabStyles variant="body2" onClick={() => setSelectedTab(1)} selected={1}>
+            <TabStyles variant="body2" onClick={() => handleSelectTab(1)} selected={1}>
               Closed Trades
             </TabStyles>
-            <TabStyles variant="body2" onClick={() => setSelectedTab(2)} selected={2}>
+            <TabStyles variant="body2" onClick={() => handleSelectTab(2)} selected={2}>
               Public Trades
             </TabStyles>
             {upMd && (
-              <TabStyles variant="body2" onClick={() => setSelectedTab(3)} selected={3}>
+              <TabStyles variant="body2" onClick={() => handleSelectTab(3)} selected={3}>
                 Leaderboard
               </TabStyles>
             )}
@@ -580,7 +592,7 @@ export default function TradesBoard() {
               sx={{ textAlign: 'left' }}
               onClick={(e) => {
                 setSlideChecked(false);
-                setSelectedTab(3);
+                handleSelectTab(3);
               }}
             >
               Leaderboard
@@ -610,17 +622,17 @@ export default function TradesBoard() {
                   spacing={{ sm: 1, md: 3 }}
                   sx={{ mb: 2 }}
                 >
-                  <TabStyles variant="body2" onClick={() => setSelectedTab(0)} selected={0}>
+                  <TabStyles variant="body2" onClick={() => handleSelectTab(0)} selected={0}>
                     Active Trades
                   </TabStyles>
-                  <TabStyles variant="body2" onClick={() => setSelectedTab(1)} selected={1}>
+                  <TabStyles variant="body2" onClick={() => handleSelectTab(1)} selected={1}>
                     Closed Trades
                   </TabStyles>
-                  <TabStyles variant="body2" onClick={() => setSelectedTab(2)} selected={2}>
+                  <TabStyles variant="body2" onClick={() => handleSelectTab(2)} selected={2}>
                     Public Trades
                   </TabStyles>
 
-                  <TabStyles variant="body2" onClick={() => setSelectedTab(3)} selected={3}>
+                  <TabStyles variant="body2" onClick={() => handleSelectTab(3)} selected={3}>
                     Leaderboard
                   </TabStyles>
                 </Stack>
@@ -743,7 +755,7 @@ export default function TradesBoard() {
                   sx={{ mb: 2, position: 'relative' }}
                   onClick={(e) => {
                     setSlideChecked(true);
-                    setSelectedTab(2);
+                    handleSelectTab(2);
                   }}
                 >
                   <Stack
@@ -759,7 +771,7 @@ export default function TradesBoard() {
                   </Stack>
                   <TabStyles
                     variant="body2"
-                    onClick={() => setSelectedTab(3)}
+                    onClick={() => handleSelectTab(3)}
                     selected={3}
                     sx={{ fontSize: { xs: 20, sm: 24 } }}
                   >

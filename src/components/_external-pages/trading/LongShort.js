@@ -39,7 +39,6 @@ import { getPreviousChartData1 as getPreviousChartData } from './api';
 // web3
 import { ContractContext } from 'src/contexts/ContractContext';
 
-
 const TabContainer = styled(Tabs)(({ theme }) => ({
   minHeight: 24,
   borderRadius: '10px',
@@ -80,13 +79,12 @@ const NotEnoughBalance = styled('div')(({ theme }) => ({
 LongShort.propTypes = {
   currency: PropTypes.string,
   ctype: PropTypes.number,
+  handleSelectTab: PropTypes.func,
   onChartViewMode: PropTypes.func,
   socket: PropTypes.object
 };
 
-export default function LongShort({ currency, ctype, onChartViewMode, socket }) {
-
-
+export default function LongShort({ currency, ctype, handleSelectTab, onChartViewMode, socket }) {
   const theme = useTheme();
   const { stopLossMode } = useSettings();
 
@@ -112,7 +110,7 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
 
   const [cPrice, setCPrice] = useState(0);
   const [curPrice, setCurPrice] = useState(0);
-  const [pair, setPair] = useState("");
+  const [pair, setPair] = useState('');
 
   const [entryPrice, setEntryPrice] = useState(0);
 
@@ -124,7 +122,7 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
   const [accBalance, setAccBalance] = useState();
 
   //contract object
-  const {vault, user, dai} = useContext(ContractContext);
+  const { vault, user, dai } = useContext(ContractContext);
 
   useEffect(() => {
     setMinMax(MIN_MAX[ctype]);
@@ -229,9 +227,9 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
   }, [currency, ctype]);
 
   useEffect(() => {
-    if (user != "") {
+    if (user != '') {
       getAccountBalance();
-      console.log('currency: ',currency)
+      console.log('currency: ', currency);
       console.log('type: ', PriceTypes[ctype]);
     }
   }, [user]);
@@ -281,83 +279,82 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
   };
 
   const removeDecimal = (balance) => {
-    const balanceAfter = balance / 10**18;
+    const balanceAfter = balance / 10 ** 18;
     return balanceAfter;
   };
 
   const checkOrderType = (marketLimit, longShort) => {
-     if (marketLimit == "market" && longShort == "long") {
-         return 2;
-     } else if (marketLimit == "market" && longShort =="short") {
-         return 3;
-     } else if (marketLimit == "limit" && longShort =="long") {
-         return 0;
-     } else {
-        return 1;
-     }
-
-  }
+    if (marketLimit == 'market' && longShort == 'long') {
+      return 2;
+    } else if (marketLimit == 'market' && longShort == 'short') {
+      return 3;
+    } else if (marketLimit == 'limit' && longShort == 'long') {
+      return 0;
+    } else {
+      return 1;
+    }
+  };
 
   const getAccountBalance = async () => {
-     let acc = await dai.methods.balanceOf(user).call();
-     let accountBalance = removeDecimal(acc);
-     setAccBalance(accountBalance);
+    let acc = await dai.methods.balanceOf(user).call();
+    let accountBalance = removeDecimal(acc);
+    setAccBalance(accountBalance);
   };
 
   const checkTPnSLInput = (price) => {
-      if (price == 0) {
-        return price;
-      } else {
-        const round = Math.round(price);
-        return round * 10**8;
-      }
-  }
+    if (price == 0) {
+      return price;
+    } else {
+      const round = Math.round(price);
+      return round * 10 ** 8;
+    }
+  };
 
   const openMarketOrder = async (pair, orderType, leverageAmount, collateral, TP, SL) => {
-    await dai.methods.approve(vault._address, collateral).send({ from: user}).on('transactionHash', (hash) => {
-       vault.methods.openMarketPriceOrder(pair, 
-        orderType, 
-        leverageAmount, 
-        collateral, 
-        TP, 
-        SL).send({ from: user})
-        .on('transactionHash', (hash) => {
-           console.log(hash);
-           setIsShowAlert(true);  // show notification
-        });
-    })
-    
+    await dai.methods
+      .approve(vault._address, collateral)
+      .send({ from: user })
+      .on('transactionHash', (hash) => {
+        vault.methods
+          .openMarketPriceOrder(pair, orderType, leverageAmount, collateral, TP, SL)
+          .send({ from: user })
+          .on('transactionHash', (hash) => {
+            console.log(hash);
+            setTimeout(() => {
+              handleSelectTab(0);
+            }, 7000);
+            setIsShowAlert(true); // show notification
+          });
+      });
   };
 
   const getAssetID = (currency, PriceType, CryptoList, ForexList, StockList) => {
-     if(PriceType[ctype] === 'crypto') {
-       for (let i = 0; i < CryptoList.length; i++ ) {
-          if(CryptoList[i].name == currency) {
-            return CryptoList[i].currencyID;
-          }
-       }
-     } else if (PriceType[ctype] === 'forex') {
-        for (let i=0; i < ForexList.length; i++) {
-          if(ForexList[i].name == currency) {
-            return ForexList[i].currencyID;
-          }
+    if (PriceType[ctype] === 'crypto') {
+      for (let i = 0; i < CryptoList.length; i++) {
+        if (CryptoList[i].name == currency) {
+          return CryptoList[i].currencyID;
+        }
       }
-     } else {
-        for (let i=0; i < StockList.length; i++) {
-          if(StockList[i].name == currency) {
-            return StockList[i].currencyID;
-         }
-        } 
-     }
-
-  }
-
+    } else if (PriceType[ctype] === 'forex') {
+      for (let i = 0; i < ForexList.length; i++) {
+        if (ForexList[i].name == currency) {
+          return ForexList[i].currencyID;
+        }
+      }
+    } else {
+      for (let i = 0; i < StockList.length; i++) {
+        if (StockList[i].name == currency) {
+          return StockList[i].currencyID;
+        }
+      }
+    }
+  };
 
   return (
     <Card
       sx={{
         minWidth: 480,
-        height:'fit-content',
+        height: 'fit-content',
         [theme.breakpoints.down('md')]: { minWidth: '100%' }
       }}
     >
@@ -739,13 +736,14 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
                 }
               }}
               onClick={() => {
-                 openMarketOrder(getAssetID(currency, PriceTypes, CryptoList, ForexList, StockList),                   // need to change according to pair selected
-                                 checkOrderType(marketLimit, longShort),  // 0 - Limit Long 1 - Limit Short - 2 - Market Long 3 - Market Short
-                                 Math.round(sliderValue),
-                                 BigInt(collateralValue * 10**18),
-                                 checkTPnSLInput(profit),
-                                 checkTPnSLInput(loss)
-                                )
+                openMarketOrder(
+                  getAssetID(currency, PriceTypes, CryptoList, ForexList, StockList), // need to change according to pair selected
+                  checkOrderType(marketLimit, longShort), // 0 - Limit Long 1 - Limit Short - 2 - Market Long 3 - Market Short
+                  Math.round(sliderValue),
+                  BigInt(collateralValue * 10 ** 18),
+                  checkTPnSLInput(profit),
+                  checkTPnSLInput(loss)
+                );
               }}
             >
               {upperCase(marketLimit)} {upperCase(longShort)}
@@ -757,10 +755,10 @@ export default function LongShort({ currency, ctype, onChartViewMode, socket }) 
 
         <Box m={2} />
         <List>
-            <ListItem sx={{ justifyContent: 'space-between !important' }}>
-              <Typography variant="body2">Wallet Balance</Typography>
-              <Typography variant="body2">{accBalance}{" "}DAI</Typography>
-            </ListItem>
+          <ListItem sx={{ justifyContent: 'space-between !important' }}>
+            <Typography variant="body2">Wallet Balance</Typography>
+            <Typography variant="body2">{accBalance} DAI</Typography>
+          </ListItem>
         </List>
         <Box m={1} />
         <List>
@@ -833,17 +831,16 @@ const MIN_MAX = [
 
 const PriceTypes = ['crypto', 'forex', 'stocks'];
 
-
 export const CryptoList = [
   {
     name: 'btc',
     currencyID: 0,
-    icon: "/static/icons/crypto/btc.webp"
+    icon: '/static/icons/crypto/btc.webp'
   },
   {
     name: 'eth',
     currencyID: 1,
-    icon: "/static/icons/crypto/eth.webp"
+    icon: '/static/icons/crypto/eth.webp'
   },
   {
     name: 'ltc',
@@ -914,9 +911,8 @@ export const CryptoList = [
     name: 'fil',
     currencyID: 15,
     icon: '/static/icons/crypto/fil.png'
-  },
-]
-
+  }
+];
 
 export const ForexList = [
   {
@@ -948,8 +944,8 @@ export const ForexList = [
     name: 'mxn',
     currencyID: 21,
     icon: '/static/icons/forex/MX.svg'
-  },
-]
+  }
+];
 
 export const StockList = [
   {
@@ -978,7 +974,7 @@ export const StockList = [
     icon: '/static/icons/stocks/snap.svg'
   },
   {
-    name: 'axp',   //need to add icons
+    name: 'axp', //need to add icons
     currencyID: 27,
     icon: ''
   },
@@ -1016,8 +1012,5 @@ export const StockList = [
     name: 'jnj',
     currencyID: 34,
     icon: '/static/icons/stocks/johnson-and-johnson.svg'
-  },
-
-]
-
-
+  }
+];

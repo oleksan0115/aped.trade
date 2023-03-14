@@ -10,6 +10,7 @@ import datafeed from 'src/components/_external-pages/trading/chart/datafeed';
 import { PriceTypes } from '../components/_external-pages/trading/chart/Consts';
 import Page from '../components/Page';
 
+// eslint-disable-next-line import/named
 import { ChartStatus, LongShort, TradesBoard } from '../components/_external-pages/trading';
 
 // import { LongShort, TradesBoard } from '../components/_external-pages/trading';
@@ -27,6 +28,7 @@ export default function TradingPage() {
   const [lastPrice, setLastPrice] = useState({});
   const [lastOHLCData, setLastOHLCData] = useState({});
   const [widget, setWidget] = useState(null);
+  const [selectedTab, setSelectedTab] = useState(2);
 
   useEffect(() => {
     chartInitailize();
@@ -68,6 +70,9 @@ export default function TradingPage() {
         });
     });
     setWidget(chart);
+  };
+  const handleSelectTab = (value) => {
+    setSelectedTab(value);
   };
   return (
     <Page title="Trading | APED">
@@ -114,10 +119,16 @@ export default function TradingPage() {
               id="tv_chart_container"
             />
           </Stack>
-          <LongShort currency={currency} ctype={cType} onChartViewMode={(vm) => setChartViewMode(vm)} socket={socket} />
+          <LongShort
+            currency={currency}
+            ctype={cType}
+            handleSelectTab={handleSelectTab}
+            onChartViewMode={(vm) => setChartViewMode(vm)}
+            socket={socket}
+          />
         </Stack>
         <Box m={3} />
-        <TradesBoard />
+        <TradesBoard selectedTab={selectedTab} handleSelectTab={handleSelectTab} />
       </Container>
     </Page>
   );
