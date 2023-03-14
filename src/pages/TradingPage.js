@@ -29,6 +29,7 @@ export default function TradingPage() {
   const [lastOHLCData, setLastOHLCData] = useState({});
   const [widget, setWidget] = useState(null);
   const [selectedTab, setSelectedTab] = useState(2);
+  const [trigger, setTrigger] = useState(0);
 
   useEffect(() => {
     chartInitailize();
@@ -72,6 +73,10 @@ export default function TradingPage() {
     setWidget(chart);
   };
   const handleSelectTab = (value) => {
+    setSelectedTab(value);
+  };
+  const handleLongShortTab = (value) => {
+    if (selectedTab === value) setTrigger(trigger + 1);
     setSelectedTab(value);
   };
   return (
@@ -122,13 +127,13 @@ export default function TradingPage() {
           <LongShort
             currency={currency}
             ctype={cType}
-            handleSelectTab={handleSelectTab}
+            handleSelectTab={handleLongShortTab}
             onChartViewMode={(vm) => setChartViewMode(vm)}
             socket={socket}
           />
         </Stack>
         <Box m={3} />
-        <TradesBoard selectedTab={selectedTab} handleSelectTab={handleSelectTab} />
+        <TradesBoard selectedTab={selectedTab} handleSelectTab={handleSelectTab} trigger={trigger} />
       </Container>
     </Page>
   );

@@ -92,10 +92,11 @@ const CloseTradeButton = styled(Button)(({ theme }) => ({
 }));
 
 TradesBoard.propTypes = {
-  handleSelectTab:PropTypes.func,
-  selectedTab:PropTypes.number
+  handleSelectTab: PropTypes.func,
+  selectedTab: PropTypes.number,
+  trigger: PropTypes.number
 };
-export default function TradesBoard({handleSelectTab, selectedTab}) {
+export default function TradesBoard({ handleSelectTab, selectedTab, trigger }) {
   const theme = useTheme();
   const classes = useStyles();
 
@@ -136,6 +137,10 @@ export default function TradesBoard({handleSelectTab, selectedTab}) {
     setTradeList([...trades]);
   }, [selectedTab]);
 
+  useEffect(() => {
+    if (trigger > 0) getUserOpenTrades();
+  }, [trigger]);
+
   const getUserOpenTrades = async () => {
     setLoading(true);
     const trades = await tradingStorage.methods
@@ -159,14 +164,13 @@ export default function TradesBoard({handleSelectTab, selectedTab}) {
       .closeOrder(tradeId)
       .send({ from: user })
       .on('transactionHash', (hash) => {
-        console.log("hash:", hash);
+        console.log('hash:', hash);
         setIsShowAlert(true);
         setTimeout(() => {
           //alert(111);
           getUserCloseTrades();
           handleSelectTab(1);
         }, 7000);
-        
       });
   };
 
