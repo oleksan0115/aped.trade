@@ -57,7 +57,7 @@ export default function CryptoPopover({ price, openPrice, currency, onChangeCurr
             });
             return 0;
           });
-          console.log('useEffect: cryptos: ', tmpPrices);
+          // console.log('useEffect: cryptos: ', tmpPrices);
         }
         break;
       case 1:
@@ -71,7 +71,7 @@ export default function CryptoPopover({ price, openPrice, currency, onChangeCurr
             tmpPrices.push({ ...item, price: mPrice, changes: forexPrices[idx].changes_24hrs });
             return 0;
           });
-          console.log('useEffect: forex: ', tmpPrices);
+          // console.log('useEffect: forex: ', tmpPrices);
         }
         break;
       case 2:
@@ -111,7 +111,7 @@ export default function CryptoPopover({ price, openPrice, currency, onChangeCurr
   const fetchData = () => {
     try {
       getAllStageData().then((response) => {
-        console.log('fetchData', response);
+        // console.log('fetchData', response);
         if (response.cryptos.length > 0) setCryptoPrices(response.cryptos);
         if (response.forex.length > 0) setForexPrices(response.forex);
         if (response.stocks.length > 0) setStocksPrices(response.stocks);

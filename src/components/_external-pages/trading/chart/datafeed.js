@@ -90,7 +90,7 @@ export default {
       allSymbols = [...symbols];
       const symbolItem = symbols.find(({ symbol }) => symbol === symbolName.split(':')[1]);
       if (!symbolItem) {
-        console.log('[resolveSymbol]: Cannot resolve symbol', symbolName);
+        // console.log('[resolveSymbol]: Cannot resolve symbol', symbolName);
         onResolveErrorCallback('cannot resolve symbol');
         return;
       }
@@ -113,7 +113,7 @@ export default {
         data_status: 'streaming'
       };
 
-      console.log('[resolveSymbol]: Symbol resolved', symbolInfo);
+      // console.log('[resolveSymbol]: Symbol resolved', symbolInfo);
       onSymbolResolvedCallback(symbolInfo);
     } catch (e) {
       console.log(new Error(e));

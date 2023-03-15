@@ -50,7 +50,7 @@ export async function getPreviousChartData(currency, interval, type, startTime, 
   else currencyString = currency?.toUpperCase();
 
   const API_URL = `v2/aggs/ticker/${currencyString}/range/${intervalNumber}/${intervalUnit}/${startTime}/${lastTime}?adjusted=true&sort=asc&apiKey=${AuthStr}`;
-  console.log(API_URL);
+  // console.log(API_URL);
   const response = await axios.post(`${process.env.REACT_APP_CHART_API_URL}/preData`, { url: API_URL });
   return response?.data?.data;
 }
@@ -64,7 +64,7 @@ export async function getPreviousChartData1(currency, interval, type, startTime,
   else currencyString = currency?.toUpperCase();
 
   const API_URL = `v2/aggs/ticker/${currencyString}/range/${intervalNumber}/${intervalUnit}/${startTime}/${lastTime}?adjusted=true&sort=asc&apiKey=${AuthStr}`;
-  console.log(API_URL);
+  // console.log(API_URL);
   const response = await axios.post(`${process.env.REACT_APP_CHART_API_URL}/preData`, { url: API_URL });
   return response?.data?.results;
 }
