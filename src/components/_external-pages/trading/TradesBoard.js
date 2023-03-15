@@ -35,7 +35,7 @@ import PropTypes from 'prop-types';
 
 // components
 import TradesDetailDialog from './TradesDetailDialog';
-import { isArray } from 'lodash';
+import { isArray, upperCase } from 'lodash';
 
 const useStyles = makeStyles({
   table: {
@@ -93,10 +93,11 @@ const CloseTradeButton = styled(Button)(({ theme }) => ({
 
 TradesBoard.propTypes = {
   handleSelectTab: PropTypes.func,
+  handleLongShortTab: PropTypes.func,
   selectedTab: PropTypes.number,
   trigger: PropTypes.number
 };
-export default function TradesBoard({ handleSelectTab, selectedTab, trigger }) {
+export default function TradesBoard({ handleSelectTab, handleLongShortTab, selectedTab, trigger }) {
   const theme = useTheme();
   const classes = useStyles();
 
@@ -151,7 +152,8 @@ export default function TradesBoard({ handleSelectTab, selectedTab, trigger }) {
         for (let i = 0; i < trades.length; i++) {
           const tradeIcon = getPairIcon(trades[i]);
           const tradeDir = getOrderDirection(trades[i]);
-          const newTrade = { ...trades[i], pair: { icon: tradeIcon, orderDirection: tradeDir } };
+          const tradeName = getPairName(trades[i]);
+          const newTrade = { ...trades[i], pair: { icon: tradeIcon, orderDirection: tradeDir, name: tradeName } };
           arr.push(newTrade);
         }
         setTradeList(arr);
@@ -167,9 +169,8 @@ export default function TradesBoard({ handleSelectTab, selectedTab, trigger }) {
         console.log('hash:', hash);
         setIsShowAlert(true);
         setTimeout(() => {
-          //alert(111);
           getUserCloseTrades();
-          handleSelectTab(1);
+          handleLongShortTab(1);
         }, 7000);
       });
   };
@@ -184,12 +185,13 @@ export default function TradesBoard({ handleSelectTab, selectedTab, trigger }) {
         for (let i = 0; i < trades.length; i++) {
           const tradeIcon = getPairIcon(trades[i]);
           const tradeDir = getOrderDirection(trades[i]);
-          let newTrade = { pair: { icon: tradeIcon, orderDirection: tradeDir } };
+          const tradeName = getPairName(trades[i]);
+          let newTrade = { ...trades[i], pair: { icon: tradeIcon, orderDirection: tradeDir, name: tradeName } };
           if (trades[i].trader) newTrade.trader = trades[i].trader;
           if (trades[i].traderId) newTrade.traderId = trades[i].traderId;
-          if (trades[i].openTimestamp) newTrade.openTimestamp = new Date(trades[i].openTimestamp * 1000).toDateString();
+          if (trades[i].openTimestamp) newTrade.openTimestamp = new Date(trades[i].openTimestamp * 1000).toLocaleString();
           if (trades[i].closeTimestamp)
-            newTrade.closeTimestamp = new Date(trades[i].closeTimestamp * 1000).toDateString();
+            newTrade.closeTimestamp = new Date(trades[i].closeTimestamp * 1000).toLocaleString();
           if (trades[i].orderType) newTrade.orderType = trades[i].trader;
           if (trades[i].leverageAmount) newTrade.leverageAmount = trades[i].leverageAmount;
           if (trades[i].collateral) newTrade.collateral = removeDecimal(trades[i].collateral, 18);
@@ -213,6 +215,14 @@ export default function TradesBoard({ handleSelectTab, selectedTab, trigger }) {
     for (let i = 0; i < assetList.length; i++) {
       if (Number(item.pair) === assetList[i].currencyID) {
         return assetList[i].icon;
+      }
+    }
+  };
+  const getPairName = (item) => {
+    const assetList = CryptoList.concat(ForexList, StockList);
+    for (let i = 0; i < assetList.length; i++) {
+      if (Number(item.pair) === assetList[i].currencyID) {
+        return upperCase(assetList[i].name);
       }
     }
   };
@@ -260,6 +270,7 @@ export default function TradesBoard({ handleSelectTab, selectedTab, trigger }) {
           notiDuration={NOTIFICATION_DURATION}
           onClose={() => setIsShowAlert(false)}
           longShort="Trade"
+          currency={dialogContent?.pair?.name}
         />
         {!upMd && (
           <Slide direction="left" in={slideChecked} mountOnEnter unmountOnExit>

@@ -76,8 +76,7 @@ export default function TradingPage() {
     setSelectedTab(value);
   };
   const handleLongShortTab = (value) => {
-    if (selectedTab === value) setTrigger(trigger + 1);
-    setSelectedTab(value);
+    setTrigger(trigger + 1);
   };
   return (
     <Page title="Trading | APED">
@@ -133,7 +132,12 @@ export default function TradingPage() {
           />
         </Stack>
         <Box m={3} />
-        <TradesBoard selectedTab={selectedTab} handleSelectTab={handleSelectTab} trigger={trigger} />
+        <TradesBoard
+          selectedTab={selectedTab}
+          handleSelectTab={handleSelectTab}
+          handleLongShortTab={handleLongShortTab}
+          trigger={trigger}
+        />
       </Container>
     </Page>
   );

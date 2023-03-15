@@ -122,11 +122,11 @@ export default {
 
   getBars: async (symbolInfo, resolution, periodParams, onHistoryCallback, onErrorCallback) => {
     const { from, to, firstDataRequest } = periodParams;
-    console.log('[getBars]: Method call', symbolInfo, resolution, from, to);
+    // console.log('[getBars]: Method call', symbolInfo, resolution, from, to);
     if (symbolInfo.type !== 'stocks') {
       const parsedSymbol = parseFullSymbol(symbolInfo.ticker);
-      console.log(resolution);
-      console.log(parsedSymbol);
+      // console.log(resolution);
+      // console.log(parsedSymbol);
       try {
         getPreviousChartData(
           parsedSymbol.fromSymbol,
@@ -143,8 +143,8 @@ export default {
             });
             return;
           }
-          console.log('previousChartData', data);
-          console.log(symbolInfo.type);
+          // console.log('previousChartData', data);
+          // console.log(symbolInfo.type);
           let bars = [];
           data.forEach((bar) => {
             if (bar.t >= from * 1000 && bar.t < to * 1000) {
@@ -164,10 +164,10 @@ export default {
             lastBarsCache.set(symbolInfo.full_name, {
               ...bars[bars.length - 1]
             });
-            console.log('bars final data');
-            console.log(bars[bars.length - 1]);
+            // console.log('bars final data');
+            // console.log(bars[bars.length - 1]);
           }
-          console.log(`[getBars]: returned ${bars.length} bar(s)`);
+          // console.log(`[getBars]: returned ${bars.length} bar(s)`);
           onHistoryCallback(bars, {
             noData: false
           });
@@ -186,8 +186,8 @@ export default {
             return;
           }
           let bars = [];
-          console.log('previousChartData', data);
-          console.log(symbolInfo.type);
+          // console.log('previousChartData', data);
+          // console.log(symbolInfo.type);
           data.forEach((bar) => {
             if (bar.t >= from * 1000 && bar.t < to * 1000) {
               bars = [
@@ -207,7 +207,7 @@ export default {
               ...bars[bars.length - 1]
             });
           }
-          console.log(`[getBars]: returned ${bars.length} bar(s)`);
+          // console.log(`[getBars]: returned ${bars.length} bar(s)`);
           onHistoryCallback(bars, {
             noData: false
           });
@@ -219,7 +219,7 @@ export default {
   },
 
   subscribeBars: (symbolInfo, resolution, onRealtimeCallback, subscriberUID, onResetCacheNeededCallback) => {
-    console.log('[subscribeBars]: Method call with subscriberUID:', subscriberUID);
+    // console.log('[subscribeBars]: Method call with subscriberUID:', subscriberUID);
     subscribeOnStream(
       symbolInfo,
       resolution,
@@ -231,7 +231,7 @@ export default {
   },
 
   unsubscribeBars: (subscriberUID) => {
-    console.log('[unsubscribeBars]: Method call with subscriberUID:', subscriberUID);
+    // console.log('[unsubscribeBars]: Method call with subscriberUID:', subscriberUID);
     unsubscribeFromStream(subscriberUID);
   }
 };

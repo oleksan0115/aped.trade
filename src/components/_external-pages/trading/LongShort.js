@@ -244,7 +244,20 @@ export default function LongShort({ currency, ctype, handleSelectTab, onChartVie
 
   const handleSlider = (e) => {
     const { value } = e.target;
-    setSliderValue(value);
+    //setSliderValue(value);
+    console.log('handleSlider:', value);
+    const direction = value >= sliderValue ? true : false;
+    let _value = 0;
+    for (let i = 0; i < MIN_MAX[ctype].values.length; i++) {
+      if (MIN_MAX[ctype].values[i] >= value) {
+        if (direction) _value = MIN_MAX[ctype].values[i];
+        else _value = MIN_MAX[ctype].values[i - 1];
+        break;
+      }
+    }
+    console.log('handleValue', _value);
+    if(_value > 0)
+      setSliderValue(_value);
   };
 
   const handleSliderLoseValue = (e) => {
@@ -815,7 +828,7 @@ const MIN_MAX = [
   {
     min: 1,
     max: 250,
-    values: [1, 5, 10, 25, 50, 75, 100, 150, 200, 250]
+    values: [1, 5, 10, 25, 50, 75, 100, 125, 150, 175, 200, 225, 250]
   },
   {
     min: 1,

@@ -44,15 +44,15 @@ function ChartStatus({
   const [openPrice, setOpenPrice] = useState(0);
   useEffect(() => {
     socket.on('connect', () => {
-      console.log('[socket] Connected');
+      // console.log('[socket] Connected');
     });
 
     socket.on('disconnect', (reason) => {
-      console.log('[socket] Disconnected:', reason);
+      // console.log('[socket] Disconnected:', reason);
     });
 
     socket.on('error', (error) => {
-      console.log('[socket] Error:', error);
+      // console.log('[socket] Error:', error);
     });
 
     socket.on(`${PriceTypes[0]}_trade_data`, (data) => {
@@ -63,7 +63,7 @@ function ChartStatus({
       const tradeTime = parseInt(data.t, 10);
       const channelString = `0~${exchange}~${fromSymbol}~${toSymbol}`;
       const subscriptionItem = channelToSubscription.get(channelString);
-      console.log('crypto_trade_data');
+      // console.log('crypto_trade_data');
 
       // real time show the price in CryptoPopover
       if (ctype === 0 && fromSymbol === currency.toUpperCase() && toSymbol === 'USD') {
@@ -84,7 +84,7 @@ function ChartStatus({
           low: tradePrice,
           close: tradePrice
         };
-        console.log('[socket] Generate new bar', bar);
+        // console.log('[socket] Generate new bar', bar);
       } else {
         bar = {
           ...lastDailyBar,
@@ -92,7 +92,7 @@ function ChartStatus({
           low: Math.min(lastDailyBar.low, tradePrice),
           close: tradePrice
         };
-        console.log('[socket] Update the latest bar by price', tradePrice);
+        // console.log('[socket] Update the latest bar by price', tradePrice);
       }
 
       // assess if the price is increasing or decreasing for CryptoPopover
@@ -113,7 +113,7 @@ function ChartStatus({
 
       // real time show the price in CryptoPopover
       if (ctype === 1 && fromSymbol === currency.toUpperCase() && toSymbol === 'USD') {
-        console.log('new price set forex', tradePrice);
+        // console.log('new price set forex', tradePrice);
         setPrice(tradePrice);
       }
       const subscriptionItem = channelToSubscription.get(channelString);
@@ -132,7 +132,7 @@ function ChartStatus({
           low: data.b,
           close: data.b
         };
-        console.log('[socket] Generate new bar', bar);
+        // console.log('[socket] Generate new bar', bar);
       } else {
         bar = {
           ...lastDailyBar,
@@ -140,7 +140,7 @@ function ChartStatus({
           low: Math.min(lastDailyBar.low, data.b),
           close: data.b
         };
-        console.log('[socket] Update the latest bar by price', data.b);
+        // console.log('[socket] Update the latest bar by price', data.b);
       }
       // assess if the price is increasing or decreasing for CryptoPopover
       setOpenPrice(subscriptionItem.lastDailyBar.open);
@@ -265,12 +265,12 @@ function ChartStatus({
 export default ChartStatus;
 
 function getNextDailyBarTime(barTime, resolution) {
-  console.log('getNextDailyBarTime');
-  console.log(resolution);
-  console.log(barTime);
+  // console.log('getNextDailyBarTime');
+  // console.log(resolution);
+  // console.log(barTime);
   const date = new Date(barTime);
-  console.log(date);
-  console.log(date.getTime());
+  // console.log(date);
+  // console.log(date.getTime());
   switch (resolution) {
     case '1D':
       date.setDate(date.getDate() + 1);

@@ -49,10 +49,10 @@ export async function getPreviousChartData(currency, interval, type, startTime, 
   else if (type === 'forex') currencyString = `C:${currency?.toUpperCase()}USD`;
   else currencyString = currency?.toUpperCase();
 
-  const API_URL = `${process.env.REACT_APP_POLYGON_API_URL}/v2/aggs/ticker/${currencyString}/range/${intervalNumber}/${intervalUnit}/${startTime}/${lastTime}?adjusted=true&sort=asc&apiKey=${AuthStr}`;
+  const API_URL = `v2/aggs/ticker/${currencyString}/range/${intervalNumber}/${intervalUnit}/${startTime}/${lastTime}?adjusted=true&sort=asc&apiKey=${AuthStr}`;
   console.log(API_URL);
-  const response = await axios.get(API_URL);
-  return response?.data?.results;
+  const response = await axios.post(`${process.env.REACT_APP_CHART_API_URL}/preData`, { url: API_URL });
+  return response?.data?.data;
 }
 
 export async function getPreviousChartData1(currency, interval, type, startTime, lastTime) {
@@ -63,9 +63,9 @@ export async function getPreviousChartData1(currency, interval, type, startTime,
   else if (type === 'forex') currencyString = `C:${currency?.toUpperCase()}USD`;
   else currencyString = currency?.toUpperCase();
 
-  const API_URL = `${process.env.REACT_APP_POLYGON_API_URL}/v2/aggs/ticker/${currencyString}/range/${intervalNumber}/${intervalUnit}/${startTime}/${lastTime}?adjusted=true&sort=asc&apiKey=${AuthStr}`;
+  const API_URL = `v2/aggs/ticker/${currencyString}/range/${intervalNumber}/${intervalUnit}/${startTime}/${lastTime}?adjusted=true&sort=asc&apiKey=${AuthStr}`;
   console.log(API_URL);
-  const response = await axios.get(API_URL);
+  const response = await axios.post(`${process.env.REACT_APP_CHART_API_URL}/preData`, { url: API_URL });
   return response?.data?.results;
 }
 
@@ -114,6 +114,13 @@ export async function getPreviousStocksData(stockName, interval, startTime, last
   console.log(API_URL);
   const response = await axios.get(API_URL);
   return response?.data?.results;
+}
+export async function getAllStageData() {
+  const API_URL = `${process.env.REACT_APP_CHART_API_URL}/getAllStageData`;
+  console.log('getAllStageData', API_URL);
+  const response = await axios.get(API_URL);
+  console.log('response', response);
+  return response.data;
 }
 
 // eur, aud, gbp, cnh, jpy, mxn

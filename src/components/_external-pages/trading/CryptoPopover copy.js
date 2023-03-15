@@ -14,8 +14,6 @@ import { fCurrency } from '../../../utils/formatNumber';
 // consts
 import { CRYPTOS, FOREX, STOCKS, PriceTypes } from './chart/Consts';
 
-// api
-import { getAllStageData } from './api';
 // ----------------------------------------------------------------------
 
 CryptoPopover.propTypes = {
@@ -38,7 +36,9 @@ export default function CryptoPopover({ price, openPrice, currency, onChangeCurr
   const [newPrices, setNewPrices] = useState([]);
 
   useEffect(() => {
-    fetchData();
+    fetchData(PriceTypes[0]);
+    fetchData(PriceTypes[1]);
+    fetchData(PriceTypes[2]);
   }, []);
 
   useEffect(() => {
@@ -108,14 +108,16 @@ export default function CryptoPopover({ price, openPrice, currency, onChangeCurr
     setValue(newValue);
   };
 
-  const fetchData = () => {
+  const fetchData = async (currencyName) => {
     try {
-      getAllStageData().then((response) => {
-        console.log('fetchData', response);
-        if (response.cryptos.length > 0) setCryptoPrices(response.cryptos);
-        if (response.forex.length > 0) setForexPrices(response.forex);
-        if (response.stocks.length > 0) setStocksPrices(response.stocks);
-      });
+      if (currencyName === 'crypto') currencyName += 's';
+      const response = await fetch(`${process.env.REACT_APP_CHART_API_URL}/${currencyName}`).then((res) => res.json());
+      console.log('fetchData', response);
+      if (response.length) {
+        if (currencyName === 'cryptos') setCryptoPrices(response);
+        else if (currencyName === 'forex') setForexPrices(response);
+        else setStocksPrices(response);
+      }
     } catch (e) {
       console.error(e);
     }
