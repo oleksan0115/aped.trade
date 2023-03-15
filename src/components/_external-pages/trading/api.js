@@ -111,15 +111,15 @@ export async function getPreviousStocksData(stockName, interval, startTime, last
   const API_URL = `${
     process.env.REACT_APP_POLYGON_API_URL
   }/v2/aggs/ticker/${stockName.toUpperCase()}/range/${intervalNumber}/${intervalUnit}/${startTime}/${lastTime}?adjusted=true&sort=asc&apiKey=${AuthStr}`;
-  console.log(API_URL);
+  // console.log(API_URL);
   const response = await axios.get(API_URL);
   return response?.data?.results;
 }
 export async function getAllStageData() {
   const API_URL = `${process.env.REACT_APP_CHART_API_URL}/getAllStageData`;
-  console.log('getAllStageData', API_URL);
+  // console.log('getAllStageData', API_URL);
   const response = await axios.get(API_URL);
-  console.log('response', response);
+  // console.log('response', response);
   return response.data;
 }
 

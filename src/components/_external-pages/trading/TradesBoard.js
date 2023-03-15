@@ -186,7 +186,7 @@ export default function TradesBoard({ handleSelectTab, handleLongShortTab, selec
           const tradeIcon = getPairIcon(trades[i]);
           const tradeDir = getOrderDirection(trades[i]);
           const tradeName = getPairName(trades[i]);
-          let newTrade = { ...trades[i], pair: { icon: tradeIcon, orderDirection: tradeDir, name: tradeName } };
+          let newTrade = { pair: { icon: tradeIcon, orderDirection: tradeDir, name: tradeName } };
           if (trades[i].trader) newTrade.trader = trades[i].trader;
           if (trades[i].traderId) newTrade.traderId = trades[i].traderId;
           if (trades[i].openTimestamp) newTrade.openTimestamp = new Date(trades[i].openTimestamp * 1000).toLocaleString();
