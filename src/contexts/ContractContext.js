@@ -11,13 +11,13 @@ import MockDAIContract from '../contracts/MockDAI.json';
 import TradingStorageContract from '../contracts/TradingStorage.json';
 
 //Contract object
-const vaultContractAddress = "0xAC352deB880515218Ba27e1c107651846d2EB530"  //vault contract address
+const vaultContractAddress = "0xD143478E1f71A1BBAd3057253fCf7398f3974839"  //vault contract address
 const vaultabi = VaultContract.abi;
 
-const daiContractAddress = "0xAA3Ca7949548BFBAb3EcCC1B14399D2a764F8792";
+const daiContractAddress = "0x8f674e4e5C10b5ac3e9405e920b55a3311EedE41";
 const daiABI = MockDAIContract.abi;
 
-const tradingStorageAddress = "0x244923166356A460Db242CaCd035A23658Bb415b";
+const tradingStorageAddress = "0xC5f6d82be83bb6fCdAE31FE5c4B81c37823A230C";
 const tradingStorageABI = TradingStorageContract.abi;
 
 
