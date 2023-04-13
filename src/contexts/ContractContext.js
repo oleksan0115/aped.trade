@@ -9,6 +9,7 @@ import Web3 from 'web3';
 import VaultContract from '../contracts/Vault.json';
 import MockDAIContract from '../contracts/MockDAI.json';
 import TradingStorageContract from '../contracts/TradingStorage.json';
+import TradingLogicContract from '../contracts/TradingLogic.json';
 
 //Contract object
 const vaultContractAddress = "0x74ddE3f67553b939ED335B55eBe056021C0F80a5"  //vault contract address
@@ -20,12 +21,16 @@ const daiABI = MockDAIContract.abi;
 const tradingStorageAddress = "0xA6BFBB4d45D1699df93431D1E093Df6B660Fa6A4";
 const tradingStorageABI = TradingStorageContract.abi;
 
+const tradingLogicAddress = "0x681EA395Cdaaa98692ECeD52a72eF75c14A715B6";
+const tradingLogicABI = TradingLogicContract.abi;
+
 
 const ContractContextProvider = (props) => {
 
     const [vault, setVault] = useState({});
     const [dai, setDAI] = useState({});
     const [tradingStorage, setTradingStorage] = useState({});
+    const [tradingLogic, setTradingLogic] = useState({});
     const [user, setUser] = useState("");
 
     const loadWeb3 = async() => {
@@ -49,6 +54,8 @@ const ContractContextProvider = (props) => {
         setDAI(dai);
         const tradeStorage = new web3.eth.Contract(tradingStorageABI, tradingStorageAddress);
         setTradingStorage(tradeStorage);
+        const tradeLogic = new web3.eth.Contract(tradingLogicABI, tradingLogicAddress);
+        setTradingLogic(tradeLogic);
     }
 
     useEffect(() => {
@@ -57,7 +64,7 @@ const ContractContextProvider = (props) => {
     }, [])
 
     return ( 
-       <ContractContext.Provider value={{dai, vault, tradingStorage, user, setUser}}>{props.children}</ContractContext.Provider>
+       <ContractContext.Provider value={{dai, vault, tradingStorage, user, setUser, tradingLogic}}>{props.children}</ContractContext.Provider>
      );
 }
  

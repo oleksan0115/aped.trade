@@ -848,52 +848,62 @@ export const CryptoList = [
   {
     name: 'btc',
     currencyID: 0,
-    icon: '/static/icons/crypto/btc.webp'
+    icon: '/static/icons/crypto/btc.webp',
+    api: 'https://api2.aped.xyz/crypto/btc'
   },
   {
     name: 'eth',
     currencyID: 1,
-    icon: '/static/icons/crypto/eth.webp'
+    icon: '/static/icons/crypto/eth.webp',
+    api: 'https://api2.aped.xyz/crypto/eth'
   },
   {
     name: 'ltc',
     currencyID: 2,
-    icon: '/static/icons/crypto/ltc.png'
+    icon: '/static/icons/crypto/ltc.png',
+    api: 'https://api2.aped.xyz/crypto/ltc'
   },
   {
     name: 'xlm',
     currencyID: 3,
-    icon: '/static/icons/crypto/xlm.png'
+    icon: '/static/icons/crypto/xlm.png',
+    api: 'https://api2.aped.xyz/crypto/xlm'
   },
   {
     name: 'ada',
     currencyID: 4,
-    icon: '/static/icons/crypto/ada.webp'
+    icon: '/static/icons/crypto/ada.webp',
+    api: 'https://api2.aped.xyz/crypto/ada'
   },
   {
     name: 'neo',
     currencyID: 5,
-    icon: '/static/icons/crypto/neo.png'
+    icon: '/static/icons/crypto/neo.png',
+    api: 'https://api2.aped.xyz/crypto/neo'
   },
   {
     name: 'eos',
     currencyID: 6,
-    icon: '/static/icons/crypto/eos.png'
+    icon: '/static/icons/crypto/eos.png',
+    api: 'https://api2.aped.xyz/crypto/eos'
   },
   {
     name: 'iot',
     currencyID: 7,
-    icon: '/static/icons/crypto/iota.png'
+    icon: '/static/icons/crypto/iota.png',
+    api: 'https://api2.aped.xyz/crypto/iot'
   },
   {
     name: 'sol',
     currencyID: 8,
-    icon: '/static/icons/crypto/sol.png'
+    icon: '/static/icons/crypto/sol.png',
+    api: 'https://api2.aped.xyz/crypto/sol'
   },
   {
     name: 'vet',
     currencyID: 9,
-    icon: '/static/icons/crypto/vet.png'
+    icon: '/static/icons/crypto/vet.png',
+    api: 'https://api2.aped.xyz/crypto/vet'
   },
   {
     name: 'matic',

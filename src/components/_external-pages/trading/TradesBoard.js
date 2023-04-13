@@ -5,6 +5,7 @@ import { experimentalStyled as styled, makeStyles, useTheme } from '@material-ui
 import { ContractContext } from 'src/contexts/ContractContext';
 import Snackbar from '../../Snackbar';
 import { ForexList, CryptoList, StockList } from './LongShort';
+import axios from 'axios';
 
 import {
   Card,
@@ -36,6 +37,7 @@ import PropTypes from 'prop-types';
 // components
 import TradesDetailDialog from './TradesDetailDialog';
 import { isArray, upperCase } from 'lodash';
+
 
 const useStyles = makeStyles({
   table: {
@@ -113,7 +115,7 @@ export default function TradesBoard({ handleSelectTab, handleLongShortTab, selec
 
   const [slideChecked, setSlideChecked] = useState(true);
 
-  const { tradingStorage, user, vault } = useContext(ContractContext);
+  const { tradingStorage, user, vault, tradingLogic } = useContext(ContractContext);
 
   const [loading, setLoading] = useState(false);
 
@@ -141,6 +143,8 @@ export default function TradesBoard({ handleSelectTab, handleLongShortTab, selec
   useEffect(() => {
     if (trigger > 0) getUserOpenTrades();
   }, [trigger]);
+
+
 
   const getUserOpenTrades = async () => {
     setLoading(true);
@@ -206,6 +210,15 @@ export default function TradesBoard({ handleSelectTab, handleLongShortTab, selec
       });
   };
 
+  
+
+  const getTradePnl = async (entry, current, leverage, collateral, order) => {
+     const pnl = await tradingLogic.methods.calculatePnL(entry, current, leverage, collateral, order);
+     const roi = (pnl / collateral) * 100;
+
+     return roi;
+  };
+
   const removeDecimal = (num, numDecimal) => {
     return num / 10 ** numDecimal;
   };
@@ -226,6 +239,33 @@ export default function TradesBoard({ handleSelectTab, handleLongShortTab, selec
       }
     }
   };
+
+  // const getPairAPI = (item) => {
+  //   const assetList = CryptoList.concat(ForexList, StockList);
+  //   for (let i =0; i< assetList.length; i++) {
+  //     if (Number(item.pair) === assetList[i].currencyID) {
+  //       return assetList[i].api;
+  //     }
+  //   }
+  // }
+
+  const getPairCurrentPrice = async (item) => {
+    const assetList = [...CryptoList, ...ForexList, ...StockList];
+    for (let i = 0; i < assetList.length; i++) {
+      if (Number(item.pair) === assetList[i].currencyID) {
+        const response = await axios.get(String(assetList[i].api));
+        const data = response.data;
+        const sortedKeys = Object.keys(data).sort();
+        const secondKey = sortedKeys[1];
+        const secondValue = data[secondKey];
+        const pnl = await tradingLogic.methods.calculatePnL(item.entryPrice, secondValue, item.leverageAmount, item.collateral, item.orderType);
+        const roi = (pnl / collateral) * 100;
+  
+        return roi;
+      }
+    }
+  };
+  
 
   const getOrderDirection = (item) => {
     const assetList = CryptoList.concat(ForexList, StockList);
@@ -387,6 +427,7 @@ export default function TradesBoard({ handleSelectTab, handleLongShortTab, selec
                           <TableBodyCell align="left">{removeDecimal(item.exitPrice, 8)}</TableBodyCell>
                         )}
                         <TableBodyCell align="left" sx={{ color: '#72F238' }}>
+                          {/* {getPairCurrentPrice(item)} */}
                           {item.roi}
                           {item.roi === '-' ? '' : '%'}
                         </TableBodyCell>
@@ -526,7 +567,7 @@ export default function TradesBoard({ handleSelectTab, handleLongShortTab, selec
                         <TableBodyCell align="left">{removeDecimal(item.exitPrice, 8)}</TableBodyCell>
                       )}
                       <TableBodyCell align="left" sx={{ color: '#72F238' }}>
-                        {item.roi}
+                        {/* {getPairCurrentPrice(item)} */}
                         {item.roi === '-' ? '' : '%'}
                       </TableBodyCell>
                       {upMd && (
