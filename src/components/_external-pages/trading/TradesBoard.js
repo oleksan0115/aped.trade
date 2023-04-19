@@ -146,24 +146,42 @@ export default function TradesBoard({ handleSelectTab, handleLongShortTab, selec
 
 
 
+
   const getUserOpenTrades = async () => {
     setLoading(true);
     const trades = await tradingStorage.methods
       .getAllOpenTrades(user)
       .call()
-      .then((trades) => {
+      .then(async (trades) => {
         let arr = [];
+        
         for (let i = 0; i < trades.length; i++) {
           const tradeIcon = getPairIcon(trades[i]);
           const tradeDir = getOrderDirection(trades[i]);
           const tradeName = getPairName(trades[i]);
-          const newTrade = { ...trades[i], pair: { icon: tradeIcon, orderDirection: tradeDir, name: tradeName } };
+          const tradeCurrentPrice = await getPairCurrentPrice(trades[i]);
+          console.log("price is: " ,tradeCurrentPrice)
+          const tradePnl = await getTradePnl(trades[i], tradeCurrentPrice);
+          console.log("roi is: ", tradePnl);
+  
+          const newTrade = {
+            ...trades[i],
+            pair: {
+              icon: tradeIcon,
+              orderDirection: tradeDir,
+              name: tradeName,
+            },
+            roi: tradePnl,
+          };
           arr.push(newTrade);
         }
+  
         setTradeList(arr);
         setLoading(false);
       });
   };
+  
+  
 
   const closeMarketOrder = async (tradeId) => {
     await vault.methods
@@ -212,12 +230,22 @@ export default function TradesBoard({ handleSelectTab, handleLongShortTab, selec
 
   
 
-  const getTradePnl = async (entry, current, leverage, collateral, order) => {
-     const pnl = await tradingLogic.methods.calculatePnL(entry, current, leverage, collateral, order);
-     const roi = (pnl / collateral) * 100;
-
-     return roi;
+  const getTradePnl = async (item, currentPrice) => {
+    const pnl = await tradingLogic.methods
+      .calculatePnL(
+        item.entryPrice,
+        (currentPrice * 10e8),
+        item.leverageAmount,
+        item.collateral,
+        item.orderType
+      )
+      .call();
+  
+    
+  
+    return removeDecimal(pnl, 8);
   };
+  
 
   const removeDecimal = (num, numDecimal) => {
     return num / 10 ** numDecimal;
@@ -249,24 +277,13 @@ export default function TradesBoard({ handleSelectTab, handleLongShortTab, selec
   //   }
   // }
 
-  const getPairCurrentPrice = async (item) => {
-    const assetList = [...CryptoList, ...ForexList, ...StockList];
-    for (let i = 0; i < assetList.length; i++) {
-      if (Number(item.pair) === assetList[i].currencyID) {
-        const response = await axios.get(String(assetList[i].api));
-        const data = response.data;
-        const sortedKeys = Object.keys(data).sort();
-        const secondKey = sortedKeys[1];
-        const secondValue = data[secondKey];
-        const pnl = await tradingLogic.methods.calculatePnL(item.entryPrice, secondValue, item.leverageAmount, item.collateral, item.orderType);
-        const roi = (pnl / collateral) * 100;
-  
-        return roi;
-      }
-    }
-  };
-  
 
+
+  const getPairCurrentPrice = async (item) => {
+    const response = await axios.get(`https://localhost:8080/cryptos/id/${item.pair}`);
+    return response.data.price;
+  }
+  
   const getOrderDirection = (item) => {
     const assetList = CryptoList.concat(ForexList, StockList);
     for (let i = 0; i < assetList.length; i++) {
@@ -427,7 +444,7 @@ export default function TradesBoard({ handleSelectTab, handleLongShortTab, selec
                           <TableBodyCell align="left">{removeDecimal(item.exitPrice, 8)}</TableBodyCell>
                         )}
                         <TableBodyCell align="left" sx={{ color: '#72F238' }}>
-                          {/* {getPairCurrentPrice(item)} */}
+                          143434
                           {item.roi}
                           {item.roi === '-' ? '' : '%'}
                         </TableBodyCell>
@@ -567,7 +584,7 @@ export default function TradesBoard({ handleSelectTab, handleLongShortTab, selec
                         <TableBodyCell align="left">{removeDecimal(item.exitPrice, 8)}</TableBodyCell>
                       )}
                       <TableBodyCell align="left" sx={{ color: '#72F238' }}>
-                        {/* {getPairCurrentPrice(item)} */}
+                        {item.roi}
                         {item.roi === '-' ? '' : '%'}
                       </TableBodyCell>
                       {upMd && (
